@@ -1,3 +1,5 @@
+#ifndef BSPLINE_SURFACE_H
+#define BSPLINE_SURFACE_H
 namespace geom {
 
     class bspline_surface {
@@ -12,3 +14,4 @@ namespace geom {
     };
 
 }
+#endif

@@ -1,9 +1,10 @@
-//-*- mode: c++-mode -*-
+//-*- mode: c++ -*-
 #ifndef _BSPLINE_OPS_H
 #define _BSPLINE_OPS_H
+#include "box.hpp"
+#include "spline_traits.hpp"
 namespace geom {
-  struct bspline_ops {
-
+struct bspline_ops {
     template <class SplineType>
     static SplineType
     insert_knots(const SplineType& crv,
@@ -21,6 +22,14 @@ namespace geom {
     template <class SplineType>
     static std::list<SplineType>
     split_into_bezier_patches(const SplineType &spl);
+
+    template <class SplineType>
+    static std::list<SplineType>
+    split_into_bezier_patches_hard(const SplineType &spl);
+
+    template <class SplineType>
+    static SplineType
+    extract_curve(const SplineType &spl, double a, double b);
 
     template <class SplineType>
     static SplineType reverse_curve(SplineType& spl);
@@ -46,12 +55,16 @@ namespace geom {
 
     template <class FnType>
     static bspline<double>
-	quad_approx1d(FnType f, std::vector<double>& t);
+    quad_approx1d(FnType f, std::vector<double>& t);
 
     template <class SplineType>
     static double
     foot_param(const SplineType &spl,
                const typename SplineType::point_t& p);
-  };
+
+    template <class SplineType>
+    static box<spline_traits<SplineType>::dim>
+    compute_box(const SplineType &spl);
+};
 }
 #endif //_BSPLINE_OPS_H

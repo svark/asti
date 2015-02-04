@@ -20,6 +20,7 @@ namespace geom
       :spl(wrap(pts,ks,degree_))
     {
     }
+
     periodic_bspline(const periodic_bspline& other)
       :spl(other.spl)
     {
@@ -90,6 +91,4 @@ namespace geom
     bspline<point_t> spl;
   };
 
- 
-  
 }

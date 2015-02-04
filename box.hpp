@@ -1,7 +1,7 @@
 /* -*- mode: c++ -*- */
 #ifndef BOX_HPP
 #define BOX_HPP
-#include <cmath>
+#include <math.h>
 #include <limits>
 #include "point.hpp"
 
@@ -12,23 +12,17 @@ namespace geom {
     {
         box(){
             double inf = std::numeric_limits<double>::infinity();
-            lo = diag_point(inf);
-            hi = diag_point(-inf);
+            lo = pt_t<dim>(inf);
+            hi = pt_t<dim>(-inf);
         }
         bool is_invalid() const;
-        box &operator +=( pt_t<dim> p);
+        box &operator +=( const pt_t<dim>& p);
+        box &operator +=( const double& p);
+        box &operator +=( const box& p);
         pt_t<dim> lo;
         pt_t<dim> hi;
     };
 
-    template <int dim>
-    struct oriented_box : public box<dim>
-    {
-        oriented_box(){}
-        matrix3d mat;
-    };
-
-    using std::max, std::min;
 
     template <int dim>
     bool
@@ -53,28 +47,38 @@ namespace geom {
     }
 
     template <int  dim>
-    box &operator +=( pt_t<dim> pt)
+    box<dim> &box<dim>::operator +=( const pt_t<dim>& pt)
     {
         for(int i =0;i < dim;++i)
         {
-            lo[i] =  fmin( pt.p[i], lo[i] );
-            hi[i] =  fmax( pt.p[i], hi[i] );
+            lo[i] =  std::fmin( pt.p[i], lo[i] );
+            hi[i] =  std::fmax( pt.p[i], hi[i] );
         }
+		return *this;
+    }
+
+	template <>
+    inline box<1> &box<1>::operator +=( const double& pt)
+    {
+        lo[0] =  std::fmin( pt, lo[0] );
+        hi[0] =  std::fmax( pt, hi[0] );
+		return *this;
     }
 
     template <int  dim>
-    box &box::operator +=( box<dim> b)
+    box<dim> &box<dim>::operator +=(const box<dim> &b)
     {
         for(int i =0;i < dim; ++i)
         {
-            lo[i] =  fmin( b.lo[i], lo[i] );
-            hi[i] =  fmax( b.hi[i], hi[i] );
+            lo[i] =  std::fmin( b.lo[i], lo[i] );
+            hi[i] =  std::fmax( b.hi[i], hi[i] );
         }
+		return *this;
     }
 
     template <int dim>
     bool
-    intersect( const box<dim>& b1
+    intersect( const box<dim>& b1,
                const box<dim>& b2
         )
     {
@@ -103,3 +107,4 @@ namespace geom {
         return false;
     }
 }
+#endif

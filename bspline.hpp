@@ -1,5 +1,5 @@
-#ifndef _BSPLINE_H
-#define _BSPLINE_H
+#ifndef BSPLINE_H
+#define BSPLINE_H
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -19,16 +19,9 @@ namespace geom {
         typedef std::vector<point_t> cpts_t;
         typedef std::vector<double> knots_t;
 
-        bspline(const cpts_t& pts, const knots_t &ks, int degree_);
-
-        bspline(std::tuple<cpts_t&&,knots_t&&,int&&> dat)
-            :  cpts(std::forward<cpts_t>(std::get<0>(dat))),
-               t(std::forward<knots_t>(std::get<1>(dat))),
-               deg(std::get<2>(dat)) {}
+        bspline(std::tuple<cpts_t&&,knots_t&&,int&&> dat);
 
         bspline(cpts_t&& pts, knots_t &&ks, int degree_);
-
-        bspline(const bspline& other);
 
         bspline(bspline&& other);
 
@@ -52,11 +45,7 @@ namespace geom {
         // store cpts relative to cg
         void optimize();
 
-        void swap( bspline & other ) {
-            t.swap(other.t);
-            cpts.swap(other.cpts);
-            std::swap(origin,other.origin);
-        }
+        void swap( bspline & other ) ;
 
         // accessors
         const knots_t & knots() const { return t;}
@@ -69,8 +58,11 @@ namespace geom {
         vector_t origin;
         int deg;
     };
-	
-	
+	template <class Point>
+	bool operator==(const bspline<Point>& bs1,const bspline<Point>&bs2) { 
+		return std::make_tuple(bs1.control_points(),bs1.knots(),bs1.base_point(),bs1.degree())
+			==std::make_tuple(bs2.control_points(),bs2.knots(),bs2.base_point(),bs2.degree());
+	}
 }
 
-#endif //_BSPLINE_H
+#endif //BSPLINE_H

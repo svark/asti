@@ -30,6 +30,10 @@ namespace geom {
 	  pt_t& operator+=( const VecT& v) { p+=v.v; return *this;}
 	  template <class VecT>
 	  pt_t& operator-=( const VecT& v) { p-=v.v; return *this;}
+
+	  pt_t& operator+=(const double& v) { for(int i =0; i < dim;++i) p[i]+=v; return *this;}
+	  template <class VecT>
+	  pt_t& operator-=(const double& v) { for(int i =0; i < dim;++i) p[i]-=v; return *this;}
 	  
       Eigen::Matrix<double,dim,1>  p;
       enum { dimension = dim };
@@ -88,9 +92,9 @@ namespace geom {
     return pt;
   }
   template <int dim>
-  bool operator!=(const pt_t<dim>& p1, const pt_t<dim>& p2) { return p1.p!=p2.p; }
+  bool operator!=(const pt_t<dim>& p1, const pt_t<dim>& p2) { return !(p1.p==p2.p); }
   template <int dim>
-  bool operator==(const pt_t<dim>& p1, const pt_t<dim>& p2) { return p1.p==p2.p; }
+  bool operator==(const pt_t<dim>& p1, const pt_t<dim>& p2) { return sqlen(p1-p2)<1e-16; }
 
   template <int dim>
   struct vec_t
@@ -122,7 +126,13 @@ namespace geom {
       double operator[](std::size_t i) const { return v[i];}
       double& operator[](std::size_t i) { return v[i];}
       Eigen::Matrix<double,dim,1> v;
+	  enum { dimension = dim };
   };
+  
+  template <int point_dim>
+  bool operator==(const vec_t<point_dim>&v1,const vec_t<point_dim>&v2) { return sqlen(v1-v2) < 1e-16;}
+  
+
   template struct vec_t<2>;
   template struct vec_t<3>;
   template struct vec_t<4>;
@@ -137,7 +147,7 @@ namespace geom {
   }
 
   template<int dim>
-  double len(vec_t < dim >& vec)
+  double len(const vec_t < dim >& vec)
   {
       return vec.v.norm();
   }
@@ -155,7 +165,7 @@ namespace geom {
     static_assert(point_t::dimension == dim,
                   "dimensions of point and vector "
                   "must match for addition");
-    res.p += vec.v;
+    res += vec;
     return res;
   }
 
@@ -165,7 +175,7 @@ namespace geom {
   {
     auto res = pt;
     static_assert(point_t::dimension == dim,"dimensions of point and vector must match for subtraction");
-    res.p -= vec.v;
+    res -= vec;
     return res;
   }
   template <int dim>
@@ -470,5 +480,7 @@ namespace std
     {
 		v1.v.swap(v2.v);
     }
+    inline double fmin(double a, double b ) { return a < b? a: b;}
+    inline double fmax(double a, double b ) { return b < a? a: b;}
 }
 #endif//_POINT_HPP
