@@ -67,9 +67,9 @@ bspline<Point>::bspline(std::tuple<cpts_t&&,knots_t&&,int&&> dat)
 
 template <class Point>
 bspline<Point>::bspline(bspline<Point>&& other):
-	cpts(std::forward<cpts_t>(other.cpts)),t(std::forward<knots_t>(other.t)),
+    cpts(std::forward<cpts_t>(other.cpts)),t(std::forward<knots_t>(other.t)),
     deg(other.deg),
-	origin(std::forward<vector_t>(other.origin))
+    origin(std::forward<vector_t>(other.origin))
 {
 }
 
@@ -96,8 +96,8 @@ void bspline < Point >::swap(bspline & other)
 
 //{{{ --(@*"evaluate bspline blossom f[0],f[1],...,f[deg-1]")
 //see
-//(@file :file-name "./blossom1.png" :to "./blossom1.png" :display "blossom1")
-//(@file :file-name "./blossom2.png" :to "./blossom2.png" :display "blossom2")
+// ./media/blossom1.png
+// ./media/blossom2.png
 template <class Point>
 template <class KnotIter>
 Point bspline<Point>::blossom_eval(KnotIter f)
@@ -120,12 +120,12 @@ Point bspline<Point>::blossom_eval(KnotIter f)
 
 
 /*
-Local Variables:
-eval:(load-file "./temp.el")
-eval:(instantiate-templates "bspline" '("double"
-"point2d_t" "point3d_t"  "point4d_t")  '("blossom_eval") '("const double *"
-"std::vector<double>::const_iterator") )
-End:
+  Local Variables:
+  eval:(load-file "./temp.el")
+  eval:(instantiate-templates "bspline" '("double"
+  "point2d_t" "point3d_t"  "point4d_t")  '("blossom_eval") '("const double *"
+  "std::vector<double>::const_iterator") )
+  End:
 */
 namespace geom {
 #include "bspline_inst.cpp"
