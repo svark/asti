@@ -1,6 +1,8 @@
 #ifndef SPLINE_TRAITS_HPP
 #define SPLINE_TRAITS_HPP
 #include "point.hpp"
+#include "rational_bspline.hpp"
+#include "periodic_bspline.hpp"
 //#include <boost/mpl/integral_c.hpp>
 namespace geom {
 typedef std::false_type regular_tag;
@@ -11,7 +13,7 @@ template <class SplineType>
 struct spline_traits_base
 {
     typedef typename SplineType::point_t point_t;
-    enum{dim= point_traits < point_t *>::dim};
+    enum{dim= point_iter_traits < point_t *>::dim};
 };
 
 template <class SplineType>
@@ -22,7 +24,14 @@ struct spline_traits: spline_traits_base < SplineType >
 template <class Point>
 struct spline_traits<periodic_bspline < Point >> : spline_traits_base < periodic_bspline < Point > >
 {
-    typedef periodic_bspline ptag;
+    typedef periodic_tag ptag;
+};
+
+template <class Point>
+struct spline_traits<rational_bspline<periodic_bspline < Point > > > : spline_traits_base < 
+	rational_bspline< periodic_bspline < Point > > >
+{
+    typedef periodic_tag ptag;
 };
 }
 #endif

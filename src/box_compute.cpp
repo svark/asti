@@ -1,0 +1,49 @@
+#include "stdafx.h"
+#include "box_compute.hpp"
+namespace geom {
+    //--compute box
+template <class SplineType>
+box<spline_traits<SplineType>::dim>
+bspline_ops::compute_box(const SplineType &spl)
+{
+    box<spline_traits<SplineType>::dim > b;
+    auto const & cpts = spl.control_points();
+    for(auto const & c : cpts)
+    {
+        b += c;
+    }
+    b.lo += spl.base_point();
+    b.hi += spl.base_point();
+    return b;
+}
+}
+//{{{  instantiation scripts
+
+/*
+  Local Variables:
+  eval:(load-file "./scripts/temp.el")
+  eval:(setq methods (list "compute_box"
+  ))
+  eval:(setq spltypes (list "bspline<double>"
+  "bspline<point2d_t>"
+  "bspline<point3d_t>"
+  "bspline<point4d_t>"
+  "periodic_bspline<double>"
+  "periodic_bspline<point2d_t>"
+  "periodic_bspline<point3d_t>"
+  "periodic_bspline<point4d_t>"
+  ))
+  eval:(instantiate-templates "box_compute" "bspline_ops" (list ) methods spltypes )
+  End:
+// dump all explicitly instantiated templates below
+*/
+//}}}
+
+//{{{  instantiation
+#include "bspline.hpp"
+#include "periodic_bspline.hpp"
+#include "point.hpp"
+namespace geom {
+#include "box_compute_inst.cpp"
+}
+//}}}

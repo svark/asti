@@ -1,0 +1,311 @@
+#include "stdafx.h"
+#include <vector>
+#include "spline_approx.hpp"
+#include "Eigen/Core"
+#include "bspline_cons.hpp"
+#include <boost/math/tools/roots.hpp>
+#include <boost/math/tools/tuple.hpp>
+#include "spline_traits.hpp"
+#include <numeric>
+#include "insert_knot.hpp"
+#include "tol.hpp"
+#include "rmat.hpp"
+#include "geom_exception.hpp"
+#include <random>
+namespace geom {
+//{{{ -- approximations
+
+template <class Fn>
+bspline<double>
+bspline_ops::cubic_approx1d(Fn f, std::vector<double>& t)
+{
+
+    double mindist = std::numeric_limits<double>::infinity();
+    size_t i  = 0;
+    static const int p = 3;
+    size_t n = t.size() - p - 1;
+    std::vector<double> pts(n,0.0);
+    // pg 173 lyche
+    //(@file :file-name "./lee_quasi.pdf" :to "./lee_quasi.pdf" :display "intro to quasi interpolants")
+
+    Eigen::Matrix<double, 5, 5, Eigen::RowMajor>  mat(5, 5);
+    mat.setZero();
+    rmat_base_vd rm(t, 3);
+    for(size_t j = 2; j + 2 < n; ++j) {
+        double t5[] = { t[j + 1], (t[j + 1] + t[j + 2])/2,
+                        t[j + 2], (t[j + 2] + t[j + 3])/2,
+                        t[j + 3] - tol::param_tol/2 }; // ./media/cubic_approx0.png
+
+        for(int i =  0; i < 5; ++i) {
+            auto const & b = rm.basis(t5[i]);
+            for(int k = 0; k < 4; ++k) {// ./media/cubic_approx.png
+                mat(i, k + (i > 1? 1 : 0)) = b[k];
+            }
+        }
+        double rhs[5] = {f(t5[0]), f(t5[1]), f(t5[2]), f(t5[3]), f(t5[4])};
+        Eigen::Matrix<double, 5, 1> rhs_(rhs);
+        Eigen::Matrix<double, 5, 1> res = mat.lu().solve(rhs_);
+        if(j==2) {
+            pts[j-2] = res(0);
+            pts[j-1] = res(1);
+        }
+        pts[j] = res(2);
+        if(j == n-3) {
+            pts[j+1] = res(3);
+            pts[j+2] = res(4);
+        }
+    }
+
+    return make_bspline(std::move(pts), std::move(t), 3);
+}
+
+template <class FnType>
+bspline<double>
+bspline_ops::quad_approx1d(FnType f, std::vector<double>& t)
+{
+    assert( std::distance(b, e)!=0);
+
+    if(e[-1] - b < param_tol)
+        throw geom_exception(bad_knot_spacing_t);
+
+    std::vector<double> pts(n);
+
+    double s = *b;
+    double t;
+    pts[0] = f(s);
+
+    for(size_t j = 1; j < n - 1; ++j) {
+        s = b[j];
+        t = b[j+1];
+        u = (s + t)/2;
+        pts[j] = ( -f(s) + 4*f(u) - f(t) )/2;
+    }
+
+    t = e[-1];
+    pts[n-1] = f(t);
+
+    return make_bspline(std::move(pts), std::move(knots), 3);
+}
+//}}}
+
+//{{{ --(@* "compute foot param of a point on a spline")
+namespace kts{
+
+template <int p>
+static void build_knots_helper(const std::vector<double>& uniqts,
+                        std::vector<double>& t)
+{
+    if(uniqts.size() < 2)
+        throw geom_exception(bad_knot_spacing_t);
+
+    std::vector<double> taus;
+    taus.reserve(2*p+2);
+    std::vector<int> indices(uniqts.size() - 1);
+    std::iota(indices.begin(), indices.end(), 0);
+
+    auto width_comp = [&uniqts](int i, int j) -> bool {
+        double w = uniqts[i+1] - uniqts[i];
+        double u = uniqts[j+1] - uniqts[j];
+        return w < u;
+    };
+
+    std::make_heap(indices.begin(), indices.end(),
+                   width_comp);
+
+    std::mt19937 gen(1013); // todo:replace with linear congruence
+    std::uniform_real_distribution<> rb(0.0, 1.0);
+    while( uniqts.size() + taus.size() < p + 1 ) {
+        int indx_ = indices[0];
+        std::pop_heap(indices.begin(),
+                      indices.end(),
+                      width_comp);
+
+        auto   it     = uniqts.cbegin() + indx_;
+        auto   upIt   = std::next(it);
+        double lambda = rb(gen);
+        taus.push_back(lambda*(*upIt) + (1 - lambda)*(*it));
+    }
+    std::sort(taus.begin(), taus.end());
+    std::merge(uniqts.begin(), uniqts.end(), taus.begin(),
+               taus.end(), std::back_inserter(t));
+}
+
+template <int p, class KnotIter>
+static void build_knots(KnotIter b,
+                 KnotIter e,
+                 std::vector<double>& t, periodic_tag)
+{
+    size_t sz = std::distance(b, e);
+    t.reserve(std::max(sz, size_t(2*p)));
+    std::vector<double> uniqts;
+    uniqts.reserve(sz);
+    std::unique_copy(b, e, std::back_inserter(uniqts),
+                     tol::param_eq );
+
+    build_knots_helper<p>(uniqts, t);
+}
+
+template <int p, class KnotIter>
+static void build_knots(KnotIter b,
+                 KnotIter e,
+                 std::vector<double>& t, regular_tag)
+{
+    size_t sz = std::distance(b, e);
+    t.reserve(sz + 2*p);
+
+    std::vector<double> uniqts;
+    uniqts.reserve(sz);
+    std::unique_copy(b, e, std::back_inserter(uniqts),
+                     tol::param_eq );
+
+    for(int i = 0; i < p;++i)
+        t.push_back(*b);
+
+    build_knots_helper<p>(uniqts, t);
+
+    for(int i = 0; i < p;++i)
+        t.push_back(e[-1]);
+}
+}
+
+static std::pair<double, bool>
+find_next_rootc(geom::bspline<double>& spl,
+                double prev,
+                double tol)
+{
+    auto const &t = spl.knots();
+    auto const &c = spl.control_points();
+    int p = spl.degree();
+
+    size_t k = 1;
+    while( k < c.size() && t[k] < prev)
+        ++k;
+
+    for(; ; )
+    {
+        auto const &t = spl.knots();
+        auto const &c = spl.control_points();
+        auto tcap = [&t, p](size_t i) -> double {
+            return std::accumulate( &t[i+1], &t[i + 1] + p, 0.0 )/p;
+        };
+
+        size_t n = c.size();
+        while(k < n && ( c[k-1]*c[k] > 0 ))
+            ++k;
+
+        if( k >= n)
+            break;
+
+        double root =
+            tcap(k) - (c[k]/p) * (t[k+p] - t[k] )/(c[k] - c[k-1] );
+
+        if( fabs(spl.eval(root)) < tol)
+            return std::make_pair(root, true);
+
+        spl.swap(bspline_ops::insert_knot(spl, root));
+    }
+    return std::make_pair(prev, false);
+}
+
+
+template <class SplineType>
+double
+bspline_ops::foot_param(const SplineType &spl,
+                        const typename SplineType::point_t& p)
+{
+    auto pr = spl.param_range();
+    double b = pr.first;
+    double e = pr.second;
+
+    auto dist = [&p, &spl] (double u) -> double {
+        return sqlen( p - spl.eval(u) );
+    };
+
+    auto dist_der_by_2 = [&p, &spl] (double u) -> double  {
+        return dot( spl.eval(u) - p,  spl.eval_derivative(1, u) );
+    };
+    namespace m = boost::math;
+    auto fn = [&p, &spl]
+        (double u) {
+        auto v =  spl.eval(u) - p;
+        auto vdash =  spl.eval_derivative(1, u);
+        auto vdashdash =  spl.eval_derivative(2, u);
+        return m::make_tuple(dot(v, vdash),
+                             dot(v, vdashdash ) + dot(vdash, vdash),
+                             3*dot(vdash, vdashdash)
+            );
+    };
+
+    auto deg  = spl.degree();
+    auto &t = spl.knots();
+
+    std::vector<double> tapprox;
+    typedef typename spline_traits<SplineType>::ptag ptag;
+    kts::build_knots<3>(spl.knots().cbegin() + spl.degree(),
+                        spl.knots().cend()   - spl.degree(),
+                        tapprox,
+                        ptag());
+
+    // get a spline approximation of the derivative of distance
+    auto splapprox = cubic_approx1d(dist_der_by_2, tapprox);
+
+    // compute roots of this spline
+    auto rootQ = find_next_rootc(splapprox, t.front(), tol::param_tol);
+
+    double mindist = dist(t.front());
+    double minu = t.front();
+    double min = minu;
+
+    for(;rootQ.second;) {
+        const size_t digits_ = 2 *std::numeric_limits<double>::digits/3;
+
+        double guess = rootQ.first;
+
+        double u = m::tools::halley_iterate(fn, guess,
+                                            minu + tol::param_tol,
+                                            t.back(), //TODO:adjust
+                                            digits_);
+        min = std::max(min, u);
+        auto d = dist(u);
+        if( d < mindist ) { mindist = d; minu = u; }
+        rootQ = find_next_rootc(splapprox,
+                                std::max(u, rootQ.first)+2.0e-3,
+                                tol::param_tol);//TODO:adjust
+    }
+    double db = dist(t.back());
+    if(mindist > db ) {
+        minu = t.back();
+    }
+    return minu;
+}
+//}}}
+}
+
+/*
+Local Variables:
+eval:(load-file "./scripts/temp.el")
+eval:(setq methods (list "foot_param"
+                          "cubic_approx1d" 
+                          "quad_approx1d"
+                         ))
+eval:(setq spltypes (list "bspline<double>"
+                           "bspline<point2d_t>"
+                           "bspline<point3d_t>"
+                           "bspline<point4d_t>"
+                           "periodic_bspline<double>"
+                           "periodic_bspline<point2d_t>"
+                           "periodic_bspline<point3d_t>"
+                           "periodic_bspline<point4d_t>"
+                           ))
+eval:(instantiate-templates "spline_approx" "bspline_ops" (list ) methods spltypes )
+End:
+// dump all explicitly instantiated templates below
+*/
+#include "bspline.hpp"
+#include "periodic_bspline.hpp"
+#include "point.hpp"
+#include <functional>
+namespace geom {
+#include "spline_approx_inst.cpp"
+template bspline<double> bspline_ops::cubic_approx1d(class std::function<double (double)>,class std::vector<double> &);
+}

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "point.hpp"
 
 namespace geom {
