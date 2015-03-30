@@ -1,6 +1,5 @@
 //--*-mode:c++-*-
 //{{{ --includes
-#include "stdafx.h"
 #include <iostream>
 #include <map>
 #include <cmath>
@@ -14,12 +13,7 @@
 #include "skip_idx_iter.hpp"
 #include "transformed_back_inserter.hpp"
 //}}}
-
-
 namespace geom {
-
-
-
 //{{{ --(@* "evaluate curve at param @u")
 template <class Point>
 Point bspline<Point>::eval(double u) const
@@ -30,6 +24,7 @@ Point bspline<Point>::eval(double u) const
 //}}}
 
 //{{{ --(@* "evaluate derivative of the curve at the param @u")
+
 // throws a spline_exception if u is not in parameter range of this curve
 template <class Point>
 typename bspline<Point>::vector_t
@@ -100,8 +95,8 @@ bspline<Point>::bspline(bspline<Point>&& other):
 }
 //}}}
 
-// optimize will change the origin for the spline to be at the centroid
-// of the control points.
+//{{{  .(@* "optimize")
+// optimize by storing all points relative to their centroid
 template <class Point>
 void bspline<Point>::optimize()
 {
@@ -110,6 +105,7 @@ void bspline<Point>::optimize()
                    [&center](decltype(cpts[0]) p){ return p -= center;} );
     origin += center;
 }
+//}}}
 
 //{{{ --(@* "swap")
 template <class Point>
@@ -135,7 +131,7 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
     rmat<Point> m(cpts,t,deg);
     size_t nu = m.locate_nu(*f);
     for(int j = 0;j < p + 1; ++j) {
-        cache[j] = control_points()[nu - p + j];
+        cache[j] = cpts[nu - p + j];
     }
     m.spline_compute(f, nu, cache.get());
     return cache[0] + origin;

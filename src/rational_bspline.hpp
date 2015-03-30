@@ -7,21 +7,22 @@
 namespace geom
 {
 template <class SplineType>
-class rational_bspline
+struct rational_bspline
 {
 public:
     enum {dimension =  SplineType::dimension  - 1};
     typedef decltype(lower_dim(SplineType::point_t())) point_t;
 
     typedef typename SplineType::point_t pointw_t;
+    typedef typename SplineType::vector_t vectorw_t;
 
     typedef decltype(SplineType::rebound_type<point_t>()) lowdim_spl_t;
     typedef typename lowdim_spl_t::vcpts_t vcpts_t;
-    typedef typename lowdim_spl_t::cpts_t  cpts_t;
     typedef SplineType         spl_t;
     typedef decltype(point_t() - point_t())  vector_t;
 
     typedef typename spl_t::cpts_t wcpts_t;
+    typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::vcpts_t wvcpts_t;
 
     typedef std::vector<double> knots_t;
@@ -67,9 +68,9 @@ public:
         return vs;
     }
 
-    vector_t eval_derivative(double u) const
+    vector_t eval_derivative(int numDer, double u) const
     {
-        return eval_derivatives(1, u).back();
+        return eval_derivatives(numDer, u).back();
     }
 
     point_t eval(double u) const;
@@ -106,6 +107,10 @@ public:
     int degree() const { return spl.degree(); };
     const typename spl_t::vector_t& base_point() const {
         return spl.base_point();
+    }
+    rational_bspline& translate(const vectorw_t& t) {
+        spl.translate(t);
+        return *this;
     }
 private:
     spl_t  spl;

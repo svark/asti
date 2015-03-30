@@ -52,9 +52,9 @@ struct pt_t {
     double& operator[](std::size_t i) { return p[i];}
 
     template <class VecT>
-    pt_t& operator+=( const VecT& v) { p+=v.v; return *this;}
+    pt_t& operator+=( const VecT& v) { p+=eigen_vec(v); return *this;}
     template <class VecT>
-    pt_t& operator-=( const VecT& v) { p-=v.v; return *this;}
+    pt_t& operator-=( const VecT& v) { p-=eigen_vec(v); return *this;}
 
     pt_t& operator+=(const double& v) {
         for(int i =0; i < dim;++i) p[i]+=v; return *this;}
@@ -96,10 +96,9 @@ centroid (PointIter pts,PointIter end) ->  typename std::decay<decltype(pts[0])>
     typedef typename std::decay<decltype(pts[0])>::type point_t;
 
     point_t avg = point_t();
-    point_t zero(0.0);
     int num_pts = 0;
     for(;pts!=end;++pts,++num_pts) {
-        avg += (*pts - zero);
+        avg += *pts;
     }
     scale(avg , 1.0/num_pts);
     return avg;
@@ -116,6 +115,14 @@ bool operator==(const pt_t<dim>& p1, const pt_t<dim>& p2) {
 
 
 template <int dim>
+pt_t < dim >
+axypy(double a, const pt_t < dim >& x, const pt_t < dim >& y)
+{
+    return pt_t < dim >(a * x.p + y.p);
+}
+
+
+template <int dim>
 struct vec_t
 {
     enum { NeedsToAlign = (sizeof(Eigen::Matrix<double,dim,1>)%16)==0 };
@@ -126,6 +133,7 @@ struct vec_t
     vec_t(const double ve[]): v(ve)
     {
     }
+
     vec_t(const vec_t&other):v(other.v){}
 
     vec_t(const EMT& w):v(w)
@@ -133,13 +141,13 @@ struct vec_t
     }
 
     template <int odim>
-    vec_t(const vec_t<odim>& other)
+    vec_t(const vec_t<odim>& other, double fill = 0.0)
     {
         const int low = std::min(dim,2);
         for(int j = 0;j < low;++j)
             v[j] = other[j];
         for(int j = low;j < dim;++j)
-            v[j] = 0.0;
+            v[j] = fill;
     }
 
     explicit vec_t(double ve) {
@@ -236,7 +244,14 @@ vec_t<dim> operator * ( double s, vec_t<dim> &vec)
     return vec.v * s;
 }
 
+template<int dim>
+vec_t < dim >
+axypy(double a, const vec_t < dim >& x, const vec_t < dim >& y)
+{
+    return vec_t < dim >(a * x.v + y.v);
+}
 
+// ________________________________________________________________
 inline point3d_t  lower_dim(const point4d_t& pt)
 {
     return point3d_t(pt);
@@ -252,8 +267,23 @@ inline double lower_dim(const point2d_t& pt)
     return pt[0];
 }
 
+// ________________________________________________________________
+inline point4d_t  higher_dim(const point3d_t& pt)
+{
+    return point4d_t(pt);
+}
 
+inline point3d_t  higher_dim(const point2d_t& pt)
+{
+    return point3d_t(pt);
+}
 
+inline point2d_t higher_dim(double pt)
+{
+    return point2d_t(pt);
+}
+
+// ________________________________________________________________
 
 template <int dim>
 vec_t<dim>
@@ -463,7 +493,7 @@ inline Eigen::Matrix<double,1,1> eigen_vec(double ve)
 //}}}
 
 
-
+// ________________________________________________________________
 inline point2d_t make_pt(double s,double t)
 {
   double p[] = {s,t};
@@ -502,6 +532,18 @@ inline double lower_dim(const vector2d_t& v)
 {
     return v[0];
 }
+// ________________________________________________________________
+inline vector4d_t  higher_dim(const vector3d_t& v)
+{
+    return vector4d_t(v, 1.0);
+}
+
+inline vector3d_t  higher_dim(const vector2d_t& v)
+{
+    return vector3d_t(v, 1.0);
+}
+
+// ________________________________________________________________
 
 inline vector2d_t normalize(const vector2d_t& vec)
 {
@@ -604,48 +646,6 @@ inline vector4d_t make_vec(double s,double t, double w, double x)
   return vector4d_t(p);
 }
 
-
-template <class Point>
-struct point_dim
-{
-    
-    enum {dimension = Point::dimension};
-    typedef Eigen::aligned_allocator<Point> alloc_t;
-  
-};
-
-template <>
-struct point_dim<double>
-{
-    enum {dimension = 1};
-    typedef std::allocator<double> alloc_t;
-};
-
-
-template <class point_t, int dim>
-struct inc_dimension_helper
-{
-    enum {NeedsToAlign = pt_t < dim + 1 >::NeedsToAlign };
-    
-    typedef typename std::conditional<NeedsToAlign, EIGEN_ALIGN16 pt_t < dim + 1 >, 
-        pt_t < dim + 1 > >::type    type;
-};
-
-template <int dim>
-struct inc_dimension_helper < vec_t < dim >, dim >
-{
-    enum {NeedsToAlign = vec_t < dim + 1 >::NeedsToAlign };
-    typedef typename std::conditional<NeedsToAlign, EIGEN_ALIGN16 pt_t < dim + 1 >, 
-        vec_t < dim + 1 > >::type    type;
-};
-
-template<class PointVec>
-struct inc_dimension
-{
-    enum { dimension =  point_dim < PointVec >::dimension };
-    typedef typename inc_dimension_helper < PointVec, dimension
-                                          >::type type;
-};
 
 
 //}}}

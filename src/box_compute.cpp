@@ -1,12 +1,11 @@
-#include "stdafx.h"
 #include "box_compute.hpp"
 namespace geom {
     //--compute box
 template <class SplineType>
-box<spline_traits<SplineType>::dim>
-bspline_ops::compute_box(const SplineType &spl)
+box<typename SplineType::point_t>
+ops::compute_box(const SplineType &spl)
 {
-    box<spline_traits<SplineType>::dim > b;
+    box<typename SplineType::point_t> b;
     auto const & cpts = spl.control_points();
     for(auto const & c : cpts)
     {
@@ -33,7 +32,8 @@ bspline_ops::compute_box(const SplineType &spl)
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
   ))
-  eval:(instantiate-templates "box_compute" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "box_compute" "ops" (list ) (list
+  (cons (car methods) spltypes )))
   End:
 // dump all explicitly instantiated templates below
 */

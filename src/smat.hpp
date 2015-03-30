@@ -4,8 +4,9 @@
 #include <vector>
 #include <list>
 #include <algorithm>
-#include "special.hpp"
 #include "rmat.hpp"
+#include "bspline_x_cons.hpp"
+
 //#include "util.hpp" // for constant_iterator
 #include "constant_iterator.hpp"
 namespace geom {
@@ -130,7 +131,8 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
     // 'a'
     smat(a, b, ks, deg).reval(newcpts.begin());
 
-    return SplineCurve(std::move(newcpts), std::move(ks), deg)
+    return make_bsplinex < SplineCurve >
+        (std::move(newcpts), std::move(ks), deg)
         .translate(crv.base_point());
 }
 
@@ -143,8 +145,8 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
-    
-    size_t nu = r.locate_nu(util::fprev(b));
+
+	size_t nu = r.locate_nu(b - tol::param_tol/2);
   //  assert(r.locate_nu(b+tol::param_tol/2)==nu+1);
     double a = t[nu];
     // all the knots in us are expected to be >= b
@@ -162,7 +164,8 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     std::copy_backward(us, us + (deg + 1), ks.end());
     smat(a, b, ks, deg).reval(newcpts.begin() + (nu - deg));
 
-    return SplineCurve(std::move(newcpts), std::move(ks), deg)
+    return make_bsplinex < SplineCurve > (std::move(newcpts),
+                                          std::move(ks), deg)
         .translate(crv.base_point());
 }
 
@@ -172,7 +175,6 @@ SplineCurve rebase_at_start(const SplineCurve & crv, KnotIter us)
 
     auto & t = crv.knots();
     int deg  = crv.degree();
-    auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
     double a = crv.param_range().first;
     return rebase_at_left(crv, a, us);
@@ -184,7 +186,6 @@ SplineCurve rebase_at_end(const SplineCurve & crv, KnotIter us)
 
     auto & t = crv.knots();
     int deg  = crv.degree();
-    auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
     double b = crv.param_range().second;
     return rebase_at_right(crv, b, us);
@@ -236,23 +237,23 @@ template <class SplineCurve>
 SplineCurve clamp_at_right_yaim(double b, const SplineCurve & crv)
 {
     typedef SplineCurve::cpts_t cpts_t;
-    SplineCurve rcrv(bspline_ops::reverse_curve(crv));
-    return bspline_ops::reverse_curve(clamp_at_left(-b, rcrv));
+    SplineCurve rcrv(ops::reverse_curve(crv));
+    return ops::reverse_curve(clamp_at_left(-b, rcrv));
 }
 
 template <class SplineCurve>
 SplineCurve clamp_end_yaim(const SplineCurve & crv)
 {
     double b = crv.param_range().second;
-    return clamp_at_right_yaim(b, crv)
-        }
+    return clamp_at_right_yaim(b, crv);
+}
 
 template <class SplineCurve>
 SplineCurve clamp_at_left_yaim(double a, const SplineCurve & crv)
 {
     typedef SplineCurve::cpts_t cpts_t;
-    SplineCurve rcrv(bspline_ops::reverse_curve(crv));
-    return bspline_ops::reverse_curve(clamp_at_right(-a, rcrv));
+    SplineCurve rcrv(ops::reverse_curve(crv));
+    return ops::reverse_curve(clamp_at_right(-a, rcrv));
 }
 
 template <class SplineCurve>

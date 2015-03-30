@@ -15,81 +15,6 @@
 #include "match_case.hpp"
 namespace geom {
 
-#if 0
-template < class cpts_t, class param_t  >
-auto
-start_vec(const cpts_t & pts,
-          const param_t& t, int deg)->decltype( pts[0] - pts[1] )
-{
-    typdef decltype( pts[0] - pts[1] ) vec_t;
-    auto dt0 = E(t,0,deg);
-    auto dt1 = E(t,1,deg);
-
-    auto  dptbydt0 = E(pts,0) / d1;
-    auto  dptbydt1 = E(pts,1) / d2;
-
-    return vec_t( dptbydt0 -  dt0/dt1 * (dptbydt1 - dptbydt0) );
-}
-
-template < class cpts_t, class params_t  >
-auto
-end_vec(const cpts_t & pts,
-        const params_t& t, int deg)->decltype( pts[0] - pts[1] )
-{
-    return start_vec(rvector(pts),
-                     rvector(t), deg);
-}
-
-template <int dim>
-std::vector<pt_t < dim> >&&
-hermite_interpolation(const std::vector<double>& t,
-                      const std::vector<pt_t<dim> > & pts,
-                      vec_t<dim> & v1,
-                      vec_t<dim> & v2
-    )
-{
-    if(t.size() == 0 || t.size()!= pts.size())
-        return ;
-
-    using Eigen::TridiagonalMatrix;
-    using Eigen::Dynamic;
-    TridiagonalMatrix<double,Dynamic> mat(pts.size() + 2);
-    rmat_base rm(t, 3);
-
-    mat(0, 0) = rm.der(1, t[0]);
-    mat(0, 1) = rm.der(2, t[0]);
-
-    for(size_t j =  1; j <= m; ++j) {
-        for(size_t k = 0; k < 3; ++k)
-            mat(j, j - 1 + k) = rm.coeff(k, t[j - 1]);
-    }
-
-    mat(m + 1,m )    =  rm.der(1, t[m - 1]);
-    mat(m + 1,m + 1) =  rm.der(2, t[m - 1]);
-
-    // eigen does not have a banded lu solve...sigh
-    banded_lu_decompose(mat);
-
-    point_iter_traits<pt_t<dim>*>::PointContT cpts(pts + 2);
-
-    for(int k = 0; k < dim; ++k) {
-        using Eigen::VectorXd;
-        VectorXd rhs(m + 2);
-
-        rhs(0) = v1[k];
-        for(int l = 1; l < m; ++l)
-            rhs(l) = pts[l - 1].p[k];
-
-        rhs(m + 1) = v2[k];
-        banded_lu_solve(mat, rhs);
-
-        for(int p = 0; p < m + 2; ++p) {
-            cpts[p].p[k] = rhs[p];
-        }
-    }
-    return cpts;
-}
-#endif
 
 // {{{ -- interpolation (hermite & global)
 template <int dim,class PointIter>
@@ -100,10 +25,7 @@ setupQMatrix(PointIter pb, PointIter pe,
 {
     typedef typename point_iter_traits<PointIter>::point_t point_t;
     point_t cg(centroid(pb, pe));
-    
-    //std::array<double,dim*dim> sigmaxy;
     sigmaxy.setZero();
-    
     //should be able to run in parallel
     int n = 0;
     for(;pb!=pe;++pb)
@@ -123,7 +45,6 @@ setupQMatrix(PointIter pb, PointIter pe,
             sigmaxy(j,i) = sigmaxy(i,j);
         }
     }
-    
 }
 
 enum parametrization_option_t { centripetal_length, chord_length, affinely_invariant,neilson_foley};
@@ -518,7 +439,6 @@ piecewise_cubic_hermite_interp_periodic
     )
 {
     typedef typename point_iter_traits<PointIter>::point_t point_t;
-    typedef bspline<point_t>   bspline_t;
     static const int dim =  point_iter_traits<PointIter>::dim;
 
     // generate parameters using chord length approximation.
@@ -526,7 +446,6 @@ piecewise_cubic_hermite_interp_periodic
     assert( opts.end_conditions !=
                   periodic
                   || pe[-1] == pb[0] );
-    
     std::vector < double > params(m);
 
     switch_case_4(parametrization_option_t,
@@ -547,15 +466,15 @@ piecewise_cubic_hermite_interp_periodic
 
 // end conditions depend on options passed..
     eval_tangents_for_pchip(
-        pb,pe,params.begin(),params.end(),tgts, 
+        pb,pe,params.begin(),params.end(),tgts,
         std::integral_constant<end_conditions_t,periodic>());
 
     return pchip_closed(pb,pe,params,tgts);
-    
 }
+
 template <class PointIter, class VecsT>
 bspline< typename point_iter_traits<PointIter>::point_t >
-piecewise_cubic_hermite_interp
+piecewise_cubic_hermite_interp_regular
 (
     PointIter pb,
     PointIter pe,
@@ -563,8 +482,8 @@ piecewise_cubic_hermite_interp
     const VecsT & vecs
     )
 {
+
     typedef typename point_iter_traits<PointIter>::point_t point_t;
-    typedef bspline<point_t>   bspline_t;
     static const int dim =  point_iter_traits<PointIter>::dim;
 
     // generate parameters using chord length approximation.
@@ -572,7 +491,6 @@ piecewise_cubic_hermite_interp
     assert( opts.end_conditions !=
                   periodic
                   || pe[-1] == pb[0] );
-    
 
     std::vector < double > params(m);
 
@@ -600,9 +518,26 @@ piecewise_cubic_hermite_interp
 
     bool is_periodic = opts.end_conditions == periodic;
     return pchip_open(pb,pe,params,tgts);
-    
+
 }
 
+
+template <class PointIter, class VecsT>
+bspline< typename point_iter_traits<PointIter>::point_t >
+piecewise_cubic_hermite_interp
+(
+    PointIter pb,
+    PointIter pe,
+    interpolation_options_t opts,
+    const VecsT & vecs
+    )
+
+{
+    if(opt.end_conditions != periodic)
+        return piecewise_cubic_hermite_interp_regular(pb, pe, opts, vecs);
+    else
+        return piecewise_cubic_hermite_interp_periodic(pb, pe, opts, vecs);
+}
 // }}}
 // }}}
 }

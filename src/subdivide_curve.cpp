@@ -9,7 +9,7 @@ namespace geom {
 
 template <class Point>
 std::pair<bspline<Point>, bspline<Point>>
-bspline_ops::split_open_curve(const bspline<Point>& spl, double u)
+ops::split_open_curve(const bspline<Point>& spl, double u)
 {
     return std::make_pair(clamp_at_right(u,spl),
                           clamp_at_left(u,spl));
@@ -17,7 +17,7 @@ bspline_ops::split_open_curve(const bspline<Point>& spl, double u)
 
 template <class Point>
 bspline<Point>
-bspline_ops::split_periodic_curve(const periodic_bspline<Point>& pspl, double u)
+ops::split_periodic_curve(const periodic_bspline<Point>& pspl, double u)
 {
     double s, e;
     int p = pspl.degree();
@@ -52,7 +52,8 @@ bspline_ops::split_periodic_curve(const periodic_bspline<Point>& pspl, double u)
   "point3d_t"
   "point4d_t"
   ))
-  eval:(instantiate-templates "subdivide_curve" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "subdivide_curve" "ops" (list )
+  (product methods spltypes) )
   End:
 // dump all explicitly instantiated templates below
 */

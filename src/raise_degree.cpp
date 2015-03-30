@@ -1,12 +1,12 @@
-#include "stdafx.h"
 #include "skip_idx_iter.hpp"
 #include "raise_degree.hpp"
+#include "rational_bspline_cons.hpp"
 namespace geom {
 
 //{{{ --(@* "raise the degree by 1")
 // see:(@file :file-name "media/raise_degree.png" :to "./media/raise_degree.png" :display "raise_degree")
 template <class SplineType>
-SplineType bspline_ops::raise_degree(const SplineType& spl)
+SplineType ops::raise_degree(const SplineType& spl)
 {
     typedef typename SplineType::knots_t knots_t;
     //typedef typename SplineType::point_t Point;
@@ -42,6 +42,14 @@ SplineType bspline_ops::raise_degree(const SplineType& spl)
     return SplineType(std::move(new_cpts),
                       std::move(new_knots), p).translate(spl.base_point());
 }
+
+template <class SplineCurve>
+rational_bspline <SplineCurve>
+raise_degree(const rational_bspline<SplineCurve>
+           & crv, double u)
+{
+    return make_rbspline(raise_degree(crv.spline()));
+}
 //}}}
 }
 //{{{  instantiation scripts
@@ -59,8 +67,14 @@ SplineType bspline_ops::raise_degree(const SplineType& spl)
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
+  "rational_bspline < bspline<point2d_t>>"
+  "rational_bspline < bspline<point3d_t>>"
+  "rational_bspline < bspline<point4d_t>>"
+  "rational_bspline < periodic_bspline<point2d_t>>"
+  "rational_bspline < periodic_bspline<point3d_t>>"
+  "rational_bspline < periodic_bspline<point4d_t>>"
   ))
-  eval:(instantiate-templates "raise_degree" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "raise_degree" "ops" (list ) methods spltypes )
   End:
 // dump all explicitly instantiated templates below
 */

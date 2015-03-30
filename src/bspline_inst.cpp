@@ -1,5 +1,5 @@
 //-*-mode:c++-*-
-//Generated on: Wed Feb 18 17:06:46 2015. Do not edit
+//Generated on: Thu Mar 19 13:18:05 2015. Do not edit
 //________________________________________________________
 // class:bspline
 template struct bspline<double>;

@@ -47,7 +47,7 @@
       "\\([ \t\n]\\|\\\\\n\\)*"                 ;;4
       "\\(static\\)?"                           ;;5
       "\\([ \t\n]\\|\\\\\n\\)*"                 ;;6
-      "\\(" "[" c-alpha "]" "[" c-alnum " _:<>]+\\)"                ;7 (return type) match identifier chars
+      "\\(" "[" c-alpha "]" "[" c-alnum " ,_:<>]+\\)"                ;7 (return type) match identifier chars
       "\\([ \t\n]\\|\\\\\n\\)*"         ;8
       cls
       (if templ-class "<\\([^>]+\\)>" "") ;9
@@ -58,7 +58,10 @@
       "\\([^ \t\n(*]"                   ;11,12 with an asterisk or parentheses
       "[^()]*\\(([^()]*)[^()]*\\)*"    ; Maybe function pointer arguments
       "\\)?)"
-      "\\([ \t\n]\\|\\\\\n\\)*[^ \t\n;(]"
+      "\\([ \t\n]\\|\\\\\n\\)*"         ;
+      "\\(const\\)?"                    ;14,15 const qualifier
+      "\\([ \t\n]\\|\\\\\n\\)*"         ;
+      "[^ \t\n;(]"
       ) (point-max) nil)
     )
   )
@@ -78,6 +81,20 @@
                                     (match-end 11)
                                     ))
   )
+;;(require 'cc-menus)
+(defun find-const-qual(templ-class)
+  (if (and templ-class (match-beginning 15))
+      (buffer-substring-no-properties (match-beginning 15)
+                                      (match-end 15)
+                                      )
+    (if (match-beginning 14)
+        (buffer-substring-no-properties (match-beginning 14)
+                                        (match-end 14) 
+                                        )
+      ""
+      )
+    )
+  )
 (defun find-cls-targ-in-method()
   (buffer-substring-no-properties (match-beginning 9)
                                   (match-end 9)
@@ -90,11 +107,15 @@
                                   )
   )
 
-(defun instantiate-templates(cls ts-cls cms ts-methods)
+(defun product (methods spltypes)
+   (mapcar (lambda(m) (cons m spltypes))  methods )
+)
+
+(defun instantiate-templates(fname cls ts-cls cms)
   """instantiate a template class and its methods"""
   (interactive)
   ;; clear the inst file
-  (with-temp-file (concat cls "_inst.cpp")
+  (with-temp-file (concat fname "_inst.cpp")
     (insert (concat "//-*-mode:c++-*-\n" "//Generated on: " (current-time-string) 
                     ". Do not edit\n")
             )
@@ -107,19 +128,24 @@
         (instantiate-template/class cls (find-cls) (find-cls-targ) ts-cls)
       (setq templ-class nil)
       )
-    (dolist (cm cms)
-      (progn
-        (if (find-exp templ-class cls cm)
-            (if templ-class
-                (instantiate-template-template/method cls ts-cls cm (find-ret) 
-                                                      (find-args templ-class) (find-targ) 
-                                                      (find-cls-targ-in-method) ts-methods)
-              (instantiate-template/method cls cm (find-ret)
-                                           (find-args templ-class) (find-targ) ts-methods)
-              )
-          (message (format "failed to find %s::%s " cls cm))
-          )
+    (while cms
+      (setq cm (caar cms))
+      (setq ts-ms (cdar cms))
+      (if (find-exp templ-class cls cm)
+          (if templ-class
+              (instantiate-template-template/method fname  cls ts-cls cm (find-ret) 
+                                                    (find-args templ-class) (find-targ) 
+                                                    (find-cls-targ-in-method) ts-ms 
+                                                    (find-const-qual templ-class) )
+            (instantiate-template/method fname cls cm (find-ret)
+                                         (find-args templ-class) (find-targ) 
+                                         ts-ms
+                                         (find-const-qual templ-class)
+                                         )
+            )
+        (message (format "failed to find %s::%s " cls cm))
         )
+      (setq cms (cdr cms))
       )
     )
   )
@@ -136,42 +162,37 @@
     )
   )
 
-(defun instantiate-template/method(cls curmethod ret args formal_targ targs)
+(defun instantiate-template/method(fname cls curmethod ret args formal_targ targs const-qual)
   """instantiate a template function"""
-  (let ((curcls cls)
-        (fname cls)
-        )
+ 
     (with-temp-buffer
       (message "instantiating: " cm)
       (insert (concat "//________________________________________________________\n"
                       "// method:" curmethod "\n"))
       (dolist (targ targs)
-        (insert (format "template %s %s::%s(%s);\n" (rargs ret formal_targ targ)
-                        curcls cm (rargs args formal_targ targ ) ) )
+        (insert (format "template %s %s::%s(%s) %s;\n" (rargs ret formal_targ targ)
+                        cls cm (rargs args formal_targ targ ) const-qual ) )
         )
       (append-to-file (point-min) (point-max) (concat fname "_inst.cpp") )
       )
-    )
   )
 
-(defun instantiate-template-template/method(cls ctargs curmethod ret args formal_targ cls-formal-targ targs)
+(defun instantiate-template-template/method(fname cls ctargs curmethod ret args formal_targ 
+                                              cls-formal-targ targs const-qual)
   """instantiate a template function"""
-  (let ((curcls cls)
-        (fname cls)
-        )
     (with-temp-buffer
       (message "instantiating: " cm)
       (insert (concat "//________________________________________________________\n"
                       "// method:" curmethod "," cls-formal-targ "," formal_targ "\n"))
       (dolist (ctarg ctargs)
         (dolist (targ targs)
-          (insert (format "template %s %s<%s>::%s(%s);\n" 
+          (insert (format "template %s %s<%s>::%s(%s) %s;\n" 
                           (rargs (rargs ret formal_targ targ) cls-formal-targ ctarg)
-                          curcls ctarg cm
+                          cls ctarg cm
                           (rargs (rargs args formal_targ targ ) cls-formal-targ ctarg)
+                          const-qual
                           ) )
           ))
       (append-to-file (point-min) (point-max) (concat fname "_inst.cpp") )
-      )
     )
   )

@@ -7,29 +7,29 @@
 
 namespace geom {
 
-    template <int dim>
+    template <class Point>
     struct box
     {
         box(){
             double inf = std::numeric_limits<double>::infinity();
-            lo = pt_t<dim>(inf);
-            hi = pt_t<dim>(-inf);
+            lo = Point(inf);
+            hi = Point(-inf);
         }
         bool is_invalid() const;
-        box &operator +=( const pt_t<dim>& p);
-        box &operator +=( const double& p);
+        box &operator +=( const Point& p);
         box &operator +=( const box& p);
-        pt_t<dim> lo;
-        pt_t<dim> hi;
+        Point lo;
+        Point hi;
     };
 
 
-    template <int dim>
+    template <class Point>
     bool
-    contains_point(const box<dim> &b,
-                   pt_t<dim> &p,
+    contains_point(const box<Point> &b,
+                   Point &p,
                    double tol)
     {
+        enum { dim = point_dim < Point >::dimension };
         for (int i = 0; i < dim; ++i) {
             if (pt[d] < lo[d] - tol)
                 return false;
@@ -39,50 +39,53 @@ namespace geom {
         return true;
     }
 
-    template <int  dim>
-    pt_t<dim>
-    center(const box<dim> &b)
+    template <class Point>
+    Point
+    center(const box<Point> &b)
     {
         return lerp(lo,hi);
     }
 
-    template <int  dim>
-    box<dim> &box<dim>::operator +=( const pt_t<dim>& pt)
+    template <class Point>
+    box<Point> &box<Point>::operator +=( const Point& pt)
     {
+        enum { dim = point_dim < Point >::dimension };
         for(int i =0;i < dim;++i)
         {
             lo[i] =  std::fmin( pt.p[i], lo[i] );
             hi[i] =  std::fmax( pt.p[i], hi[i] );
         }
-		return *this;
+        return *this;
     }
 
-	template <>
-    inline box<1> &box<1>::operator +=( const double& pt)
+    template <>
+    inline box<double> &box<double>::operator +=( const double& pt)
     {
-        lo[0] =  std::fmin( pt, lo[0] );
-        hi[0] =  std::fmax( pt, hi[0] );
-		return *this;
+        lo =  std::fmin( pt, lo );
+        hi =  std::fmax( pt, hi );
+        return *this;
     }
 
-    template <int  dim>
-    box<dim> &box<dim>::operator +=(const box<dim> &b)
+    template <class Point>
+    box<Point> &box<Point>::operator +=(const box<Point> &b)
     {
+        enum { dim = point_dim < Point >::dimension };
         for(int i =0;i < dim; ++i)
         {
             lo[i] =  std::fmin( b.lo[i], lo[i] );
             hi[i] =  std::fmax( b.hi[i], hi[i] );
         }
-		return *this;
+        return *this;
     }
 
-    template <int dim>
+    template <class Point>
     bool
-    intersect( const box<dim>& b1,
-               const box<dim>& b2
+    intersect( const box<Point>& b1,
+               const box<Point>& b2
         )
     {
-        box<dim> union_ ( b1 );
+        enum { dim = point_dim < Point >::dimension };
+        box<Point> union_ ( b1 );
         union_+= b2;
 
         for (size_t i = 0; i < dim; ++i) {
@@ -97,9 +100,10 @@ namespace geom {
         return true;
     }
 
-    template <int dim>
-    bool box<dim>::is_invalid() const
+    template <class Point>
+    bool box<Point>::is_invalid() const
     {
+        enum { dim = point_dim < Point >::dimension };
         for (uint i = 0; i < dim; i++)
             if (lo[i] > hi[i]) {
                 return true;

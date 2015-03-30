@@ -12,10 +12,10 @@ template <class SplineType>
 double periodic_param(const SplineType & spl, double u)
 {
     auto p  = spl.param_range();
-	if (u <<_in_>> p) 
-		return u;
+    if (u <_in_> p)
+        return u;
 
-	double s = p.first, e = p.second;
+    double s = p.first, e = p.second;
     double r = fmod(u - s, (e - s));
     return s + r;
 }
@@ -64,9 +64,9 @@ struct periodic_bspline
     }
 
     double periodic_param(double u) const
-	{
-		return geom::periodic_param(*this,u);
-	}
+    {
+        return geom::periodic_param(*this,u);
+    }
 
     point_t eval(double u) const {
         return spl.eval(periodic_param(u));

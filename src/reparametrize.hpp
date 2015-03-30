@@ -1,6 +1,6 @@
 #pragma once
 namespace geom {
-    namespace bspline_ops {
+    namespace ops {
     template <class SplineType>
     extern SplineType reparametrize(const SplineType& spl,
                                     double t1, double t2);

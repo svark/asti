@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <vector>
 #include "spline_approx.hpp"
 #include "Eigen/Core"
@@ -17,7 +16,7 @@ namespace geom {
 
 template <class Fn>
 bspline<double>
-bspline_ops::cubic_approx1d(Fn f, std::vector<double>& t)
+ops::cubic_approx1d(Fn f, std::vector<double>& t)
 {
 
     double mindist = std::numeric_limits<double>::infinity();
@@ -56,19 +55,20 @@ bspline_ops::cubic_approx1d(Fn f, std::vector<double>& t)
         }
     }
 
-    return make_bspline(std::move(pts), std::move(t), 3);
+    return make_bspline(std::move(pts), std::move(t), p);
 }
 
 template <class FnType>
 bspline<double>
-bspline_ops::quad_approx1d(FnType f, std::vector<double>& t)
+ops::quad_approx1d(FnType f, std::vector<double>& t_)
 {
-    assert( std::distance(b, e)!=0);
+    assert(t_.size()!=0);
+	auto b = t_.cbegin();
+	auto e = t_.cend();
 
-    if(e[-1] - b < param_tol)
-        throw geom_exception(bad_knot_spacing_t);
-
-    std::vector<double> pts(n);
+	static const int p = 2;
+    size_t n = t_.size() - p - 1;
+    std::vector<double> pts(n,0);
 
     double s = *b;
     double t;
@@ -77,14 +77,14 @@ bspline_ops::quad_approx1d(FnType f, std::vector<double>& t)
     for(size_t j = 1; j < n - 1; ++j) {
         s = b[j];
         t = b[j+1];
-        u = (s + t)/2;
+        auto u = (s + t)/2;
         pts[j] = ( -f(s) + 4*f(u) - f(t) )/2;
     }
 
     t = e[-1];
     pts[n-1] = f(t);
 
-    return make_bspline(std::move(pts), std::move(knots), 3);
+    return make_bspline(std::move(pts), std::move(t_), p);
 }
 //}}}
 
@@ -202,7 +202,7 @@ find_next_rootc(geom::bspline<double>& spl,
         if( fabs(spl.eval(root)) < tol)
             return std::make_pair(root, true);
 
-        spl.swap(bspline_ops::insert_knot(spl, root));
+        spl.swap(ops::insert_knot(spl, root));
     }
     return std::make_pair(prev, false);
 }
@@ -210,7 +210,7 @@ find_next_rootc(geom::bspline<double>& spl,
 
 template <class SplineType>
 double
-bspline_ops::foot_param(const SplineType &spl,
+ops::foot_param(const SplineType &spl,
                         const typename SplineType::point_t& p)
 {
     auto pr = spl.param_range();
@@ -285,8 +285,6 @@ bspline_ops::foot_param(const SplineType &spl,
 Local Variables:
 eval:(load-file "./scripts/temp.el")
 eval:(setq methods (list "foot_param"
-                          "cubic_approx1d" 
-                          "quad_approx1d"
                          ))
 eval:(setq spltypes (list "bspline<double>"
                            "bspline<point2d_t>"
@@ -296,16 +294,25 @@ eval:(setq spltypes (list "bspline<double>"
                            "periodic_bspline<point2d_t>"
                            "periodic_bspline<point3d_t>"
                            "periodic_bspline<point4d_t>"
+                           "rational_bspline < bspline<point2d_t>>"
+                           "rational_bspline < bspline<point3d_t>>"
+                           "rational_bspline < bspline<point4d_t>>"
+                           "rational_bspline < periodic_bspline<point2d_t>>"
+                           "rational_bspline < periodic_bspline<point3d_t>>"
+                           "rational_bspline < periodic_bspline<point4d_t>>"
                            ))
-eval:(instantiate-templates "spline_approx" "bspline_ops" (list ) methods spltypes )
+eval:(instantiate-templates "spline_approx" "ops" (list ) (product methods spltypes) )
 End:
-// dump all explicitly instantiated templates below
 */
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
+#include "rational_bspline.hpp"
 #include "point.hpp"
 #include <functional>
 namespace geom {
 #include "spline_approx_inst.cpp"
-template bspline<double> bspline_ops::cubic_approx1d(class std::function<double (double)>,class std::vector<double> &);
+template bspline<double> ops::cubic_approx1d(
+    class std::function<double (double)>, class std::vector<double> &);
+template bspline<double> ops::quad_approx1d(
+    class std::function<double (double)>, class std::vector<double> &);
 }

@@ -83,16 +83,19 @@ make_periodic_bspline_wrap(
     return periodic_bspline < point_t >( std::move( make_bspline
                                          (wrap_spline_params(pts, ks, degree_)) ));
 }
+
 template <class CptsT, class KnotsT>
 auto
-make_periodic_bspline (CptsT && pts,
-                       KnotsT && ks, int degree_)
+make_periodic_bspline (CptsT  pts,
+                       KnotsT ks, int degree_)
                        ->periodic_bspline <typename std::decay < decltype(pts[0]) >::type >
 {
      typedef typename std::decay < decltype(pts[0]) >::type point_t;
-     return periodic_bspline < point_t >( std::move( make_bspline (std::forward < CptsT > (pts),
+	 return periodic_bspline < point_t >( std::move( make_bspline (std::forward < CptsT > (pts),
                                                         std::forward < KnotsT > (ks),
                                                         degree_) ));
 }
+
+ 
 }
 #endif // PERIODIC_BSPLINE_CONS

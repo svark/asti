@@ -1,16 +1,16 @@
-#include "stdafx.h"
 #include "tol.hpp"
 #include "split_into_bezier_patches.hpp"
 #include "smat.hpp"
 #include <assert.h>
 #include "insert_knot.hpp"
 #include "Eigen/Core"
+#include "rational_bspline_cons.hpp"
 namespace geom {
 //{{{ --(@* "split into bezier patches")
 
 template <class SplineType>
 std::list<SplineType,Eigen::aligned_allocator<SplineType> >
-bspline_ops::split_into_bezier_patches(const SplineType &spl)
+ops::split_into_bezier_patches(const SplineType &spl)
 {
     typedef typename SplineType::knots_t knots_t;
     typedef typename SplineType::point_t point_t;
@@ -39,6 +39,20 @@ bspline_ops::split_into_bezier_patches(const SplineType &spl)
     return patches;
 }
 
+template <class SplineType>
+std::list< rational_bspline < SplineType>,
+           Eigen::aligned_allocator<rational_bspline < SplineType >>>
+    split_into_bezier_patches(const rational_bspline < SplineType > &spl)
+{
+    std::list<rational_bspline < SplineType>,
+              Eigen::aligned_allocator<rational_bspline < SplineType>> > res;
+    auto l = split_into_bezier_patches(spl.spline());
+    for(auto pc:l)
+    {
+        res.push_back(make_rbspline(std::move(pc)));
+    }
+    return res;
+}
 
 
 //}}}
@@ -49,8 +63,7 @@ bspline_ops::split_into_bezier_patches(const SplineType &spl)
   Local Variables:
   eval:(load-file "./scripts/temp.el")
   eval:(setq methods (list "split_into_bezier_patches"
- 
-  ))
+   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"
   "bspline<point3d_t>"
@@ -59,8 +72,15 @@ bspline_ops::split_into_bezier_patches(const SplineType &spl)
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
+  "rational_bspline < bspline<point2d_t>>"
+  "rational_bspline < bspline<point3d_t>>"
+  "rational_bspline < bspline<point4d_t>>"
+  "rational_bspline < periodic_bspline<point2d_t>>"
+  "rational_bspline < periodic_bspline<point3d_t>>"
+  "rational_bspline < periodic_bspline<point4d_t>>"
   ))
-  eval:(instantiate-templates "split_into_bezier_patches" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "split_into_bezier_patches" "ops" (list )
+  (product methods spltypes ))
   End:
 // dump all explicitly instantiated templates below
 */

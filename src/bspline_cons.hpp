@@ -33,7 +33,6 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, std::false_typ
     typedef bspline < point_t > spl_t;
     typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::knots_t knots_t;
-    
     return spl_t(
         std::move(cpts_t(pts)),
         std::forward < knots_t > (ks),

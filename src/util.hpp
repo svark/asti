@@ -14,70 +14,69 @@ enum infix1 { inside , outside, boundary_of};
 template <class Fn>
 struct infix_op
 {
-	infix_op(Fn f_):f(f_)
-	{
-	}
+    infix_op(Fn f_):f(f_)
+    {
+    }
 
-	Fn f;
+    Fn f;
 };
 
 template <class Scalar>
 struct curried_arg_in
 {
-	curried_arg_in(Scalar x_):x(x_){}
-	bool operator()( const std::pair<Scalar,Scalar>& y) const 
-	{
-		return x > y.first  && x < y.second ;  
-	}
-	double x;
+    curried_arg_in(Scalar x_):x(x_){}
+    bool operator()( const std::pair<Scalar,Scalar>& y) const
+    {
+        return x > y.first  && x < y.second ;
+    }
+    Scalar x;
 };
 template <class Scalar>
 struct curried_arg_out
 {
-	curried_arg_out(double x_):x(x_){}
-	bool operator()( const std::pair<double,double>& y) const 
-	{
-		return x < y.first  || x > y.second ; 
-	}
-	double x;
+    curried_arg_out(Scalar x_):x(x_){}
+    bool operator()( const std::pair<double,double>& y) const
+    {
+        return x < y.first  || x > y.second ;
+    }
+    Scalar x;
 };
 template <class Scalar>
 struct curried_arg_bndry
 {
-	curried_arg_bndry(double x_):x(x_){}
-	bool operator()( const std::pair<double,double>& y) const 
-	{
-		return x == y.first  || x == y.second ; 
-	}
-	double x;
+    curried_arg_bndry(Scalar x_):x(x_){}
+    bool operator()( const std::pair<Scalar,Scalar>& y) const
+    {
+        return x == y.first  || x == y.second ;
+    }
+    Scalar x;
 };
 
 template <typename Scalar>
 infix_op <curried_arg_in<Scalar> >
-operator << (Scalar x, std::integral_constant<infix1,inside> i) 
+operator < (Scalar x, std::integral_constant<infix1,inside> i)
 {
-return infix_op<curried_arg_in<Scalar>> (curried_arg_in<Scalar>(x));
+    return infix_op<curried_arg_in<Scalar>> (curried_arg_in<Scalar>(x));
 }
 template <typename Scalar>
 infix_op <curried_arg_out<Scalar> >
-	operator << (Scalar x, std::integral_constant<infix1,outside> i) 
+operator < (Scalar x, std::integral_constant<infix1,outside> i)
 {
-return infix_op<curried_arg_out<Scalar> > (curried_arg_out<Scalar> (x));
+    return infix_op<curried_arg_out<Scalar> > (curried_arg_out<Scalar> (x));
 }
 
 template <typename Scalar>
 infix_op <curried_arg_bndry<Scalar> >
-	operator << (Scalar x, std::integral_constant<infix1,boundary_of> i) 
+operator < (Scalar x, std::integral_constant<infix1,boundary_of> i)
 {
-return infix_op<curried_arg_bndry<Scalar>> (curried_arg_bndry<Scalar>(x));
+    return infix_op<curried_arg_bndry<Scalar>> (curried_arg_bndry<Scalar>(x));
 }
- 
 
 template <class Fn,class Scalar>
-bool operator >> ( infix_op<Fn> op, 
-	const std::pair<Scalar,Scalar>&  y)
+bool operator > ( infix_op<Fn> op,
+                   const std::pair<Scalar,Scalar>&  y)
 {
-	return op.f(y);
+    return op.f(y);
 }
 
 
@@ -90,13 +89,6 @@ std::vector<decltype(Fn()(A()))> fmap(Fn f, const std::vector<A, AllocT >& as) {
                    std::back_inserter(result), f);
     return result;
 }
-//template<class A, class Fn>
-//std::list<decltype(Fn()(A()))> fmap(Fn f, const std::list<A>& as ) {
-//    std::list<decltype(Fn()(A()))> result;
-//    std::transform(as.begin(), as.end(),
-//                   std::back_inserter(result), f);g
-//    return result;
-//}
 
 using std::next;
 }
@@ -107,8 +99,8 @@ ArrayT * make_checked_array_iterator(ArrayT * arr, int size) { return arr;}
 }
 #endif
 
-#define _on_  std::integral_constant<util::infix1,util::boundary_of>()
-#define _in_  std::integral_constant<util::infix1,util::inside>() 
-#define _out_ std::integral_constant<util::infix1,util::outside>()
+static const std::integral_constant<util::infix1,util::boundary_of> _on_;
+static const std::integral_constant<util::infix1,util::inside>      _in_;
+static const std::integral_constant<util::infix1,util::outside>     _out_;
 
 #endif//UTIL_HPP

@@ -126,6 +126,10 @@ public:
             m.basis[num_cols - 2] * kim.get_ndiag(num_cols - 2);
     }
 
+    mult_rmat(mult_rmat && other):basis(std::forward <std::vector<double>>
+                                        (other.basis))
+    {
+    }
     void swap(mult_rmat & m)
     {
         basis.swap(m.basis);
@@ -155,13 +159,14 @@ public:
     }
 
     template<class PointIter>
-    auto prod(const PointIter cpts) -> decltype(cpts[0])
+    auto prod(const PointIter cpts) ->
+        typename std::remove_reference < decltype(cpts[0]) >::type
     {
         typedef decltype(cpts[0]) point_type;
         point_type pt(0.0);
         for (int k = 0; k < size(); ++k)
         {
-            pt += get(0, k) * cpts[k];
+            pt += get(k) * cpts[k];
         }
         return pt;
     }

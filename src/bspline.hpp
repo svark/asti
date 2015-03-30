@@ -42,7 +42,7 @@ struct bspline {
 
     std::pair<double,double> param_range() const;
 
-    bspline<Point>& translate(const vector_t& t) {
+    bspline& translate(const vector_t& t) {
         origin += t; return *this;
     }
 
@@ -52,10 +52,13 @@ struct bspline {
     void swap( bspline & other ) ;
 
     // accessors
-    const knots_t & knots() const { return t;}
-    const cpts_t &  control_points() const { return cpts;}
-    int degree() const { return deg; };
-    const vector_t& base_point() const { return origin; }
+    const knots_t&  knots()              const { return t;}
+    const cpts_t &  control_points()     const {
+        return cpts;
+    }
+    int             degree()             const { return deg; };
+    const vector_t& base_point()         const { return origin; }
+
 protected:
     knots_t t;
     cpts_t cpts;
@@ -65,8 +68,8 @@ protected:
 
 template <class Point>
 bool operator==(const bspline<Point>& bs1,const bspline<Point>&bs2) {
-    return std::make_tuple(bs1.control_points(),bs1.knots(),bs1.base_point(),bs1.degree())
-        ==std::make_tuple(bs2.control_points(),bs2.knots(),bs2.base_point(),bs2.degree());
+    return std::make_tuple(bs1.control_points(),bs1.knots(),bs1.degree())
+        ==std::make_tuple(bs2.control_points(),bs2.knots(),bs2.degree());
 }
 
 }

@@ -1,7 +1,7 @@
 #include "periodic_bspline_cons.hpp"
 #include <numeric>
 namespace geom {
-namespace bspline_ops {
+namespace ops {
 
 template <class Point>
 periodic_bspline < Point >
@@ -16,10 +16,9 @@ rotate_base_knot(const periodic_bspline < Point >& pspl, size_t nu)
                 cpts_unwrapped.begin() + nu - p,
                 cpts_unwrapped.end() );
     std::vector<double> knots_unwrapped;
-    knots_unwrapped.reserve (t.size() );
-	std::rotate_copy(t.begin() + p, t.begin() + nu, t.end() - p, 
-		std::back_inserter(knots_unwrapped));
-	
+    knots_unwrapped.reserve (t.size());
+    std::rotate_copy(t.begin() + p, t.begin() + nu, t.end() - p,
+                     std::back_inserter(knots_unwrapped));
     std::vector<double> startDiffs(nu - p + 1);
     std::adjacent_difference(t.begin() + p, t.begin() + nu + 1,
                              startDiffs.begin());

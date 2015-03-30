@@ -1,12 +1,13 @@
-#include "stdafx.h"
 #include "reparametrize.hpp"
 #include "tol.hpp"
 #include "geom_exception.hpp"
+#include "bspline_x_cons.hpp"
+
 namespace geom {
 
 //{{{ --(@* "re-parametrise curve with a new range")
 template <class SplineType>
-SplineType bspline_ops::reparametrize(const SplineType& spl,
+SplineType ops::reparametrize(const SplineType& spl,
                                              double t1, double t2)
 {
     typedef typename SplineType::knots_t knots_t;
@@ -27,7 +28,7 @@ SplineType bspline_ops::reparametrize(const SplineType& spl,
         const double par = ( u - first_t) * scale;
         new_knots[i++] = t1 + (t2 - t1) * par;
     }
-    return SplineType(
+    return make_bsplinex < SplineType > (
           SplineType::cpts_t(spl.control_points()),
           std::move(new_knots),
           spl.degree()
@@ -35,7 +36,7 @@ SplineType bspline_ops::reparametrize(const SplineType& spl,
 }
 
 template <class SplineType>
-SplineType bspline_ops::reparametrize_start(const SplineType& spl,
+SplineType ops::reparametrize_start(const SplineType& spl,
                                       double t1)
 {
 
@@ -61,8 +62,15 @@ SplineType bspline_ops::reparametrize_start(const SplineType& spl,
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
+  "rational_bspline < bspline<point2d_t>>"
+  "rational_bspline < bspline<point3d_t>>"
+  "rational_bspline < bspline<point4d_t>>"
+  "rational_bspline < periodic_bspline<point2d_t>>"
+  "rational_bspline < periodic_bspline<point3d_t>>"
+  "rational_bspline < periodic_bspline<point4d_t>>"
   ))
-  eval:(instantiate-templates "reparametrize" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "reparametrize" "ops" (list )
+  (product methods spltypes ))
   End:
 // dump all explicitly instantiated templates below
 */

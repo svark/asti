@@ -6,7 +6,7 @@
 #include "rational_bspline_cons.hpp"
 #include <utility>//for pair
 namespace geom {
-namespace bspline_ops {
+namespace ops {
 
 template <class Point>
 extern std::pair<bspline<Point>,bspline<Point> >

@@ -64,10 +64,60 @@ struct rmat_base {
     // deg + 1, bspline coefficients at u, optimized for parallelism
     std::vector<double> coeffs_par(double u) const;
 
+    template<class Point>
+    struct accumulator  {
+        accumulator(double u, int numDer):base(0.0), k(0)
+        {
+            size_t nu = locate_nu(u);
+            assert(numDer >= 0);
+            for(int j = 1;j < deg - numDer; ++j) {
+                basis_cache *= rmat_explicit<KnotIter>(t + nu, j, u);
+            }
+            for(int j = deg - numDer;j <= deg; ++j) {
+                basis_cache *= der_rmat_explicit<KnotIter>(t + nu, j, u);
+            }
+        }
+
+        accumulator(accumulator&& other)
+            :basis_cache(other.basis_cache)
+        {
+            k = 0;
+            base = Point(0.0);
+        }
+
+        template<class Point>
+        void prod(const Point& pt)
+        {
+            base = axpy(basis_cache.get(k++), pt, base);
+        }
+
+        Point get() const
+        {
+            return base;
+        }
+
+        void swap(accumulator &other)
+        {
+            basis_cache.swap(other.basis_cache);
+            std::swap(k, other.k);
+            std::swap(base, other.base);
+        }
+    private:
+        mult_rmat basis_cache;
+        int k;
+        Point base;
+    };
+
+    template<class Point>
+    accumulator < Point >
+    get_accumulator(double u, int numDer = 0)
+    {
+        return accumulator < Point > (u, numDer);
+    }
+
     // knot insertion matrix of size:(l - f) * (e - t)
     Eigen::MatrixXd
     insertion_matrix(KnotIter f, KnotIter l) const;
-
 
     // locate the greatest index nu such that t[nu] <= u, except when
     // u == back() in which case return greatest nu such that
@@ -76,7 +126,7 @@ struct rmat_base {
         auto nu = std::distance(t, locate(u));
         return nu;
     }
-    // same as above but with a guess to aid computation
+    // same as above but with a guess for nu to aid computation
     size_t
     locate_nu(double u, size_t nu_guess) const;
 
@@ -86,13 +136,15 @@ struct rmat_base {
     //.  ./media/basis_comp.png
     // returns the vector b = (B_{\mu - p, p}(u), \ldots, B_{\mu, p}(x)), mu =
     // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
-    // low mem foot print
     std::vector<double> basis(double u);
 
     template <class KnotIter, class PointIter>
     void spline_compute(KnotIter us, size_t nu, //location of us[0] in
                                                 //knot seq t
                         PointIter cache) const;
+
+
+    
 protected:
     KnotIter t,e;
     int deg;
@@ -110,8 +162,9 @@ rmat_base < KnotIter >::spline_compute(size_t nu,
     auto t_ =  t + nu;
     size_t fac = 1;
 
-    if(numDer > deg )
-        cache[0] = std::decay<decltype(cache[0])>::type(0.0);
+    typedef std::decay<decltype(cache[0])>::type point_t;
+    if(numDer > size )
+        cache[0] = point_t(0.0);
 
     for(int sz = size; sz > size - numDer; --sz) {
         fac *= sz;
@@ -132,7 +185,7 @@ rmat_base < KnotIter >::spline_compute(size_t nu,
             cache[j - 1] = lerp(lambda, cache[j - 1], cache[j] );
         }
     }
-    scale(cache[0],double(fac));
+    cache[0] *= double(fac);
 }
 
 template <class KnotIter>

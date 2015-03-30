@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <numeric>
 #include <vector>
 #include "rmat.hpp"
@@ -9,12 +8,12 @@ namespace geom {
 //{{{ -- check is periodic
 template <class SplineCurve>
 bool
-bspline_ops::is_periodic(const SplineCurve & crv)
+ops::is_periodic(const SplineCurve & crv)
 {
     typedef typename SplineCurve::point_t point_t;
     enum {dim = point_dim<point_t>::dimension};
 
-    int p = crv.degree();
+    int p   = crv.degree();
     auto pb = crv.control_points().cbegin();
     auto pe = crv.control_points().cend();
     auto tb =  crv.knots().cbegin();
@@ -22,6 +21,7 @@ bspline_ops::is_periodic(const SplineCurve & crv)
 
     size_t np = std::distance(pb, pe);
     size_t nt = std::distance(tb, te);
+
     if( np < 2)
         return false;
 
@@ -75,7 +75,7 @@ bspline_ops::is_periodic(const SplineCurve & crv)
 
 //{{{ -- is bezier
 template <class SplineType>
-bool bspline_ops::is_bezier(const SplineType& spl)
+bool ops::is_bezier(const SplineType& spl)
 {
     auto &t = spl.knots();
     int sz = spl.degree() + 1;
@@ -108,8 +108,8 @@ bool bspline_ops::is_bezier(const SplineType& spl)
   "bspline<point3d_t>"
   "bspline<point4d_t>"
   ))
-  eval:(instantiate-templates "bspline_queries" "bspline_ops" '()
-  ((cons (car methods) spltypes ) ( cons (cadr methods) spltypes) ) )
+  eval:(instantiate-templates "bspline_queries" "ops" (list )
+          (product methods spltypes) )
   End:
 // dump all explicitly instantiated templates below
 */

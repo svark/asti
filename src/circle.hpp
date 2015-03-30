@@ -1,7 +1,7 @@
 #ifndef CIRCLE_HPP
 #define CIRCLE_HPP
 #include "rational_bspline_cons.hpp"
-
+#define TY(EXP) typename EXP::type
 /*
 
 */
@@ -10,26 +10,41 @@ namespace geom{
   template <class Point>
   struct circle
   {
-    enum {dim = point_dim<Point>::dimension};
-    typedef Point point_t;
-    typedef decltype(make_vec<point_t>(point_t())) vector_t;
-    
-    template <class PointU>
-    circle(const PointU& center_,
-           const PointU& point_,
-           typename std::enable_if< point_dim<PointU>::dimension == 3 && dim ==3, vector3d_t const &>::type ydir_)
-      :center(center_), start_pt(point_), ydir(ydir_)
-    {
-        auto x = start_pt - center;
-        assert(!tol::eq(len(x),0));
+      enum {dim = point_dim<Point>::dimension};
+      typedef Point point_t;
+      typedef decltype(make_vec<point_t>(point_t())) vector_t;
+
+      template<class Point>
+      struct allow_ydir_if_dim_3
+      {
+          typename std::enable_if< point_dim<PointU>::dimension == 3
+                                   && dim ==3, vector3d_t const &>::type type;
+      };
+
+      template<class Point>
+      struct allow_ydir_if_dim_3
+      {
+          typename std::enable_if< point_dim<PointU>::dimension == 3
+                                   && dim ==3, vector3d_t const &>::type type;
+      };
+
+      template <class PointU>
+      circle(const PointU& center_,
+             const PointU& point_,
+             allow_ydir_if_dim_3<PointU>::type ydir_)
+          :center(center_), start_pt(point_), ydir(ydir_)
+      {
+          auto x = start_pt - center;
+          assert(!tol::eq(len(x),0));
         ydir -= x*dot((start_pt-center),ydir)/len(x);
         ydir = normalize(ydir);
     }
-  
+
      template <class PointU>
      circle(const PointU& center_,
            const PointU& point_,
-           typename std::enable_if< point_dim<PointU>::dimension == 2 && dim == 2, int >::type = 0 )
+           typename std::enable_if< point_dim<PointU>::dimension == 2
+            && dim == 2, int >::type = 0 )
         :center(center_), start_pt(point_)
     {
         auto x = start_pt - center;
@@ -42,7 +57,7 @@ namespace geom{
     {
       auto x = c.start_pt - c.center;
       x.normalize();
-      auto y = ydir;      
+      auto y = ydir;
       y.normalize();
 
       auto v = (p - c.center);
@@ -56,12 +71,12 @@ namespace geom{
     template <class PointIter,class ParamIter>
     void
     static foot_param(const circle &c,
-                      PointIter ps, 
+                      PointIter ps,
                       PointIter end, ParamIter out)
     {
       auto x = c.start_pt - c.center;
       x.normalize();
-      auto y = ydir;      
+      auto y = ydir;
       y.normalize();
 
       for( ;ps!=end; ++ps, ++out ) {
@@ -121,11 +136,9 @@ namespace geom{
                          pts[0], cv/(-sqrt(denom)) );
     }
     //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "circle to nurbs")
-    
-    
     point_t eval(double u) const
     {
-      auto x = (start_pt - center);
+      au
       auto y = ydir;
       return center + x * cos(u) + y * sin(u);
     }

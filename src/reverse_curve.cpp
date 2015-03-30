@@ -1,18 +1,20 @@
-#include "stdafx.h"
 #include <vector>
 #include "reverse_curve.hpp"
+#include "bspline_x_cons.hpp"
 namespace geom{
 //{{{ --(@* "reverse curve sense")
 
 template <class SplineType>
-SplineType bspline_ops::reverse_curve(SplineType& spl)
+SplineType ops::reverse_curve(const SplineType& spl)
 {
     auto &cpts=spl.control_points();
     auto &t = spl.knots();
     size_t numPts = cpts.size();
     typedef typename SplineType::point_t point_t;
-    SplineType::cpts_t new_cpts(numPts);
-    new_cpts.reserve(numPts);
+    typedef typename
+        std::decay<decltype(spl.control_points())>::type
+        cpts_t;
+    cpts_t new_cpts(numPts);
 
     std::vector<double> new_knots(spl.knots().size());
 
@@ -23,14 +25,15 @@ SplineType bspline_ops::reverse_curve(SplineType& spl)
                    new_knots.begin(),
                    std::negate<double>() );
 
-    return SplineType(std::move(new_cpts), std::move(new_knots),
-                      spl.degree()).translate(spl.base_point());
+    return make_bsplinex<SplineType>(std::move(new_cpts),
+                                     std::move(new_knots),
+                                     spl.degree()
+        ).translate(spl.base_point());
 }
 
 template <class SplineType>
-SplineType& bspline_ops::inplace_reverse_curve(SplineType& spl)
+SplineType& ops::inplace_reverse_curve(SplineType& spl)
 {
-    //typedef typename SplineType::point_t point_t;
     std::reverse(spl.control_points().begin(), spl.control_points().end());
     std::reverse(spl.knots().begin(), spl.knots().end());
 
@@ -59,8 +62,15 @@ SplineType& bspline_ops::inplace_reverse_curve(SplineType& spl)
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
+  "rational_bspline<bspline<point2d_t>>"
+  "rational_bspline<bspline<point3d_t>>"
+  "rational_bspline<bspline<point4d_t>>"
+  "rational_bspline<periodic_bspline<point2d_t>>"
+  "rational_bspline<periodic_bspline<point3d_t>>"
+  "rational_bspline<periodic_bspline<point4d_t>>"
   ))
-  eval:(instantiate-templates "reverse_curve" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "reverse_curve" "ops" (list )
+  (product methods spltypes) )
   End:
 // dump all explicitly instantiated templates below
 */

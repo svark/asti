@@ -11,7 +11,9 @@ namespace geom {
       interp_ends_dont_match_for_periodic = 5,
       continuity_condition_too_tight= 6,
       vectors_not_in_plane_of_points = 7,
-      lines_do_not_meet = 8
+      lines_do_not_meet = 8,
+      point_at_axis_error = 9,
+      circle_too_small = 10
    };
 
    extern  std::map<geom_error_code_t, std::string> init_dict();

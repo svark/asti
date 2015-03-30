@@ -1,7 +1,6 @@
 // ConsoleApplication1.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 
 #include <iostream>
 #include <memory>
@@ -104,7 +103,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
   std::cout << '(' << f0 <<',' <<  f1  << ')' << '\n';
   const double ts[] = {-1,-1,-1,-1,0.5,1,1,1,1};
-  auto spl0 = geom::bspline_ops::cubic_approx1d(
+  auto spl0 = geom::ops::cubic_approx1d(
       std::function<double(double)>(cube),
       std::vector<double>(ts, ts + sizeof(ts) / sizeof(ts[0])));
   std::cout << "cube approx at -1,0.1,0,1:"
@@ -117,7 +116,7 @@ int _tmain(int argc, _TCHAR* argv[])
   std::merge(bs.knots().cbegin(), bs.knots().cend(), arr, arr + 2, newknots.begin());
   newknots.insert(newknots.begin(), 0.0);
   newknots.insert(newknots.end(), 1.0);
-  auto spl2 = geom::bspline_ops::cubic_approx1d(
+  auto spl2 = geom::ops::cubic_approx1d(
       std::function<double(double)>(v_vdash), newknots);
   try {
     auto pt_ = spl2.eval(-1);
@@ -130,8 +129,8 @@ int _tmain(int argc, _TCHAR* argv[])
   std:: cout << "\n dist.dist' approx at 0.1,0.2,1:"
              << spl2.eval(0.25) << ',' << spl2.eval(0.2) << ','
              << spl2.eval(.5) << "\n";
-  std::cout << "soln NEAR param .2::" << geom::bspline_ops::foot_param(bs,p);
-  auto spls = geom::bspline_ops::split_into_bezier_patches(bs);
+  std::cout << "soln NEAR param .2::" << geom::ops::foot_param(bs,p);
+  auto spls = geom::ops::split_into_bezier_patches(bs);
   double us[] = {0.1,0.6,0.9};
   int i=0;
   for(auto s : spls)
@@ -140,7 +139,7 @@ int _tmain(int argc, _TCHAR* argv[])
       ++i;
   }
   {
-      auto spl = geom::bspline_ops::extend_curve_start(bs,0.2);
+      auto spl = geom::ops::extend_curve_start(bs,0.2);
       std::cout << "at 0.15" << spl.eval(0.15) << ",actual:"<< bs.eval(0.15) <<"\n";
       std::cout << "at -0.15" << spl.eval(-0.15) << ",actual:"<< bs.eval(-0.15) <<"\n";
       std::cout << "at -0.2" << spl.eval(-0.2) << ",actual:"<< bs.eval(-0.2) <<"\n";
@@ -161,7 +160,7 @@ int _tmain(int argc, _TCHAR* argv[])
   std::cout <<"at 0.9:"<< bs.eval(0.9) << "\n";
   std::cout <<"at 1.2:"<< bs.eval(1.2) << "\n";
   std::cout <<"at 0.9999:"<< bs.eval(.9999) << "\n";
-  bs = geom::bspline_ops::raise_degree(bs);
+  bs = geom::ops::raise_degree(bs);
    std::cout << "at 0:"<< bs.eval(0) << "\n";
   std::cout <<"at 0.2:"<< bs.eval(.2) << "\n";
   std::cout <<"at 0.9:"<< bs.eval(0.9) << "\n";
@@ -173,7 +172,7 @@ int _tmain(int argc, _TCHAR* argv[])
   std::cout <<"at 0.9:"<< bs.eval(0.9) << "\n";
   std::cout <<"at 1.2:"<< bs.eval(1.2) << "\n";
   std::cout <<"at 0.9999:"<< bs.eval(.9999) << "\n";
-  bs = geom::bspline_ops::raise_degree(bs);
+  bs = geom::ops::raise_degree(bs);
    std::cout << "at 0:"<< bs.eval(0) << "\n";
   std::cout <<"at 0.2:"<< bs.eval(.2) << "\n";
   std::cout <<"at 0.9:"<< bs.eval(0.9) << "\n";
@@ -232,8 +231,8 @@ int _tmain(int argc, _TCHAR* argv[])
    ps.push_back(0.0);
    {
        opts.end_conditions=geom::periodic;
-        auto bs= geom::piecewise_cubic_hermite_interp_periodic(ps.begin(), ps.end(),opts,
-                                          std::vector<double>());
+        auto bs= geom::piecewise_cubic_hermite_interp(
+            ps.begin(), ps.end(),opts, std::vector<double>());
   std::cout << "at 0:"<< bs.eval(0) << "\n";
   std::cout <<"at 0.2:"<< bs.eval(.2) << "\n";
   std::cout <<"at 0.3806:"<< bs.eval(.3806) << "\n";
@@ -243,28 +242,28 @@ int _tmain(int argc, _TCHAR* argv[])
   std::cout <<"at 0.9:"<< bs.eval(0.9) << "\n";
   std::cout <<"at 1.1:"<< bs.eval(1.1) << "\n";
   std::cout <<"at 0.8957:"<< bs.eval(0.8957) << "\n";
-  std::cout <<"is periodic" << std::boolalpha << ":" << geom::bspline_ops::is_periodic(bs.spline()) << "\n\n";
-  for( auto k : bs.knots() ) 
+  std::cout <<"is periodic" << std::boolalpha << ":" << geom::ops::is_periodic(bs.spline()) << "\n\n";
+  for( auto k : bs.knots() )
   {
       std::cout <<"at "<< k << ": " << bs.eval(k) << "\n";
   }
   std::cout <<"------------\n";
    }
-  //auto spls2 = geom::bspline_ops::split_into_bezier_patches_hard(bs);
+  //auto spls2 = geom::ops::split_into_bezier_patches_hard(bs);
   //bool ok = std::equal(spls.begin(), spls.end(),spls2.begin() );
   //std::cout << std::boolalpha << ok;
    {
-       auto &p = geom::bspline_ops::split_open_curve(bs,0.3);
-       auto &p_ = geom::bspline_ops::split_open_curve(geom::bspline_ops::reverse_curve(bs),-0.3);
-       geom::bspline<geom::point2d_t> s1 = geom::bspline_ops::reverse_curve(p.first),s2 = p.second;
-       auto const &p2 = geom::bspline_ops::reparametrize_start(
-           geom::bspline_ops::join_starts(s1,s2,1), 0);
-       
+       auto &p = geom::ops::split_open_curve(bs,0.3);
+       auto &p_ = geom::ops::split_open_curve(geom::ops::reverse_curve(bs),-0.3);
+       geom::bspline<geom::point2d_t> s1 = geom::ops::reverse_curve(p.first),s2 = p.second;
+       auto const &p2 = geom::ops::reparametrize_start(
+           geom::ops::join_starts(s1,s2,1), 0);
+
 
        std::cout << "----------\nat 0:"<< p.first.eval(0) << "\n";
   std::cout <<"at 0.2:"<< p.first.eval(.2) << "\n";
   std::cout <<"at 0.3:"<< p.first.eval(.3) << "\n";
-  std::cout << "is-bez:" << std::boolalpha << geom::bspline_ops::is_bezier(p.first) << "\n";
+  std::cout << "is-bez:" << std::boolalpha << geom::ops::is_bezier(p.first) << "\n";
   std::cout <<"at 0.3806:"<< p.second.eval(.3806) << "\n";
   std::cout <<"at 0.4:"<< p.second.eval(0.4) << "\n";
   std::cout <<"at 0.5:"<< p.second.eval(0.5) << "\n";
@@ -305,7 +304,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 {
-    
+
       cpts3d_t pts(4);
   pts[0] = make_pt(0.0,0.0,1);
   pts[1] = make_pt(0.4,0.3,1);
@@ -318,10 +317,10 @@ int _tmain(int argc, _TCHAR* argv[])
   geom::periodic_bspline<geom::point3d_t> bs(geom::make_periodic_bspline_wrap(pts, ks,2));
   geom::rational_bspline<geom::periodic_bspline<geom::point3d_t> >
       rbs = geom::make_rbspline(std::move(bs));
-  auto const & pc = geom::bspline_ops::rotate_base_knot(rbs.spline(), 3);
-  auto rpc = geom::bspline_ops::reparametrize(pc,0,1);
-  
-  auto rbs1 = geom::bspline_ops::split_periodic_curve(rbs, 0.1);
+  auto const & pc = geom::ops::rotate_base_knot(rbs.spline(), 3);
+  auto rpc = geom::ops::reparametrize(pc,0,1);
+
+  auto rbs1 = geom::ops::split_periodic_curve(rbs, 0.1);
   rbs1.eval(0.1);
   auto const &vs = rbs1.eval_derivatives(2,0.1);
   std::cout << (vs.front()) << vs.back() << vs[1];
@@ -329,7 +328,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 {
     geom::circle<geom::point2d_t> c( geom::make_pt(0.0,0.0),
-        geom::make_pt(0,1.0) ); 
+        geom::make_pt(0,1.0) );
     std::cout << c.eval(0) << "," << c.eval(M_PI/2) <<"\n" << c.eval(M_PI)  << ", "<<  c.eval(3*M_PI/2) << "\n";
 }
 {
@@ -340,17 +339,19 @@ int _tmain(int argc, _TCHAR* argv[])
     geom::vector2d_t v[2];
     v[0] = geom::make_vec(0,1);
     v[1] = geom::make_vec(0.4,0.5);
-    
 
-    geom::conic_arc<geom::point2d_t> c = geom::make_conic_arc( pts, v) ;
+
+    geom::conic_arc<geom::point2d_t> c = geom::make_conic_arc( pts, v);
+    
     std::cout << c.eval(0) << "," << c.eval(0.5) << c.eval(1.0)<< "\n" ;
     std::cout << "type:" <<( (c.type()== geom::hyperbola )? "hyperbola\n"
         :(c.type()== geom::ellipse )? "ellipse\n"
         :(c.type()== geom::parabola )? "parabola\n" : "unknown\n") ;
     auto rbs ( geom::make_rbspline0(c));
     std::cout << rbs.eval(0) << "," << rbs.eval(0.5) << rbs.eval(1.0)<< "\n" ;
-    
+    rbs.eval_derivative(0.5);
+
 }
-   
+
   return 0;
 }

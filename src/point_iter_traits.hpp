@@ -1,10 +1,10 @@
 #ifndef POINT_ITER_TRAITS
 #define POINT_ITER_TRAITS
-#include <type_traits>
+//#include <type_traits>
 #include "Eigen/Dense"
 //#include "vtens.hpp"
 #include <vector>
-#include "point.hpp"
+#include "point_dim.hpp"
 namespace geom {
 template <class PointIter>
 struct point_iter_traits

@@ -11,11 +11,10 @@ namespace geom {
 
 template <class SplineType>
 SplineType
-bspline_ops::join_starts(const SplineType& spl1,
+ops::join_starts(const SplineType& spl1,
                          const SplineType& spl2,
                          int join_cont)
 {
-    // assert(!spl1.is_periodic() && !spl2.is_periodic());
     SplineType spl1_clamped (clamp_end(spl1));
     SplineType spl2_clamped (clamp_start(spl2));
 
@@ -25,6 +24,9 @@ bspline_ops::join_starts(const SplineType& spl1,
 
     int p1 = spl1_clamped.degree();
     int p2 = spl2_clamped.degree();
+    if(join_cont >= std::min(p1,p2) )
+        throw geom_exception(continuity_condition_too_tight);
+
     for(;p2 < p1;++p2)
         raise_degree(spl2_clamped);
 
@@ -32,8 +34,7 @@ bspline_ops::join_starts(const SplineType& spl1,
         raise_degree(spl1_clamped);
 
     int p = spl1_clamped.degree();
-    if(join_cont >= p )
-        throw geom_exception(continuity_condition_too_tight);
+
     SplineType::knots_t ks(p + 1);
 
     auto a = spl1_clamped.knots().begin()[p+1];
@@ -41,9 +42,6 @@ bspline_ops::join_starts(const SplineType& spl1,
     if(a > b ) std::swap(a,b);
     std::fill_n(ks.begin(), join_cont + 1, -a);
     std::fill_n(ks.begin() + join_cont + 1, p - join_cont,0);
-    
-    // match the widths of the first knot interval to 'a'
-    //spl2_clamped.swap(reparametrize(spl2_clamped, 0, a / b));
 
     rmat_base_vd r(spl2_clamped.knots(),p);
     ptrdiff_t nk = join_cont + 1 - r.mult(a);
@@ -67,12 +65,10 @@ bspline_ops::join_starts(const SplineType& spl1,
     cpts.reserve(cpts1.size() + cpts2.size());
     std::copy(cpts1.crbegin(), cpts1.crend(), std::back_inserter(cpts));
     // merge the p + 1 cpts at the end of reversed c0 and start of c1
-    std::transform(cpts.cend() - (join_cont + 1) ,
-                   cpts.cend(),
-                   cpts2.cbegin(),
-                   cpts.end() - (join_cont + 1),
+    std::transform(cpts.cend() - (join_cont + 1), cpts.cend(),
+                   cpts2.cbegin(),/* into */ cpts.end() - (join_cont + 1),
                    [](cref p1,cref p2){
-                       return lerp(0.5, p1,p2);} );    
+                       return lerp(0.5, p1,p2);} );
 
     std::copy(cpts2.cbegin() + join_cont + 1,cpts2.cend(),
               std::back_inserter(cpts));
@@ -83,20 +79,21 @@ bspline_ops::join_starts(const SplineType& spl1,
                      spl2_clamped.knots().size() - p - 1);
 
     spl1_clamped.swap(reverse_curve(spl1_clamped) );
-
     newknots.assign(spl1_clamped.knots().cbegin(),
-        spl1_clamped.knots().cend() - (join_cont + 1));
+                    spl1_clamped.knots().cend() - (join_cont + 1));
     newknots.insert(newknots.end(),
-        spl2_clamped.knots().cbegin() + (p + 1) ,
+                    spl2_clamped.knots().cbegin() + (p + 1),
                     spl2_clamped.knots().cend());
-   
-    return SplineType(std::move(cpts), std::move(newknots), p);
+
+    return make_bsplinex < SplineType > (std::move(cpts),
+                                         std::move(newknots), p
+        );
 }
 
 
 template <class SplineType>
 SplineType
-bspline_ops::extract_regular_curve(const SplineType &spl)
+ops::extract_regular_curve(const SplineType &spl)
 {
     auto &ts    = spl.knots();
     int   deg   = spl.degree();
@@ -107,7 +104,7 @@ bspline_ops::extract_regular_curve(const SplineType &spl)
 
 template <class SplineType>
 SplineType
-bspline_ops::trim_curve(const SplineType &spl, double a, double b)
+ops::trim_curve(const SplineType &spl, double a, double b)
 {
     auto &ts    = spl.knots();
     int   deg   = spl.degree();
@@ -118,25 +115,64 @@ bspline_ops::trim_curve(const SplineType &spl, double a, double b)
 
 template <class SplineType>
 SplineType
-bspline_ops::extend_curve_start(const SplineType & spl,
-                                double delta)
+ops::extend_curve_start(const SplineType & spl, double delta)
 {
     auto const & s = clamp_start(spl);
-    double u = s.param_range().first;
-    u -= delta;
+    auto pr =  s.param_range();
+    double u = pr.first;
+    u -= delta * (pr.second - pr.first);
     return rebase_at_start(s, util::make_constant_iterator(u) );
 }
 
 template <class SplineType>
 SplineType
-bspline_ops::extend_curve_end(const SplineType & spl,
-                              double delta)
+ops::extend_curve_end(const SplineType & spl, double delta)
 {
     auto const & s = clamp_start(spl);
-    double v = s.param_range().second;
-    v += delta;
+    auto pr = s.param_range();
+    double v = pr.second;
+    v += (delta * (pr.second -  pr.first));
     return rebase_at_end(s, util::make_constant_iterator(v));
 }
+
+template <class SplineType>
+SplineType
+ops::extend_curve_end_to_pt(const SplineType & spl,
+                                    typename SplineType::point_t const & target)
+{
+    auto const & s = reparametrize (clamp_start(spl), 0, 1);
+    auto const & t = s.knots();
+    size_t n    = s.control_points().size();
+    int    d    = s.degree();
+    double chord_len = 0;
+    auto p = s.eval(t[d]);
+
+    for(size_t r = 0;r < n - d; ++r) {
+        auto newc = s.eval(t[d + r + 1]);
+        chord_len += len(newc - p);
+        p = newc;
+    }
+
+    double ld  = len(target - p);
+    chord_len += ld;
+    auto delta      = ld / chord_len;
+
+    std::vector<double> ks(d + 1, 1 + delta);
+    ks[0] = 1;
+
+    auto exs(rebase_at_end(s, ks.begin()));
+    auto newks(exs.knots());
+    auto newcpts(exs.control_points());
+    newks.push_back(1 + delta);
+    typedef typename SplineType::cpts_t::value_type cpt_val_t;
+    newcpts.push_back(cpt_val_t(target));
+
+    return make_bsplinex < SplineType >
+        (std::move(newcpts), std::move(newks), d);
+
+}
+
+
 
 }
 //{{{  instantiation scripts
@@ -149,13 +185,18 @@ bspline_ops::extend_curve_end(const SplineType & spl,
   "extend_curve_start"
   "extend_curve_end"
   "join_starts"
+  "extend_curve_end_to_pt"
   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"
   "bspline<point3d_t>"
   "bspline<point4d_t>"
+  "rational_bspline < bspline < point2d_t >>"
+  "rational_bspline < bspline < point3d_t >>"
+  "rational_bspline < bspline < point4d_t >>"
   ))
-  eval:(instantiate-templates "trim_extend_join" "bspline_ops" (list ) methods spltypes )
+  eval:(instantiate-templates "trim_extend_join" "ops" (list )
+   (product methods spltypes ))
   End:
 // dump all explicitly instantiated templates below
 */
@@ -163,7 +204,6 @@ bspline_ops::extend_curve_end(const SplineType & spl,
 
 //{{{  instantiation
 #include "bspline.hpp"
-#include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
 #include "trim_extend_join_inst.cpp"

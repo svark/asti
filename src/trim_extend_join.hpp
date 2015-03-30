@@ -1,8 +1,9 @@
-#pragma once
-namespace geom 
+#ifndef TRIM_EXTEND_JOIN
+#define TRIM_EXTEND_JOIN
+namespace geom
 {
-    namespace bspline_ops
-    {
+namespace ops
+{
         template <class SplineType>
         extern SplineType
             trim_curve(const SplineType &spl, double a, double b);
@@ -21,8 +22,14 @@ namespace geom
 
         template <class SplineType>
         extern SplineType
+            extend_curve_end_to_pt(const SplineType & spl,
+                                   typename SplineType::point_t const & target);
+
+        template <class SplineType>
+        extern SplineType
             join_starts(const SplineType& spl1,
             const SplineType& spl2,
             int join_cont);
-    }
 }
+}
+#endif // TRIM_EXTEND_JOIN

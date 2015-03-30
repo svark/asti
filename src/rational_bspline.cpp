@@ -56,7 +56,7 @@ rational_bspline<SplineType>::blossom_eval(KnotIter us) const
 #include "skip_idx_iter.hpp"
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
-template <class SplineType> class rational_bspline;
+template <class SplineType> struct rational_bspline;
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")

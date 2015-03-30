@@ -18,6 +18,13 @@ void switch_bool(b,f,args...) {
             f(__VA_ARGS__, std::integral_constant<bool,false>());   \
     }
 
+#define switch_bool_ret(b,f,...) {                                      \
+        if(b)                                                       \
+            return f(__VA_ARGS__, std::integral_constant<bool,true>());    \
+        else                                                        \
+            return f(__VA_ARGS__, std::integral_constant<bool,false>());   \
+    }
+
 #define switch_case_3_inner(EnumT,e,lo,f,...)                   \
     case lo:                                                    \
     f(__VA_ARGS__, std::integral_constant<EnumT,EnumT(lo)>());  \
