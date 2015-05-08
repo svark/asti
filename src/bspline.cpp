@@ -28,21 +28,21 @@ Point bspline<Point>::eval(double u) const
 // throws a spline_exception if u is not in parameter range of this curve
 template <class Point>
 typename bspline<Point>::vector_t
-bspline<Point>::eval_derivative(int numDer, double u) const
+bspline<Point>::eval_derivative(int derOrder, double u) const
 {
     rmat<Point> m(cpts, t, deg);
-    assert(numDer >= 0);
-    return  make_vec( m.eval_derivative(numDer, u) ) ;
+    assert(derOrder >= 0);
+    return make_vec( m.eval_derivative(derOrder, u) );
 }
 
 template <class Point>
 typename bspline<Point>::vcpts_t
-bspline<Point>::eval_derivatives(int numDer, double u) const
+bspline<Point>::eval_derivatives(int derOrder, double u) const
 {
     rmat<Point> m(cpts, t, deg);
-    assert(numDer >= 0);
+    assert(derOrder >= 0);
     vcpts_t v;
-    m.eval_derivatives(numDer, u,
+    m.eval_derivatives(derOrder, u,
         util::transformed_back_inserter(v, &make_vec<point_t> ) );
     return v;
 }
@@ -98,12 +98,25 @@ bspline<Point>::bspline(bspline<Point>&& other):
 //{{{  .(@* "optimize")
 // optimize by storing all points relative to their centroid
 template <class Point>
-void bspline<Point>::optimize()
+bspline<Point>& bspline<Point>::optimize()
 {
-    auto center = make_vec(centroid( cpts.cbegin(), cpts.cend() ) );
+    auto center = make_vec(centroid(cpts.cbegin(), cpts.cend()));
     std::transform(cpts.begin(), cpts.end(), cpts.begin(),
                    [&center](decltype(cpts[0]) p){ return p -= center;} );
     origin += center;
+    return * this;
+}
+
+// deoptimize so that origin is at zero
+template <class Point>
+bspline<Point>& bspline<Point>::deoptimize()
+{
+    if(origin == vector_t(0.0))
+        return *this;
+
+    std::transform(cpts.begin(), cpts.end(), cpts.begin(),
+                   [this](decltype(cpts[0]) p){ return p += this->origin;} );
+    return * this;
 }
 //}}}
 
@@ -111,6 +124,8 @@ void bspline<Point>::optimize()
 template <class Point>
 void bspline < Point >::swap(bspline & other)
 {
+    if(& other == this)
+        return;
     t.swap(other.t);
     cpts.swap(other.cpts);
     std::swap(origin,other.origin);
@@ -154,6 +169,6 @@ End:
 
 namespace geom {
 template <class Point> struct bspline;
-#include "bspline_inst.cpp"
+#include "bspline_inst.inl"
 }
 //}}}

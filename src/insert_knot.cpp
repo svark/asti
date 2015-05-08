@@ -5,7 +5,7 @@
 #include "bspline_x_cons.hpp"
 #include "util.hpp"
 #include <numeric>
-
+#include "type_utils.hpp"
 
 namespace geom {
 //{{{ --(@* "implements the oslo algorithm to insert knots")
@@ -22,14 +22,13 @@ ops::insert_knots(const SplineType& crv,
     auto const & t = crv.knots();
 
     taus.reserve( new_knots.size() + t.size() );
-
     auto const & cpts = crv.control_points();
     typedef decltype(cpts) cpts_t;
     std::merge(t.begin(), t.end(),
                new_knots.begin(), new_knots.end(),
                std::back_inserter(taus));
 
-    typedef typename std::decay<decltype(cpts[0])>::type point_t;
+    typedef RAWTYPE(cpts[0]) point_t;
     rmat<point_t> m(cpts, t, crv.degree());
     cpts_t new_cpts(m.insert_knots(taus));
     return make_bsplinex < SplineType > (
@@ -82,7 +81,7 @@ insert_knot_impl( const SplineType &crv,
                   double u,
                   geom::periodic_tag)
 {
-    u               = periodic_param(crv, u);
+    u               = periodic_param(crv.param_range(), u);
     auto         p  = crv.degree();
     auto &       t  = crv.knots();
     auto const & r  = crv.param_range();
@@ -156,5 +155,5 @@ ops::insert_knot(const SplineType& crv,
 #include "rational_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "insert_knot_inst.cpp"
+#include "insert_knot_inst.inl"
 }

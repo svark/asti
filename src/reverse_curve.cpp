@@ -1,6 +1,7 @@
 #include <vector>
 #include "reverse_curve.hpp"
 #include "bspline_x_cons.hpp"
+#include "type_utils.hpp"
 namespace geom{
 //{{{ --(@* "reverse curve sense")
 
@@ -11,9 +12,7 @@ SplineType ops::reverse_curve(const SplineType& spl)
     auto &t = spl.knots();
     size_t numPts = cpts.size();
     typedef typename SplineType::point_t point_t;
-    typedef typename
-        std::decay<decltype(spl.control_points())>::type
-        cpts_t;
+    typedef RAWTYPE(spl.control_points()) cpts_t;
     cpts_t new_cpts(numPts);
 
     std::vector<double> new_knots(spl.knots().size());
@@ -81,6 +80,6 @@ SplineType& ops::inplace_reverse_curve(SplineType& spl)
 #include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "reverse_curve_inst.cpp"
+#include "reverse_curve_inst.inl"
 }
 //}}}

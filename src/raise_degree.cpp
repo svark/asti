@@ -85,6 +85,6 @@ raise_degree(const rational_bspline<SplineCurve>
 #include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "raise_degree_inst.cpp"
+#include "raise_degree_inst.inl"
 }
 //}}}

@@ -21,6 +21,8 @@ init_dict()
       dict_.insert(std::make_pair(lines_do_not_meet,std::string("Given lines do not meet")));
       dict_.insert(std::make_pair(circle_too_small, std::string("Circle is tool small compared to precision of computation")));
       dict_.insert(std::make_pair(point_at_axis_error, std::string("Nearest point computation failed.\nGiven point is very near the axis of circle")));
+      dict_.insert(std::make_pair(knots_incompatible_for_merging,
+                                    std::string("incompatible knots in given curves")));
       return dict_;
    }
 

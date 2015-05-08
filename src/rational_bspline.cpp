@@ -3,8 +3,6 @@
 
 namespace geom
 {
-
-
 //{{{ (@* "Constructors" )
 template <class SplineType>
 rational_bspline<SplineType>::rational_bspline(wcpts_t pts,
@@ -32,7 +30,6 @@ rational_bspline<SplineType>::rational_bspline(const rational_bspline& other)
 //
 //}
 
-
 template <class SplineType>
 typename rational_bspline<SplineType>::point_t
 rational_bspline<SplineType>::eval(double u) const
@@ -47,6 +44,7 @@ rational_bspline<SplineType>::blossom_eval(KnotIter us) const
 {
     return project(spl.blossom_eval(us));
 }
+
 //}}}
 
 }
@@ -72,6 +70,6 @@ template <class SplineType> struct rational_bspline;
   End:
 */
 namespace geom {
-#include "rational_bspline_inst.cpp"
+#include "rational_bspline_inst.inl"
 }
 //}}}

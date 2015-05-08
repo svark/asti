@@ -115,7 +115,7 @@
   """instantiate a template class and its methods"""
   (interactive)
   ;; clear the inst file
-  (with-temp-file (concat fname "_inst.cpp")
+  (with-temp-file (concat fname "_inst.inl")
     (insert (concat "//-*-mode:c++-*-\n" "//Generated on: " (current-time-string) 
                     ". Do not edit\n")
             )
@@ -158,7 +158,7 @@
     (dolist (targ targs)
       (insert (format "template %s<%s>;\n"  cls-expanded targ ))
       )
-    (append-to-file (point-min) (point-max) (concat cls-small "_inst.cpp") )
+    (append-to-file (point-min) (point-max) (concat cls-small "_inst.inl") )
     )
   )
 
@@ -173,7 +173,7 @@
         (insert (format "template %s %s::%s(%s) %s;\n" (rargs ret formal_targ targ)
                         cls cm (rargs args formal_targ targ ) const-qual ) )
         )
-      (append-to-file (point-min) (point-max) (concat fname "_inst.cpp") )
+      (append-to-file (point-min) (point-max) (concat fname "_inst.inl") )
       )
   )
 
@@ -193,6 +193,6 @@
                           const-qual
                           ) )
           ))
-      (append-to-file (point-min) (point-max) (concat fname "_inst.cpp") )
+      (append-to-file (point-min) (point-max) (concat fname "_inst.inl") )
     )
   )

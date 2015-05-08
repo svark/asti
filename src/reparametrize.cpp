@@ -81,6 +81,6 @@ SplineType ops::reparametrize_start(const SplineType& spl,
 #include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "reparametrize_inst.cpp"
+#include "reparametrize_inst.inl"
 }
 //}}}

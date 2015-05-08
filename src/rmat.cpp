@@ -1,15 +1,14 @@
 //-*- mode:c++ -*-
 #include <cassert>
 #include "geom_exception.hpp"
-//#include <algorithm>
 #include "tol.hpp"
 #include "rmat.hpp"
 #include <algorithm>
 #include <memory>
 #include <math.h>
 #include "special.hpp"
-//#include "util.hpp"
 #include "range.hpp"
+
 namespace geom {
 
 template<class KnotIter>
@@ -31,35 +30,35 @@ rmat_base<KnotIter>::locate(double u) const
 template<class KnotIter>
 double
 rmat_base<KnotIter>::der_n(size_t idx,
-                           int numDer,
+                           int derOrder,
                            double u) const
 {
     int size = degree();
     auto nu  = locate_nu(u);
     if(idx < nu - size || idx > nu )
-        return 0;
+        return 0.0;
     std::unique_ptr<double[]> cache(new double[size+1]);
     std::fill_n(stdext::make_checked_array_iterator(cache.get(),size+1),
                 size + 1, 0.0);
 
-    cache[idx-nu+size] = 1;
-    spline_compute(nu, u, numDer, cache.get());
+    cache[idx - nu + size] = 1;
+    spline_compute(nu, u, derOrder, cache.get());
     return cache[0];
 }
 // get the array of deg + 1 bspline basis functions at u
 template<class KnotIter>
 std::vector<double>
-rmat_base<KnotIter>::der_coeffs_par(int numDer, double u) const
+rmat_base<KnotIter>::der_coeffs_par(int derOrder, double u) const
 {
     mult_rmat basis_cache;
     size_t nu = locate_nu(u);
-    if(numDer > deg)
+    if(derOrder > deg)
         return basis_cache.getb();
-    assert(numDer >= 0);
-    for(int j = 1;j < deg - numDer; ++j) {
+    assert(derOrder >= 0);
+    for(int j = 1;j < deg - derOrder; ++j) {
         basis_cache *= rmat_explicit<KnotIter>(t + nu, j, u);
     }
-    for(int j = deg - numDer;j <= deg; ++j) {
+    for(int j = deg - derOrder;j <= deg; ++j) {
         basis_cache *= der_rmat_explicit<KnotIter>(t + nu, j, u);
     }
     return basis_cache.getb();
@@ -224,7 +223,7 @@ size_t rmat_base<KnotIter>::locate_nu(double u,  size_t nu_guess) const
 
 template <class Point>
 Point
-rmat<Point>::eval_derivative(int numDer, double u) const
+rmat<Point>::eval_derivative(int derOrder, double u) const
 {
     size_t nu = locate_nu(u);
     int size = degree();
@@ -234,7 +233,7 @@ rmat<Point>::eval_derivative(int numDer, double u) const
     for(int j = 0; j < size + 1; ++j)
         cache[j] = control_pt(j + nu - size);
 
-    spline_compute(nu, u, numDer, cache.get());
+    spline_compute(nu, u, derOrder, cache.get());
 
     return cache[0];
 }
@@ -287,6 +286,6 @@ namespace geom {
 template <class KnotIter> struct rmat_base;
 template <class Point> struct rmat;
 
-#include "rmat_base_inst.cpp"
-#include "rmat_inst.cpp"
+#include "rmat_base_inst.inl"
+#include "rmat_inst.inl"
 }

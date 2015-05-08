@@ -2,6 +2,7 @@
 #include "remove_knot.hpp"
 #include "raise_degree.hpp"
 #include "rmat.hpp"
+#include "type_utils.hpp"
 namespace geom {
 
 template <typename SplineCurve>
@@ -36,7 +37,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     auto const & cpts = crv.control_points();
     auto const & t = crv.knots();
     SplineCurve::cpts_t newcpts(cpts);
-    typedef typename std::decay<decltype(cpts[0])>::type point_t;
+    typedef RAWTYPE(cpts[0]) point_t;
     auto l =  (t[nu + 1] - t[nu - 3]) * make_vec(cpts[nu - 1])  -
         (t[nu + 1] - t[nu]) * make_vec( cpts[nu - 2])  ;
 
@@ -103,5 +104,5 @@ ops::fair_by_knot_removal(const rational_bspline<SplineCurve> & crv,
 #include "rational_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "remove_knot_inst.cpp"
+#include "remove_knot_inst.inl"
 }

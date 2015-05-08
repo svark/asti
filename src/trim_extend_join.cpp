@@ -12,8 +12,8 @@ namespace geom {
 template <class SplineType>
 SplineType
 ops::join_starts(const SplineType& spl1,
-                         const SplineType& spl2,
-                         int join_cont)
+                 const SplineType& spl2,
+                 int join_cont)
 {
     SplineType spl1_clamped (clamp_end(spl1));
     SplineType spl2_clamped (clamp_start(spl2));
@@ -22,23 +22,17 @@ ops::join_starts(const SplineType& spl1,
     spl1_clamped.swap(reparametrize_start(spl1_clamped, 0));
     spl2_clamped.swap(reparametrize_start(spl2_clamped, 0));
 
-    int p1 = spl1_clamped.degree();
-    int p2 = spl2_clamped.degree();
-    if(join_cont >= std::min(p1,p2) )
-        throw geom_exception(continuity_condition_too_tight);
-
-    for(;p2 < p1;++p2)
-        raise_degree(spl2_clamped);
-
-    for(;p1 < p2;++p1)
-        raise_degree(spl1_clamped);
+    match_degrees(spl1_clamped, spl2_clamped);
 
     int p = spl1_clamped.degree();
+    if(join_cont >= p )
+        throw geom_exception(continuity_condition_too_tight);
 
     SplineType::knots_t ks(p + 1);
 
     auto a = spl1_clamped.knots().begin()[p+1];
     auto b = spl2_clamped.knots()[p+1];
+
     if(a > b ) std::swap(a,b);
     std::fill_n(ks.begin(), join_cont + 1, -a);
     std::fill_n(ks.begin() + join_cont + 1, p - join_cont,0);
@@ -101,6 +95,7 @@ ops::extract_regular_curve(const SplineType &spl)
     assert(!tol::param_eq(ts.front(), ts.back()));
     return clamp_end(clamp_start(spl));
 }
+
 
 template <class SplineType>
 SplineType
@@ -206,6 +201,6 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
 #include "bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "trim_extend_join_inst.cpp"
+#include "trim_extend_join_inst.inl"
 }
 //}}}

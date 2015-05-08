@@ -64,6 +64,6 @@ ops::split_periodic_curve(const periodic_bspline<Point>& pspl, double u)
 #include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "subdivide_curve_inst.cpp"
+#include "subdivide_curve_inst.inl"
 }
 //}}}

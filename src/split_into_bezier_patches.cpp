@@ -91,6 +91,6 @@ std::list< rational_bspline < SplineType>,
 #include "periodic_bspline.hpp"
 #include "point.hpp"
 namespace geom {
-#include "split_into_bezier_patches_inst.cpp"
+#include "split_into_bezier_patches_inst.inl"
 }
 //}}}
