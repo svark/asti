@@ -61,10 +61,10 @@ bool operator<( const skip_ith_iter<knots_iter>& iter1,const skip_ith_iter<knots
 
 template <class knots_iter>
 skip_ith_iter<knots_iter>
-operator+( const skip_ith_iter<knots_iter>& iter, ptrdiff_t i)
+operator+( const skip_ith_iter<knots_iter>& iter, size_t i)
 {
     assert(i>=0);
-    ptrdiff_t d = std::distance(iter.base_iterator(),iter.current_iter() );
+    auto d = std::distance(iter.base_iterator(),iter.current_iter() );
     knots_iter cur_iter = iter.current_iter();
     cur_iter+=i;
     if( d <= iter.skip() && d + i >= iter.skip() )
@@ -77,7 +77,7 @@ operator+( const skip_ith_iter<knots_iter>& iter, ptrdiff_t i)
 }
 
 template <class knots_iter>
-ptrdiff_t
+size_t
 operator-(const skip_ith_iter<knots_iter>& l, const skip_ith_iter<knots_iter> f)
 {
     assert(l.skip()==f.skip());
@@ -92,12 +92,13 @@ operator-(const skip_ith_iter<knots_iter>& l, const skip_ith_iter<knots_iter> f)
     return l.current_iter() - f.current_iter();
 
 }
+
 template <class knots_iter>
 skip_ith_iter<knots_iter>
-operator-( const skip_ith_iter<knots_iter>& iter, ptrdiff_t i)
+operator-( const skip_ith_iter<knots_iter>& iter, size_t i)
 {
     assert(i<=0);
-    ptrdiff_t d = std::distance(iter.base_iterator(),iter.current_iter() );
+    auto d = std::distance(iter.base_iterator(),iter.current_iter() );
     knots_iter cur_iter = iter.current_iter();
     cur_iter -=i;
     if( d >= iter.skip() && d - i <= iter.skip() )
@@ -125,7 +126,7 @@ template <class KnotIter>
 skip_ith_iter <KnotIter>
 make_skip_iter(int i, KnotIter kn )
 {
-    return skip_ith_iter(i, kn);
+  return skip_ith_iter<KnotIter>(i, kn);
 }
 
 

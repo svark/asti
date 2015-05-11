@@ -19,8 +19,8 @@ ops::join_starts(const SplineType& spl1,
     SplineType spl2_clamped (clamp_start(spl2));
 
     // let the two splines have the same start parameters
-    spl1_clamped.swap(reparametrize_start(spl1_clamped, 0));
-    spl2_clamped.swap(reparametrize_start(spl2_clamped, 0));
+    reparametrize_start(spl1_clamped, 0).swap(spl1_clamped);
+    reparametrize_start(spl2_clamped, 0).swap(spl2_clamped);
 
     match_degrees(spl1_clamped, spl2_clamped);
 
@@ -28,7 +28,7 @@ ops::join_starts(const SplineType& spl1,
     if(join_cont >= p )
         throw geom_exception(continuity_condition_too_tight);
 
-    SplineType::knots_t ks(p + 1);
+    typename SplineType::knots_t ks(p + 1);
 
     auto a = spl1_clamped.knots().begin()[p+1];
     auto b = spl2_clamped.knots()[p+1];
@@ -40,22 +40,22 @@ ops::join_starts(const SplineType& spl1,
     rmat_base_vd r(spl2_clamped.knots(),p);
     ptrdiff_t nk = join_cont + 1 - r.mult(a);
     for( ;nk > 0; --nk ) {
-        spl2_clamped.swap(insert_knot(spl2_clamped,a));
+       insert_knot(spl2_clamped,a).swap(spl2_clamped);
     }
-    r.swap(rmat_base_vd(spl1_clamped.knots(),p));
+    rmat_base_vd(spl1_clamped.knots(),p).swap(r);
     nk = join_cont + 1 - r.mult(a);
     for( ;nk > 0; --nk ) {
-        spl1_clamped.swap(insert_knot(spl1_clamped,a));
+       insert_knot(spl1_clamped,a).swap(spl1_clamped);
     }
 
-    spl1_clamped.swap(rebase_at_start(spl1_clamped, ks.begin()));
-    spl2_clamped.swap(rebase_at_start(spl2_clamped, ks.begin()));
+    rebase_at_start(spl1_clamped, ks.begin()).swap(spl1_clamped);
+    rebase_at_start(spl2_clamped, ks.begin()).swap(spl2_clamped);
 
     auto & cpts1 = spl1_clamped.control_points();
     auto & cpts2 = spl2_clamped.control_points();
     typename SplineType::cpts_t cpts;
     typedef typename SplineType::cpts_t::const_reference cref;
-    typedef SplineType::point_t point_t;
+    typedef typename SplineType::point_t point_t;
     cpts.reserve(cpts1.size() + cpts2.size());
     std::copy(cpts1.crbegin(), cpts1.crend(), std::back_inserter(cpts));
     // merge the p + 1 cpts at the end of reversed c0 and start of c1
@@ -72,7 +72,7 @@ ops::join_starts(const SplineType& spl1,
     newknots.reserve(spl1_clamped.knots().size() +
                      spl2_clamped.knots().size() - p - 1);
 
-    spl1_clamped.swap(reverse_curve(spl1_clamped) );
+    reverse_curve(spl1_clamped).swap(spl1_clamped);
     newknots.assign(spl1_clamped.knots().cbegin(),
                     spl1_clamped.knots().cend() - (join_cont + 1));
     newknots.insert(newknots.end(),
@@ -82,7 +82,8 @@ ops::join_starts(const SplineType& spl1,
     typedef spline_traits<SplineType> str;
     return make_bspline (std::move(cpts),
                          std::move(newknots), p,
-                         str::ptag(),str::rtag()
+                         typename str::ptag(),
+			 typename str::rtag()
         );
 }
 
@@ -167,7 +168,7 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
     typedef spline_traits<SplineType> str;
     return make_bspline
       (std::move(newcpts), std::move(newks), d,
-       str::ptag(), str::rtag());
+       typename str::ptag(), typename str::rtag());
 
 }
 

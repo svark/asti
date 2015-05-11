@@ -1,8 +1,11 @@
 #include <numeric>
 #include <vector>
 #include "rmat.hpp"
+#include "point_dim.hpp"
+#include "constant_iterator.hpp"
 #include "bspline_queries.hpp"
 #include <limits>
+#include "point.hpp"
 namespace geom {
 
 //{{{ -- check is periodic

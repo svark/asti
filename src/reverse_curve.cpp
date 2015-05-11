@@ -27,8 +27,9 @@ SplineType ops::reverse_curve(const SplineType& spl)
     typedef spline_traits<SplineType> str;
     return make_bspline(std::move(new_cpts),
                         std::move(new_knots),
-                        spl.degree(), str::ptag(),
-                        str::rtag()
+                        spl.degree(),
+                        typename str::ptag(),
+                        typename str::rtag()
         ).translate(spl.base_point());
 }
 

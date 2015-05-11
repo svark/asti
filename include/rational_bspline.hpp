@@ -53,6 +53,10 @@ public:
     typedef typename get_traits_type_from_tags < PTag, polynomial_tag,
                                                  typename inc_dimension < Point >::type
                                                  >::type spl_traits;
+
+    typedef typename get_traits_type_from_tags<PTag, polynomial_tag, 
+					       Point>::type ldim_spl_traits;
+
     typedef typename spl_traits::spline_type spl_t;
     enum {dimension =  spl_t::dimension  - 1};
     typedef Point point_t;
@@ -60,7 +64,7 @@ public:
     typedef typename spl_t::point_t pointw_t;
     typedef typename spl_t::vector_t vectorw_t;
 
-    typedef decltype(spl_t::rebound_type<point_t>()) ldim_spl_t;
+    typedef typename ldim_spl_traits::spline_type ldim_spl_t;
     typedef typename ldim_spl_t::vcpts_t vcpts_t;
     typedef typename ldim_spl_t::vector_t vector_t;
 

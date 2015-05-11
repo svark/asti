@@ -6,16 +6,17 @@
 
 namespace geom {
 
-template<int dim, class PointContT, class WeightsT>
-std::vector<typename inc_dimension < pt_t<dim> >::type,
-            typename point_dim<typename inc_dimension < pt_t<dim> >::type >::alloc_t>
-interleave(const PointContT & ps,
+template<class PointContT, class WeightsT>
+auto interleave(const PointContT & ps,
            const WeightsT & ws)
+  -> std::vector<typename inc_dimension < RAWTYPE(ps[0]) >::type,
+		 typename point_dim<typename inc_dimension < RAWTYPE(ps[0]) >::type >::alloc_t>
 {
-    typedef typename inc_dimension < pt_t<dim> >::type pointw_t;
+    typedef typename inc_dimension < RAWTYPE(ps[0]) >::type pointw_t;
     std::vector<pointw_t, typename point_dim<pointw_t>::alloc_t > pws;
     pws.reserve(ps.size());
     auto witer = std::begin(ws);
+    enum {dim = point_dim<pointw_t>::dimension };
     for(const auto &p: ps)
     {
         pointw_t pw(p,1.0);
@@ -30,26 +31,26 @@ interleave(const PointContT & ps,
 }
 
 template <class CptsT, class WeightsT>
-rational_bspline<RAWTYPE(pts[0]), periodic_tag>
+auto
 make_periodic_rbspline(const CptsT & pts,
                        const WeightsT & weights,
                        std::vector<double> ks,
-                       int degree_)
+                       int degree_) -> rational_bspline<RAWTYPE(pts[0]), periodic_tag>
 {
     return make_rbspline(make_periodic_bspline ( spline_wrap_t(),
-                         std::move(interleave<dimension>(pts, weights) ),
+                         std::move(interleave(pts, weights) ),
                          std::move(ks), degree_));
 }
 
 template <class CptsT, class WeightsT>
-rational_bspline<RAWTYPE(pts[0]), regular_tag>
+auto
 make_rbspline(const CptsT & pts,
               const WeightsT & weights,
               std::vector<double> ks,
-              int degree_)
+              int degree_) -> rational_bspline<RAWTYPE(pts[0]), regular_tag>
 {
     return make_rbspline(make_bspline (
-                         std::move(interleave<dimension>(pts, weights) ),
+                         std::move(interleave(pts, weights) ),
                          std::move(ks), degree_));
 }
 

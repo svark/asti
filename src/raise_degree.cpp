@@ -30,7 +30,7 @@ namespace impl
     size_t num_new_cpts = num_new_knots - p - 1;
 
     using util::skip_ith_iter;
-    SplineType::cpts_t new_cpts;
+    typename SplineType::cpts_t new_cpts;
     new_cpts.reserve(num_new_cpts);
     for(size_t i = 0; i < num_new_cpts; ++i)  {
       vector_t cv(0.0);
@@ -55,7 +55,7 @@ namespace impl
 template <class SplineType>
 SplineType ops::raise_degree(const SplineType& spl)
 {
-  return impl::raise_degree_helper(spl, spline_traits<SplineType>::rtag());
+  return impl::raise_degree_helper(spl, typename spline_traits<SplineType>::rtag());
 }
 
 //}}}

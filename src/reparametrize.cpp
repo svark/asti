@@ -1,3 +1,4 @@
+#include "point.hpp"
 #include "reparametrize.hpp"
 #include "tol.hpp"
 #include "geom_exception.hpp"
@@ -34,7 +35,8 @@ SplineType ops::reparametrize(const SplineType& spl,
     return make_bspline(std::move(cpts_t(spl.control_points())),
                         std::move(new_knots),
                         spl.degree(),
-                        str::ptag(), str::rtag())
+                        typename str::ptag(), 
+                        typename str::rtag())
       .translate(spl.base_point());
 }
 

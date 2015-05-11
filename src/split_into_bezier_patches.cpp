@@ -33,7 +33,7 @@ ops::split_into_bezier_patches(const SplineType &spl)
     {
         double u = newts[j];
         patches.push_back(clamp_at_right(u, s));
-        s.swap(clamp_at_left(u, s));
+        clamp_at_left(u, s).swap(s);
     }
     patches.push_back(s);
     return patches;

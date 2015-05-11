@@ -21,7 +21,7 @@ namespace geom{
 
         point_t eval(double u) const
         {
-            return center + dir * u;
+            return start + dir * u;
         }
         point_t start_pt() const { return start; }
         vector_t direction() const { return dir ;};
@@ -52,10 +52,10 @@ namespace geom{
         {
         }
 
-        line_seg(line<point_t> l,
+        line_seg(line<point_t> l_,
                  double a_,
                  double b_)
-            :l(p1,normalize(p2-p1)),a(a_),b(b_)
+	     :l(l_),a(a_),b(b_)
         {
         }
 
@@ -64,7 +64,7 @@ namespace geom{
 
         // return the parameter range in which this segment lies
         std::pair<double,double> param_range() const {
-            return std::pair(a,b);
+            return std::make_pair(a,b);
         }
 
         line<point_t> getLine() const { return l;}
@@ -80,7 +80,7 @@ namespace geom{
                   const Point& p2
                  )
     {
-        return line_seg<point_t>(p1, p2);
+        return line_seg<Point>(p1, p2);
     }
 
 //.  ./media/intersect_lines1.png

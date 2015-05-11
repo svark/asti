@@ -1,5 +1,6 @@
 #include "box_compute.hpp"
 #include "circle.hpp"
+#include "point.hpp"
 namespace geom {
 
 template <class SplineType>
@@ -33,7 +34,7 @@ ops::compute_box(const circle<Point> &c)
         if(tol::eq(len(ext_vec), 0))
             continue;
 
-        auto v = normalize(vector_t(ext_vec)) * c.getRadius();
+        auto v = c.getRadius() * normalize(vector_t(ext_vec));
         b0 += (c.getCenter() + v);
         b0 += (c.getCenter() - v);
     }

@@ -10,6 +10,7 @@
 #include "util.hpp"
 #include <utility>
 #include <memory>
+#include "point.hpp"
 #include "skip_idx_iter.hpp"
 #include "transformed_back_inserter.hpp"
 //}}}

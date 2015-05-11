@@ -8,8 +8,8 @@ namespace geom {
         extern box<typename SplineType::point_t>
         compute_box(const SplineType &spl);
 
-		template <class Point>
-        extern box<typename Point>
+	template <class Point>
+        extern box<Point>
         compute_box(const circle<Point> &spl);
     }
 }

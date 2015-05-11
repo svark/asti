@@ -1,7 +1,8 @@
 #ifndef ASTI_CIRCLE_HPP
 #define ASTI_CIRCLE_HPP
 #include "rational_bspline_cons.hpp"
-
+#include "point.hpp"
+#include "geom_exception.hpp"
 /*
 
  */
@@ -12,7 +13,7 @@ struct circle
 {
     enum {dim = point_dim<Point>::dimension};
     typedef Point point_t;
-    typedef decltype(make_vec<point_t>(point_t())) vector_t;
+    typedef decltype(make_vec(point_t())) vector_t;
 
     template<class PointU>
     struct allow_ydir_if_dim_3
@@ -25,7 +26,7 @@ struct circle
     struct allow_if_dim_2
     {
         typename std::enable_if< point_dim<PointU>::dimension == 2
-                                 && dim ==2, int>::type type;
+                                 && dim ==2, vector2d_t const &>::type type;
     };
 
     template <class PointU>
@@ -43,7 +44,7 @@ struct circle
     template <class PointU>
     circle(const PointU& center_,
            const PointU& point_,
-           typename  allow_if_dim_2 < PointU >::type = 0 )
+           typename  allow_if_dim_2 < PointU >::type)
         :center(center_), start_pt(point_)
     {
         auto x = start_pt - center;
@@ -55,11 +56,11 @@ struct circle
                       const point_t& p)
     {
         auto x = normalize(c.start_pt - c.center);
-        auto y = normalize(ydir);
+        auto y = normalize(c.ydir);
 
         auto v = (p - c.center);
 
-        if( sqlen(v) < eps*eps)
+        if( sqlen(v) < tol::sqresabs)
             throw geom_exception(point_at_axis_error);
 
         return atan2(dot(v,y) *y , dot(v,x) * x);
@@ -72,14 +73,14 @@ struct circle
                       PointIter end, ParamIter out)
     {
         auto x = normalize(c.start_pt - c.center);
-        auto y = normalize(ydir);
+        auto y = normalize(c.ydir);
 
         for( ;ps!=end; ++ps, ++out ) {
 
             auto p =*ps;
             auto v = (p - c.center);
 
-            if( sqlen(v) < eps*eps)
+            if( sqlen(v) < tol::sqresabs)
                 throw geom_exception(point_at_axis_error);
 
             *out =  atan2(dot(v,y) *y , dot(v,x) * x);
@@ -98,8 +99,10 @@ struct circle
     {
         auto x = (start_pt - center);
         auto y = ydir;
-        for( ;us!=end;++us,++out)
-            *out = center + x * cos(u) + y * sin(u);
+        for( ;us!=end;++us,++out) {
+           auto u = *us;
+           *out = center + x * cos(u) + y * sin(u);
+	}
     }
 
     vector_t tangent(double u) const
@@ -162,9 +165,9 @@ make_circle(const Point& p1,
     auto v3 = p3 - p1;
     double lv3 = sqlen(v3);
 
-    double d1 = sqlen( cross( v1, v2) );
-    center = dot(v1 , -v3) / d*d;
-    double lens[] ={lv1, lv2, lv3};
+    double d = sqlen( cross( v1, v2) );
+    center = dot(v1, -v3) / d*d;
+    double lens[] = {lv1, lv2, lv3};
     auto vs[] = {v1,v2,v3};
 
     uint idx = std::max_element(lens,lens+3) - lens;
@@ -175,7 +178,7 @@ make_circle(const Point& p1,
 
     point_t pts[] = {p1,p2,p3};
     std::rotate(pts, pts + (idx + 1)%3, pts + 3);
-    auto normal = cross(v1,v2);
+    auto normal  = cross(v1,v2);
     double denom = sqlen(normal);
     if(denom < eps*eps )
         throw geom_exception(circle_too_small);
@@ -183,8 +186,9 @@ make_circle(const Point& p1,
     double alpha = lv2 * dot(v1,-v3) *0.5 / ( denom );
     double beta  = lv3 * dot(-v1,v2) *0.5 / ( denom );
 
-    return circle<point_t>(lerp(alpha,beta,pts[0],pts[1],pts[2]),
-                            pts[0], cv/(-sqrt(denom)) );
+    auto cp = lerp(alpha,beta,pts[0],pts[1],pts[2]);
+    auto yd = cross(normal,(pts[0] - cp))/len(normal);
+    return circle<point_t>(cp, pts[0], yd);
 }
 
 template <class Point>
@@ -194,9 +198,9 @@ to_rational(const circle<Point>& circ)
     auto start_pt =  circ.getStart();
     auto center =  circ.getCenter();
     auto x = (start_pt - center);
-    auto y = ydir;
+    auto y = cross(circ.getPlaneNormal(), x );
 
-    double radius =  c.getRadius();
+    double radius =  circ.getRadius();
     auto a = start_pt + y * 2 * radius  ;
     auto c = start_pt - y * radius +  x * 2 * cos(M_PI/3) * radius;
     auto b = center -  y * radius  - x * 2 * cos(M_PI/3) * radius;
@@ -204,8 +208,8 @@ to_rational(const circle<Point>& circ)
     auto q = lerp(0.5,a,b);
     auto r = lerp(0.5,b,c);
 
-    double weights[] = {1,0.5,1,0.5,1,0.5}
-    point_t cpts[] = {p,  a   ,q    ,b    ,r        ,c/*, p*/};
+    double weights[] = {1,0.5,1,0.5,1,0.5};
+    Point cpts[] = {p,  a   ,q    ,b    ,r        ,c/*, p*/};
     double ts[]      = {0,1/6, 1/3,1/3, 0.5, 2/3, 2/3,5/6, 1};
     return make_periodic_rbspline(cpts,weights,ts,2);
 }

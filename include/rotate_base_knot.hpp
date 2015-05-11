@@ -10,7 +10,7 @@ rotate_base_knot(const periodic_bspline < Point >& pspl, size_t nu)
     int p = pspl.degree();
     auto const & cpts = pspl.control_points();
     auto const &t = pspl.knots();
-    periodic_bspline < Point >::cpts_t
+    typename periodic_bspline < Point >::cpts_t
         cpts_unwrapped(cpts.cbegin() + p, cpts.cend());
     std::rotate(cpts_unwrapped.begin(),
                 cpts_unwrapped.begin() + nu - p,

@@ -38,8 +38,13 @@ rmat_base<KnotIter>::der_n(size_t idx,
     if(idx < nu - size || idx > nu )
         return 0.0;
     std::unique_ptr<double[]> cache(new double[size+1]);
+#ifdef WIN32
     std::fill_n(stdext::make_checked_array_iterator(cache.get(),size+1),
                 size + 1, 0.0);
+#else 
+    std::fill_n(cache.get(),
+		size + 1, 0.0);
+#endif
 
     cache[idx - nu + size] = 1;
     spline_compute(nu, u, derOrder, cache.get());

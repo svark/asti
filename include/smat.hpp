@@ -6,7 +6,9 @@
 #include <algorithm>
 #include "rmat.hpp"
 #include "bspline_x_cons.hpp"
-
+#ifndef NDEBUG
+#include "reverse_curve.hpp"
+#endif
 //#include "util.hpp" // for constant_iterator
 #include "constant_iterator.hpp"
 namespace geom {
@@ -119,8 +121,8 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
 #ifndef NDEBUG
     std::for_each(us, us + (deg + 1), [&a](double u){ assert(u <= a);});
 #endif
-    typedef SplineCurve::cpts_t cpts_t;
-    typedef SplineCurve::knots_t knots_t;
+    typedef typename SplineCurve::cpts_t cpts_t;
+    typedef typename SplineCurve::knots_t knots_t;
     double b = t[nu+1];
     cpts_t newcpts(cpts.cbegin() + (nu - deg), cpts.cend());
     // get control points wrt bernstein basis
@@ -134,8 +136,8 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
     typedef spline_traits<SplineCurve> str;
     return make_bspline 
       (std::move(newcpts), std::move(ks), deg,
-       str::ptag(),
-       str::rtag())
+       typename str::ptag(),
+       typename str::rtag())
         .translate(crv.base_point());
 }
 
@@ -157,8 +159,8 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     std::for_each(us, us + (deg + 1), [&b](double u){ assert(u >= b);});
 #endif
 
-    typedef SplineCurve::cpts_t cpts_t;
-    typedef SplineCurve::knots_t knots_t;
+    typedef typename SplineCurve::cpts_t cpts_t;
+    typedef typename SplineCurve::knots_t knots_t;
     cpts_t newcpts(cpts.cbegin(), cpts.cbegin() + (nu + 1));
     // get deg + 1, control points wrt bernstein basis
     smat(a, b, t, deg).seval(newcpts.begin() + (nu - deg));
@@ -170,8 +172,8 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     typedef spline_traits<SplineCurve> str;
     return make_bspline (std::move(newcpts),
                          std::move(ks), deg,
-                         str::ptag(),
-                         str::rtag())
+                         typename str::ptag(),
+                         typename str::rtag())
         .translate(crv.base_point());
 }
 
@@ -239,10 +241,11 @@ SplineCurve clamp_end(const SplineCurve & crv)
 #ifndef NDEBUG
 // for testing
 // yaim -> yet another impl
+
 template <class SplineCurve>
 SplineCurve clamp_at_right_yaim(double b, const SplineCurve & crv)
 {
-    typedef SplineCurve::cpts_t cpts_t;
+    typedef typename SplineCurve::cpts_t cpts_t;
     SplineCurve rcrv(ops::reverse_curve(crv));
     return ops::reverse_curve(clamp_at_left(-b, rcrv));
 }
@@ -257,7 +260,7 @@ SplineCurve clamp_end_yaim(const SplineCurve & crv)
 template <class SplineCurve>
 SplineCurve clamp_at_left_yaim(double a, const SplineCurve & crv)
 {
-    typedef SplineCurve::cpts_t cpts_t;
+    typedef typename SplineCurve::cpts_t cpts_t;
     SplineCurve rcrv(ops::reverse_curve(crv));
     return ops::reverse_curve(clamp_at_right(-a, rcrv));
 }

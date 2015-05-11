@@ -371,24 +371,24 @@ point_t operator-(const point_t & pt,
 template <int dim>
 vec_t<dim> operator / ( vec_t<dim> &vec, double s)
 {
-    return vec.v*(1/s);
+  return vec_t<dim>(vec.v*(1/s));
 }
 
 template <int dim>
-vec_t<dim> operator * ( vec_t<dim> &vec, double s)
+vec_t<dim> operator * ( const vec_t<dim> &vec, double s)
 {
-    return vec.v * s;
+  return vec_t<dim>( vec.v * s );
 }
 template <int dim>
-vec_t<dim> operator / ( double s, vec_t<dim> &vec )
+vec_t<dim> operator / (const vec_t<dim> &vec , double s)
 {
-    return vec.v*(1/s);
+  return vec_t<dim>(vec.v*(1/s));
 }
 
 template <int dim>
-vec_t<dim> operator * ( double s, vec_t<dim> &vec)
+vec_t<dim> operator * ( double s, const vec_t<dim> &vec)
 {
-    return vec.v * s;
+  return  vec_t<dim>(vec.v * s);
 }
 
 template<typename PointVec, int dim>
@@ -774,7 +774,9 @@ void swap( geom::vec_t<dim>& v1, geom::vec_t<dim>&v2)
 {
     v1.v.swap(v2.v);
 }
+#ifdef WIN32
 inline double fmin(double a, double b ) { return a < b? a: b;}
 inline double fmax(double a, double b ) { return b < a? a: b;}
+#endif
 }
 #endif//_POINT_HPP

@@ -2,11 +2,13 @@
 #ifndef ASTI_RMAT_HPP
 #define ASTI_RMAT_HPP
 #include <vector>
+#include <memory>
 #include "rmat_explicit.hpp"
 #include <Eigen/Dense>
-//#include "point.hpp"
+#include "point.hpp"
 #include "geom_exception.hpp"
 #include "type_utils.hpp"
+
 namespace geom {
 
 template <class KnotIter>
@@ -137,8 +139,8 @@ struct rmat_base {
     // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
     std::vector<double> basis(double u);
 
-    template <class KnotIter, class PointIter>
-    void spline_compute(KnotIter us, size_t nu, //location of us[0] in
+    template <class KnotIterU, class PointIter>
+    void spline_compute(KnotIterU us, size_t nu, //location of us[0] in
                                                 //knot seq t
                         PointIter cache) const;
 

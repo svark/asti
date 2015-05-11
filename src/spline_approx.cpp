@@ -202,7 +202,7 @@ find_next_rootc(geom::bspline<double>& spl,
         if( fabs(spl.eval(root)) < tol)
             return std::make_pair(root, true);
 
-        spl.swap(ops::insert_knot(spl, root));
+        ops::insert_knot(spl, root).swap(spl);
     }
     return std::make_pair(prev, false);
 }

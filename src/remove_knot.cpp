@@ -10,8 +10,9 @@ SplineCurve
 ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
 {
     SplineCurve crv(crv_);
-    while(crv.degree() < 3)
-        crv.swap(raise_degree(crv));
+    while(crv.degree() < 3) {
+        raise_degree(crv).swap(crv);
+    }
     auto const &  ts =  crv.knots();
     std::vector<double> uts;
     uts.reserve(ts.size());
@@ -36,7 +37,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     size_t nu = rm.locate_nu(u);
     auto const & cpts = crv.control_points();
     auto const & t = crv.knots();
-    SplineCurve::cpts_t newcpts(cpts);
+    typename SplineCurve::cpts_t newcpts(cpts);
     typedef RAWTYPE(cpts[0]) point_t;
     auto l =  (t[nu + 1] - t[nu - 3]) * make_vec(cpts[nu - 1])  -
         (t[nu + 1] - t[nu]) * make_vec( cpts[nu - 2])  ;
@@ -62,7 +63,8 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     typedef spline_traits<SplineCurve> str;
     return make_bspline(std::move(newcpts),
                         std::move(t), crv.degree() ,
-                        str::ptag(), str::rtag());
+                        typename str::ptag(), 
+			typename str::rtag());
 }
 
 

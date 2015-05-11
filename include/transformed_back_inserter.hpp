@@ -16,7 +16,7 @@ struct transformed_back_insert_iterator : std::back_insert_iterator<ContT>
     transformed_back_insert_iterator& operator=(const Arg& v)
     {
         // transform and append to container
-        container->push_back(_f(v));
+        std::back_insert_iterator<ContT>::container->push_back(_f(v));
         return *this;
     }
     transformed_back_insert_iterator& operator*()
@@ -57,13 +57,14 @@ struct iterator_traits<util::transformed_back_insert_iterator<ContT, Ret, Arg>>:
 };
 
 // msvc checked iterator
+#ifdef WIN32
 template<class ContT, class Ret, class Arg>
 struct _Is_checked_helper<util::transformed_back_insert_iterator<ContT,
                                                                  Ret, Arg> >
     : public true_type
 {   // mark back_insert_n_iterator as checked
 };
-
+#endif
 }
 
 #endif //TRANSFORMED_BACK_INSERTER_HPP

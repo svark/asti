@@ -11,8 +11,7 @@ double
 arclength(Curve & spl, double t0 = 0.0, double t1 = 1.0)
 {
     auto speed = [&spl](double x)->double{
-       auto &v = spl.eval_derivative(1, x);
-	   return len(v);
+       return len(spl.eval_derivative(1, x));
     };
     double lastlen = 0;
     double arclen = integrate1d(speed,

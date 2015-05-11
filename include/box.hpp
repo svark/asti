@@ -3,6 +3,7 @@
 #define ASTI_BOX_HPP
 #include <math.h>
 #include <limits>
+#include "point_dim.hpp"
 #include "point.hpp"
 
 namespace geom {
@@ -36,9 +37,9 @@ namespace geom {
     {
         enum { dim = point_dim < Point >::dimension };
         for (int i = 0; i < dim; ++i) {
-            if (pt[d] < lo[d] - tol)
+            if (p[i] < b.lo[i] - tol)
                 return false;
-            if (pt[d] > hi[d] + tol)
+            if (p[i] > b.hi[i] + tol)
                 return false;
         }
         return true;
@@ -48,7 +49,7 @@ namespace geom {
     Point
     center(const box<Point> &b)
     {
-        return lerp(lo,hi);
+        return lerp(b.lo,b.hi);
     }
 
     template <class Point>

@@ -35,8 +35,8 @@ ops::insert_knots(const SplineType& crv,
                         std::move(new_cpts),
                         std::move(taus),
                         crv.degree(),
-                        spline_traits<SplineType>::ptag(),
-                        spline_traits<SplineType>::rtag())
+                        typename spline_traits<SplineType>::ptag(),
+                        typename spline_traits<SplineType>::rtag())
       .translate(crv.base_point());
 }
 
@@ -56,7 +56,7 @@ insert_knot_impl( const SplineType &crv,
     if( !( u <_in_> crv.param_range()) )
         throw geom_exception(knot_not_in_range_error);
 
-    SplineType::cpts_t newcpts;
+    typename SplineType::cpts_t newcpts;
     newcpts.reserve(cpts.size() + 1);
     std::copy(cpts.cbegin(), cpts.cbegin() + nu - p + 1,
               std::back_inserter(newcpts));
@@ -67,15 +67,15 @@ insert_knot_impl( const SplineType &crv,
     }
     std::copy(cpts.cbegin() + nu, cpts.cend(),
               std::back_inserter(newcpts));
-    SplineType::knots_t newts;
+    typename SplineType::knots_t newts;
     newts.reserve(t.size() + 1);
     newts.assign(t.cbegin(),t.cbegin() + nu + 1);
     newts.push_back(u);
     newts.insert(newts.end(), t.cbegin() + nu + 1, t.cend());
     return make_bspline (
                          std::move(newcpts),std::move(newts),p,
-                         spline_traits<SplineType>::ptag(),
-                         spline_traits<SplineType>::rtag())
+                         typename spline_traits<SplineType>::ptag(),
+                         typename spline_traits<SplineType>::rtag())
       .translate(crv.base_point());
 }
 
@@ -127,7 +127,7 @@ ops::insert_knot(const SplineType& crv,
                  double u)
 {
     return insert_knot_impl(crv,u,
-                            spline_traits<SplineType>::ptag());
+                            typename spline_traits<SplineType>::ptag());
 }
 
 //}}}
