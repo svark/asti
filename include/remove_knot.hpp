@@ -8,10 +8,13 @@ template <typename SplineCurve>
 extern SplineCurve fair_by_knot_removal(const SplineCurve & crv,
                                         double tol);
 
-template <typename SplineCurve>
-extern rational_bspline < SplineCurve >
-fair_by_knot_removal(const rational_bspline < SplineCurve > & crv,
-                     double tol);
+template <typename Point,class PTag>
+rational_bspline<Point, PTag >
+fair_by_knot_removal(const rational_bspline < Point, PTag > & crv,
+                     double tol)
+{
+  return make_rbspline( fair_by_knot_removal(crv.spline(), tol));
+}
 }
 }
 #endif // ASTI_REMOVE_KNOT

@@ -131,8 +131,11 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
     // 'a'
     smat(a, b, ks, deg).reval(newcpts.begin());
 
-    return make_bsplinex < SplineCurve >
-        (std::move(newcpts), std::move(ks), deg)
+    typedef spline_traits<SplineCurve> str;
+    return make_bspline 
+      (std::move(newcpts), std::move(ks), deg,
+       str::ptag(),
+       str::rtag())
         .translate(crv.base_point());
 }
 
@@ -164,8 +167,11 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     std::copy_backward(us, us + (deg + 1), ks.end());
     smat(a, b, ks, deg).reval(newcpts.begin() + (nu - deg));
 
-    return make_bsplinex < SplineCurve > (std::move(newcpts),
-                                          std::move(ks), deg)
+    typedef spline_traits<SplineCurve> str;
+    return make_bspline (std::move(newcpts),
+                         std::move(ks), deg,
+                         str::ptag(),
+                         str::rtag())
         .translate(crv.base_point());
 }
 

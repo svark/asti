@@ -15,5 +15,6 @@ template <class SplineType>
 extern double
 foot_param(const SplineType &spl,
            const typename SplineType::point_t& p);
+
 }
 }

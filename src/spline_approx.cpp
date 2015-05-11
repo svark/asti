@@ -211,7 +211,7 @@ find_next_rootc(geom::bspline<double>& spl,
 template <class SplineType>
 double
 ops::foot_param(const SplineType &spl,
-                        const typename SplineType::point_t& p)
+                const typename SplineType::point_t& p)
 {
     auto pr = spl.param_range();
     double b = pr.first;
@@ -294,12 +294,12 @@ eval:(setq spltypes (list "bspline<double>"
                            "periodic_bspline<point2d_t>"
                            "periodic_bspline<point3d_t>"
                            "periodic_bspline<point4d_t>"
-                           "rational_bspline < bspline<point2d_t>>"
-                           "rational_bspline < bspline<point3d_t>>"
-                           "rational_bspline < bspline<point4d_t>>"
-                           "rational_bspline < periodic_bspline<point2d_t>>"
-                           "rational_bspline < periodic_bspline<point3d_t>>"
-                           "rational_bspline < periodic_bspline<point4d_t>>"
+                           "rational_bspline < point2d_t,regular_tag>"
+                           "rational_bspline < point3d_t,regular_tag>"
+                           "rational_bspline < double, regular_tag>"
+                           "rational_bspline < point2d_t,periodic_tag>"
+                           "rational_bspline < point3d_t,periodic_tag>"
+                           "rational_bspline < double,periodic_tag>"
                            ))
 eval:(instantiate-templates "spline_approx" "ops" (list ) (product methods spltypes) )
 End:

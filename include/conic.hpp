@@ -90,7 +90,7 @@ reverse_curve(conic_arc < Point > arc)
 }
 
 template <class Point>
-rational_bspline< bspline<typename inc_dimension<Point>::type> >
+rational_bspline< typename inc_dimension<Point>::type, regular_tag >
 make_rbspline(const conic_arc<Point> &arc) {
 
     auto w = arc.weight(1);

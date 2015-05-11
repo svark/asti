@@ -85,7 +85,7 @@ struct circle
             *out =  atan2(dot(v,y) *y , dot(v,x) * x);
         }
     }
-   //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "circle to nurbs")
+   //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "eval at param")
     point_t eval(double u) const
     {
         auto x = (start_pt - center);
@@ -188,7 +188,7 @@ make_circle(const Point& p1,
 }
 
 template <class Point>
-static rational_bspline< periodic_bspline<Point> >
+static rational_bspline< Point, periodic_tag >
 to_rational(const circle<Point>& circ)
 {
     auto start_pt =  circ.getStart();

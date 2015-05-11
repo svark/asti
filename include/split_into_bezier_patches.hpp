@@ -10,10 +10,10 @@ template <class SplineType>
     extern std::list<SplineType,Eigen::aligned_allocator<SplineType> >
     split_into_bezier_patches(const SplineType &spl);
 
-template <class SplineType>
+  /*template <class SplineType>
 extern std::list< rational_bspline < SplineType>,
            Eigen::aligned_allocator<rational_bspline < SplineType >>>
-split_into_bezier_patches(const rational_bspline < SplineType > &spl);
+           split_into_bezier_patches(const rational_bspline < SplineType > &spl); */
 
 }
 }

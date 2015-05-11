@@ -17,17 +17,18 @@ extern bspline<Point>
 split_periodic_curve(const periodic_bspline<Point>& pspl, double u);
 
 template <class Point>
-rational_bspline<bspline<Point> >
-split_periodic_curve(const rational_bspline<periodic_bspline<Point> > & pspl, double u)
+rational_bspline<Point, regular_tag >
+split_periodic_curve(const rational_bspline<Point, periodic_tag > & pspl, double u)
 {
    return make_rbspline( split_periodic_curve( pspl.spline(), u ) );
 }
 
 template <class Point>
-std::pair<rational_bspline<bspline<Point> >, rational_bspline<bspline<Point> > >
-split_open_curve(const rational_bspline<bspline<Point> > & pspl, double u)
+std::pair<rational_bspline<Point, regular_tag >, rational_bspline<Point, regular_tag> >
+split_open_curve(const rational_bspline<Point, regular_tag > & pspl, double u)
 {
-   return make_rbspline( split_open_curve( pspl.spline(), u ) );
+  auto& pr = split_open_curve( pspl.spline(), u );
+  return std::make_pair(make_rbspline(pr.first),make_rbspline(pr.second));
 }
 
 }

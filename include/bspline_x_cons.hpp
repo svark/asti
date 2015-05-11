@@ -7,61 +7,60 @@
 
 namespace geom {
 
-template<class CptsT, class KnotsT>
-typename get_traits_type_from_tags < regular_tag,  polynomial_tag >::type::spline_type
-make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             regular_tag, polynomial_tag)
-{
-    return geom::make_bspline(std::forward < CptsT > (pts),
-                              std::forward < KnotsT > (ks), deg);
-}
+// to remove when you have c++14
+#define MAKE_BSPLINE  make_bspline(std::forward < CptsT > (pts),        \
+    std::forward < KnotsT > (ks), deg) 
+
+#define MAKE_PERIODIC_BSPLINE   make_periodic_bspline(std::forward<CptsT> (pts), \
+                                                      std::forward<KnotsT> (ks), \
+                                                      deg)
+#define MAKE_RBSPLINE make_rbspline(std::move(make_bspline(pts,ks,deg,PTag(),polynomial_tag())))
 
 template<class CptsT, class KnotsT>
-typename get_traits_type_from_tags < periodic_tag,  polynomial_tag >::type::spline_type
+auto
 make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             periodic_tag, polynomial_tag)
+             regular_tag, polynomial_tag) ->
+  RAWTYPE(MAKE_BSPLINE)
 {
-    return geom::make_periodic_bspline(std::forward < CptsT > (pts),
-                                       std::forward < KnotsT > (ks),
-                                       deg);
-}
-
-template< class CptsT, class KnotsT>
-typename get_traits_type_from_tags < regular_tag,  rational_tag >::type::spline_type
-make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             regular_tag, rational_tag)
-{
-    return make_rbspline(
-        geom::make_bspline(std::forward < CptsT > (pts),
-                           std::forward < KnotsT > (ks), deg));
+  return MAKE_BSPLINE;
 }
 
 template<class CptsT, class KnotsT>
-typename get_traits_type_from_tags < periodic_tag,  rational_tag >::type::spline_type
+auto
 make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             periodic_tag, rational_tag)
+             periodic_tag, polynomial_tag) ->
+  RAWTYPE(MAKE_PERIODIC_BSPLINE)
 {
-    return make_rbspline(
-        geom::make_periodic_bspline(std::forward < CptsT > (pts),
-                                    std::forward < KnotsT > (ks), deg));
+    return MAKE_PERIODIC_BSPLINE;
 }
 
-template<class CptsIterT,
+template<class CptsT, class KnotsT,class PTag>
+auto
+make_bspline(CptsT && pts, KnotsT && ks, int deg,
+             PTag , rational_tag) ->
+  RAWTYPE(MAKE_RBSPLINE)
+{
+  return MAKE_RBSPLINE;
+}
+
+/*template<class CptsIterT,
          class KnotsIterT,
          class PTag,
          class RTag>
-typename get_traits_type_from_tags <PTag, RTag>::type::spline_type
+auto
 make_bspline(CptsIterT  ptsf,
              CptsIterT  ptsl,
              KnotsIterT ksf,
              KnotsIterT ksl,
              int deg,
-             PTag, RTag)
+             PTag, RTag) -> RAWTYPE( make_bspline(mkstdvec(ptsf, ptsl),
+                                                   mkstdvec(ksf, ksl),
+                                                   deg, PTag(), RTag()))
 {
     return make_bspline(mkstdvec(ptsf, ptsl),
                         mkstdvec(ksf, ksl),
                         deg, PTag(), RTag());
-}
+                        }*/
 
 }
 #endif // ASTI_BSPLINE_X_CONS

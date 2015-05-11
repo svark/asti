@@ -30,7 +30,7 @@ interleave(const PointContT & ps,
 }
 
 template <class CptsT, class WeightsT>
-rational_bspline<periodic_bspline <RAWTYPE(pts[0])>>
+rational_bspline<RAWTYPE(pts[0]), periodic_tag>
 make_periodic_rbspline(const CptsT & pts,
                        const WeightsT & weights,
                        std::vector<double> ks,
@@ -42,7 +42,7 @@ make_periodic_rbspline(const CptsT & pts,
 }
 
 template <class CptsT, class WeightsT>
-rational_bspline<bspline<RAWTYPE(pts[0])>>
+rational_bspline<RAWTYPE(pts[0]), regular_tag>
 make_rbspline(const CptsT & pts,
               const WeightsT & weights,
               std::vector<double> ks,

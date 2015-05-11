@@ -24,22 +24,12 @@ SplineType ops::reverse_curve(const SplineType& spl)
                    new_knots.begin(),
                    std::negate<double>() );
 
-    return make_bsplinex<SplineType>(std::move(new_cpts),
-                                     std::move(new_knots),
-                                     spl.degree()
+    typedef spline_traits<SplineType> str;
+    return make_bspline(std::move(new_cpts),
+                        std::move(new_knots),
+                        spl.degree(), str::ptag(),
+                        str::rtag()
         ).translate(spl.base_point());
-}
-
-template <class SplineType>
-SplineType& ops::inplace_reverse_curve(SplineType& spl)
-{
-    std::reverse(spl.control_points().begin(), spl.control_points().end());
-    std::reverse(spl.knots().begin(), spl.knots().end());
-
-    std::transform(spl.knots().begin(), spl.knots()().end(),
-                   spl.knots().begin(),
-                   std::negate());
-    return spl;
 }
 
 //}}}
@@ -61,12 +51,12 @@ SplineType& ops::inplace_reverse_curve(SplineType& spl)
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
-  "rational_bspline<bspline<point2d_t>>"
-  "rational_bspline<bspline<point3d_t>>"
-  "rational_bspline<bspline<point4d_t>>"
-  "rational_bspline<periodic_bspline<point2d_t>>"
-  "rational_bspline<periodic_bspline<point3d_t>>"
-  "rational_bspline<periodic_bspline<point4d_t>>"
+  "rational_bspline < point2d_t,regular_tag>"
+  "rational_bspline < point3d_t,regular_tag>"
+  "rational_bspline < double, regular_tag>"
+  "rational_bspline < point2d_t,periodic_tag>"
+  "rational_bspline < point3d_t,periodic_tag>"
+  "rational_bspline < double,periodic_tag>"
   ))
   eval:(instantiate-templates "reverse_curve" "ops" (list )
   (product methods spltypes) )

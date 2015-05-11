@@ -17,10 +17,9 @@ TEST_CASE( "bspline arc length", "[bspline]" ) {
         for(int j = 0;j < 2; ++j) {
             cpts[i][j] =  pts[i][j];
         }
-        cpts3d[i][2] =  0;
     }
     bspline <point2d_t > spl2d (
-        geom::make_bspline(cpts, cpts + 3,
+        geom::make_bspline_arr(cpts, cpts + 3,
                            ks, ks + sizeof(ks) / sizeof(double), 2));
     SECTION("arc length test") {
         REQUIRE(arclength(spl2d, 0, 1) == Approx(1.5457504021));

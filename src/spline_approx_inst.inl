@@ -18,15 +18,3 @@ template double ops::foot_param(const periodic_bspline<point3d_t> &spl,
                         const  periodic_bspline<point3d_t>::point_t& p) ;
 template double ops::foot_param(const periodic_bspline<point4d_t> &spl,
                         const  periodic_bspline<point4d_t>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < bspline<point2d_t>> &spl,
-                        const  rational_bspline < bspline<point2d_t>>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < bspline<point3d_t>> &spl,
-                        const  rational_bspline < bspline<point3d_t>>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < bspline<point4d_t>> &spl,
-                        const  rational_bspline < bspline<point4d_t>>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < periodic_bspline<point2d_t>> &spl,
-                        const  rational_bspline < periodic_bspline<point2d_t>>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < periodic_bspline<point3d_t>> &spl,
-                        const  rational_bspline < periodic_bspline<point3d_t>>::point_t& p) ;
-template double ops::foot_param(const rational_bspline < periodic_bspline<point4d_t>> &spl,
-                        const  rational_bspline < periodic_bspline<point4d_t>>::point_t& p) ;

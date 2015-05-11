@@ -59,16 +59,10 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
         newcpts[nu] = cpts[nu];
     }
 
-    return make_bsplinex<SplineCurve>(std::move(newcpts),
-                         std::move(t), crv.degree() );
-}
-
-template <typename SplineCurve>
-rational_bspline < SplineCurve >
-ops::fair_by_knot_removal(const rational_bspline<SplineCurve> & crv,
-                     double tol)
-{
-    return make_rbspline( fair_by_knot_removal(crv.spline(), tol));
+    typedef spline_traits<SplineCurve> str;
+    return make_bspline(std::move(newcpts),
+                        std::move(t), crv.degree() ,
+                        str::ptag(), str::rtag());
 }
 
 
@@ -87,12 +81,6 @@ ops::fair_by_knot_removal(const rational_bspline<SplineCurve> & crv,
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
-  "rational_bspline < bspline<point2d_t>>"
-  "rational_bspline < bspline<point3d_t>>"
-  "rational_bspline < bspline<point4d_t>>"
-  "rational_bspline < periodic_bspline<point2d_t>>"
-  "rational_bspline < periodic_bspline<point3d_t>>"
-  "rational_bspline < periodic_bspline<point4d_t>>"
   ))
   eval:(instantiate-templates "remove_knot" "ops" (list ) (product
   methods spltypes ))

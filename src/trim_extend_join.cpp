@@ -79,8 +79,10 @@ ops::join_starts(const SplineType& spl1,
                     spl2_clamped.knots().cbegin() + (p + 1),
                     spl2_clamped.knots().cend());
 
-    return make_bsplinex < SplineType > (std::move(cpts),
-                                         std::move(newknots), p
+    typedef spline_traits<SplineType> str;
+    return make_bspline (std::move(cpts),
+                         std::move(newknots), p,
+                         str::ptag(),str::rtag()
         );
 }
 
@@ -133,7 +135,7 @@ ops::extend_curve_end(const SplineType & spl, double delta)
 template <class SplineType>
 SplineType
 ops::extend_curve_end_to_pt(const SplineType & spl,
-                                    typename SplineType::point_t const & target)
+                            typename SplineType::point_t const & target)
 {
     auto const & s = reparametrize (clamp_start(spl), 0, 1);
     auto const & t = s.knots();
@@ -162,8 +164,10 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
     typedef typename SplineType::cpts_t::value_type cpt_val_t;
     newcpts.push_back(cpt_val_t(target));
 
-    return make_bsplinex < SplineType >
-        (std::move(newcpts), std::move(newks), d);
+    typedef spline_traits<SplineType> str;
+    return make_bspline
+      (std::move(newcpts), std::move(newks), d,
+       str::ptag(), str::rtag());
 
 }
 
@@ -186,9 +190,9 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
   "bspline<point2d_t>"
   "bspline<point3d_t>"
   "bspline<point4d_t>"
-  "rational_bspline < bspline < point2d_t >>"
-  "rational_bspline < bspline < point3d_t >>"
-  "rational_bspline < bspline < point4d_t >>"
+  "rational_bspline < point2d_t,regular_tag>"
+  "rational_bspline < point3d_t,regular_tag>"
+  "rational_bspline < double, regular_tag>"
   ))
   eval:(instantiate-templates "trim_extend_join" "ops" (list )
    (product methods spltypes ))

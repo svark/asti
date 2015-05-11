@@ -2,13 +2,13 @@
 #include "tol.hpp"
 #include "geom_exception.hpp"
 #include "bspline_x_cons.hpp"
-
+#include "spline_traits.hpp"
 namespace geom {
 
 //{{{ --(@* "re-parametrise curve with a new range")
 template <class SplineType>
 SplineType ops::reparametrize(const SplineType& spl,
-                                             double t1, double t2)
+                              double t1, double t2)
 {
     typedef typename SplineType::knots_t knots_t;
     typedef typename SplineType::point_t point_t;
@@ -28,11 +28,14 @@ SplineType ops::reparametrize(const SplineType& spl,
         const double par = ( u - first_t) * scale;
         new_knots[i++] = t1 + (t2 - t1) * par;
     }
-    return make_bsplinex < SplineType > (
-          SplineType::cpts_t(spl.control_points()),
-          std::move(new_knots),
-          spl.degree()
-        ).translate(spl.base_point());
+    typedef spline_traits<SplineType> str;
+
+    typedef RAWTYPE(spl.control_points()) cpts_t;
+    return make_bspline(std::move(cpts_t(spl.control_points())),
+                        std::move(new_knots),
+                        spl.degree(),
+                        str::ptag(), str::rtag())
+      .translate(spl.base_point());
 }
 
 template <class SplineType>
@@ -62,12 +65,12 @@ SplineType ops::reparametrize_start(const SplineType& spl,
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
-  "rational_bspline < bspline<point2d_t>>"
-  "rational_bspline < bspline<point3d_t>>"
-  "rational_bspline < bspline<point4d_t>>"
-  "rational_bspline < periodic_bspline<point2d_t>>"
-  "rational_bspline < periodic_bspline<point3d_t>>"
-  "rational_bspline < periodic_bspline<point4d_t>>"
+  "rational_bspline < point2d_t,regular_tag>"
+  "rational_bspline < point3d_t,regular_tag>"
+  "rational_bspline < double, regular_tag>"
+  "rational_bspline < point2d_t,periodic_tag>"
+  "rational_bspline < point3d_t,periodic_tag>"
+  "rational_bspline < double,periodic_tag>"
   ))
   eval:(instantiate-templates "reparametrize" "ops" (list )
   (product methods spltypes ))

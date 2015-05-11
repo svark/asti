@@ -31,11 +31,13 @@ ops::insert_knots(const SplineType& crv,
     typedef RAWTYPE(cpts[0]) point_t;
     rmat<point_t> m(cpts, t, crv.degree());
     cpts_t new_cpts(m.insert_knots(taus));
-    return make_bsplinex < SplineType > (
-        std::move(new_cpts),
-        std::move(taus),
-        crv.degree())
-        .translate(crv.base_point());
+    return make_bspline(
+                        std::move(new_cpts),
+                        std::move(taus),
+                        crv.degree(),
+                        spline_traits<SplineType>::ptag(),
+                        spline_traits<SplineType>::rtag())
+      .translate(crv.base_point());
 }
 
 // ./media/boehm.png
@@ -70,9 +72,11 @@ insert_knot_impl( const SplineType &crv,
     newts.assign(t.cbegin(),t.cbegin() + nu + 1);
     newts.push_back(u);
     newts.insert(newts.end(), t.cbegin() + nu + 1, t.cend());
-    return make_bsplinex < SplineType > (
-        std::move(newcpts),std::move(newts),p
-        ).translate(crv.base_point());
+    return make_bspline (
+                         std::move(newcpts),std::move(newts),p,
+                         spline_traits<SplineType>::ptag(),
+                         spline_traits<SplineType>::rtag())
+      .translate(crv.base_point());
 }
 
 template <class SplineType>
@@ -144,6 +148,12 @@ ops::insert_knot(const SplineType& crv,
   "periodic_bspline<point2d_t>"
   "periodic_bspline<point3d_t>"
   "periodic_bspline<point4d_t>"
+  "rational_bspline < point2d_t,regular_tag>"
+  "rational_bspline < point3d_t,regular_tag>"
+  "rational_bspline < double, regular_tag>"
+  "rational_bspline < point2d_t,periodic_tag>"
+  "rational_bspline < point3d_t,periodic_tag>"
+  "rational_bspline < double,periodic_tag>"
   ))
   eval:(instantiate-templates "insert_knot" "ops" (list ) (product
   methods spltypes ))

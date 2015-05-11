@@ -1,7 +1,7 @@
 #ifndef ASTI_RAISE_DEGREE
 #define ASTI_RAISE_DEGREE
 #include "bspline_fwd.hpp"
-
+#include "rational_bspline_cons.hpp"
 namespace geom {
 namespace ops
 {
@@ -9,11 +9,6 @@ namespace ops
 template <class SplineType>
 extern SplineType
 raise_degree(const SplineType&crv);
-
-template <class SplineCurve>
-extern rational_bspline <SplineCurve>
-raise_degree(const rational_bspline<SplineCurve>
-             & crv, double u);
 
 template<class SplineCurve>
 bool

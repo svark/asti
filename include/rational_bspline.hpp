@@ -64,7 +64,6 @@ public:
     typedef typename ldim_spl_t::vcpts_t vcpts_t;
     typedef typename ldim_spl_t::vector_t vector_t;
 
-    typedef SplineType         spl_t;
 
     typedef typename spl_t::cpts_t wcpts_t;
     typedef typename spl_t::cpts_t cpts_t;
@@ -156,17 +155,18 @@ private:
 template <class WSplineType>
 struct rbspline_from_spline
 {
- typedef rational_bspline<decltype(lower_dim(typename WSplineType::point_t)),
-                 typename spline_traits < WSplineType >::ptag
-                 >   type
+  typedef typename dec_dimension<typename WSplineType::point_t>::type  point_t;
+  typedef rational_bspline<point_t,
+                           typename spline_traits < WSplineType >::ptag
+                           >  type;
 };
 
 template <class SplineType>
 typename rbspline_from_spline < SplineType >::type
 make_rbspline(SplineType&& spl)
 {
-    typedef typename rbspline_from_spline < SplineType >::type rspl_t;
-    return rspl_t(std::forward<SplineType>(spl));
+  typedef typename rbspline_from_spline < SplineType >::type rspl_t;
+  return rspl_t(std::forward<SplineType>(spl));
 }
 
 

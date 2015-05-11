@@ -14,13 +14,6 @@ template <class SplineType>
 extern  SplineType
 insert_knot(const SplineType& crv, double u);
 
-template <class SplineCurve>
-rational_bspline <SplineCurve>
-insert_knot(const rational_bspline<SplineCurve>
-            & crv, double u)
-{
-    return make_rbspline(insert_knot(crv.spline(), u));
-}
 
 template <class SplineCurve>
 bool

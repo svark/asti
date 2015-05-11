@@ -6,8 +6,8 @@ namespace ops {
 template <class SplineType>
 extern bool is_bezier(const SplineType& spl);
 
-template <class SplineType>
-bool is_bezier(const rational_bspline < SplineType > & spl)
+template <class Point,class PTag>
+bool is_bezier(const rational_bspline < Point, PTag > & spl)
 {
     return is_bezier(spl.spline());
 }
@@ -18,14 +18,14 @@ extern bool is_periodic(const SplineType & spl);
 template <class SplineType>
 extern bool is_regular(const SplineType & spl);
 
-template <class SplineType>
-bool is_periodic(const rational_bspline < SplineType >& spl)
+template <class Point,class PTag>
+bool is_periodic(const rational_bspline < Point, PTag >& spl)
 {
     return is_periodic(spl.spline());
 }
 
-template <class SplineType>
-bool is_regular(const rational_bspline < SplineType >& spl)
+template <class Point,class PTag>
+bool is_regular(const rational_bspline < Point,PTag >& spl)
 {
     return is_regular(spl.spline());
 }
