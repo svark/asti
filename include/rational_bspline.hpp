@@ -1,6 +1,5 @@
 #ifndef ASTI_RATIONAL_BSPLINE_HPP
 #define ASTI_RATIONAL_BSPLINE_HPP
-#include "point.hpp"
 #include "point_dim.hpp"
 #include <vector>
 #include "type_utils.hpp"

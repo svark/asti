@@ -4,8 +4,7 @@
 #include "Eigen/Core"
 #include <Eigen/Dense>
 
-//#include <boost/range/iterator_range_core.hpp>
-#include "point.hpp"
+#include "point_dim.hpp"
 #include "bspline.hpp"
 #include "periodic_bspline_cons.hpp"
 #include <type_traits>
@@ -23,7 +22,7 @@ setupQMatrix(PointIter pb, PointIter pe,
              Eigen::Matrix<double,dim,
              dim >& sigmaxy)
 {
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
+    typedef RAWTYPE(ps[0]) point_t;
     point_t cg(centroid(pb, pe));
     sigmaxy.setZero();
     //should be able to run in parallel
@@ -102,7 +101,7 @@ void find_parameters(PointIter pb,
     std::size_t n = std::distance(pb,pe);
     std::vector<double> widths(n);
     widths[0] = 0.0;
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     Eigen::Matrix<double,dim,dim> Q;
     setupQMatrix<dim>(pb,pe,Q);
     for (size_t i = 0; i < n - 1; ++i) {
@@ -125,10 +124,10 @@ void find_parameters(PointIter pb, PointIter pe,
     std::vector<double> widths(n), thetas(n);
     widths[0] = 0.0;
     thetas[0] = 0.0;
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     Eigen::Matrix<double,dim,dim> Q;
     setupQMatrix<dim>(pb,pe,Q);
-    RAWTYPE(eigen_vec(vec_t<dim>())) u;
+    RAWTYPE(eigen_vec(pb[0])) u;
     for (size_t i = 0; i < n - 1; ++i) {
         double l = 0;
         vec_t<dim> diff(  pb[i + 1] - pb[i] );
@@ -164,7 +163,7 @@ void setup_mat_for_interior_tgts(Matrix &m,
 // eqn 3.18. contd.
     size_t n = std::distance(t,te);
     assert( n > 2);
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
 
     for (size_t j = 1; j < n - 1; ++j) {
         auto aj = E(t,j);
@@ -204,7 +203,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          std::integral_constant<end_conditions_t,periodic>
     )
 {
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     using Eigen::MatrixXd;
     size_t n = std::distance(pb,pe);
 
@@ -247,7 +246,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          VecT& explicit_tgts,
                          std::integral_constant<end_conditions_t,parabolic_blending> )
 {
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
@@ -276,7 +275,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     Eigen::Matrix<double,Eigen::Dynamic,dim> rhs(n);
     // pg 88 of hoschek..  set up equation m p' = n.p for C^2
     // continuity of cubic polynomials at params. eq 3.16 we need to
@@ -310,7 +309,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          VecT& explicit_tgts,
                          std::integral_constant<end_conditions_t,not_a_knot> )
 {
-    static const int dim = point_iter_traits<PointIter>::dim;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
@@ -359,13 +358,15 @@ void interp_fail()
 }
 
 template <class PointIter, class VecsT,class ParamsT>
-bspline<typename point_iter_traits<PointIter>::point_t>
-pchip_open(PointIter pb, PointIter pe,  const ParamsT& params, const VecsT& tgts)
+auto
+pchip_open(PointIter pb, PointIter pe,
+           const ParamsT& params, const VecsT& tgts)
+           -> bspline<RAWTYPE(pb[0])>
 {
-    static const int dim = point_iter_traits<PointIter>::dim;
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    typedef RAWTYPE(ps[0]) point_t;
     size_t n = std::distance(pb,pe);
-    point_iter_traits<point_t*>::PointContT cpts(2*n);
+    RAWTYPE(mk_stdvec(pb[0])) cpts(2*n);
     std::vector<double> knots( 2* n + 4);
 
     cpts[0] = pb[0];
@@ -385,21 +386,21 @@ pchip_open(PointIter pb, PointIter pe,  const ParamsT& params, const VecsT& tgts
     cpts[2*n-2] = pb[n-1] - 1/3 * tgts[n-1] * E(params,n-2);
     cpts[2*n-1] = pb[n-1];
     knots[2*n+3] = knots[2*n+2] = knots[2*n+1] = knots[2*n] = params[n-1];
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
+    typedef RAWTYPE(ps[0]) point_t;
     return bspline<point_t>( std::move(cpts), std::move(knots ), 3);
 }
 
 template <class PointIter, class VecsT,class ParamsT>
-periodic_bspline<typename  point_iter_traits<PointIter>::point_t >
+auto
 pchip_closed(PointIter pb, PointIter pe,
              const ParamsT& params,
              const VecsT& tgts
-             )
+    ) -> periodic_bspline<RAWTYPE(pb[0]) >
 {
-    static const int dim = point_iter_traits<PointIter>::dim;
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
+    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    typedef RAWTYPE(ps[0]) point_t;
     size_t n = std::distance(pb,pe);
-    point_iter_traits<point_t*>::PointContT cpts(2*n-1);//last cpt is omitted it is the same as the first
+    RAWTYPE(mk_stdvec(ps[0])) cpts(2*n-1);//last cpt is omitted it is the same as the first
     std::vector<double> knots( 2* n);
 //pg 180,188 hoschek
     cpts[0] = pb[0] - 1/3 * tgts[0] *  E(params,n-2) ;
@@ -429,17 +430,16 @@ pchip_closed(PointIter pb, PointIter pe,
 
 
 template <class PointIter, class VecsT>
-periodic_bspline< typename point_iter_traits<PointIter>::point_t >
-piecewise_cubic_hermite_interp_periodic
+auto piecewise_cubic_hermite_interp_periodic
 (
     PointIter pb,
     PointIter pe,
     interpolation_options_t opts,
     const VecsT & vecs
-    )
+    ) -> periodic_bspline< RAWTYPE(pb[0]) >
 {
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
-    static const int dim =  point_iter_traits<PointIter>::dim;
+    typedef RAWTYPE(ps[0]) point_t;
+    static const int dim =  point_dim<point_t>::dimension;
 
     // generate parameters using chord length approximation.
     const size_t m = std::distance(pb,pe);
@@ -473,18 +473,17 @@ piecewise_cubic_hermite_interp_periodic
 }
 
 template <class PointIter, class VecsT>
-bspline< typename point_iter_traits<PointIter>::point_t >
+auto
 piecewise_cubic_hermite_interp_regular
 (
     PointIter pb,
     PointIter pe,
     interpolation_options_t opts,
     const VecsT & vecs
-    )
+    ) -> bspline< typename RAWTYPE(pb[0] ) >
 {
-
-    typedef typename point_iter_traits<PointIter>::point_t point_t;
-    static const int dim =  point_iter_traits<PointIter>::dim;
+    typedef RAWTYPE(pb[0]) point_t;
+    static const int dim =  point_dim < point_t >::dimension;
 
     // generate parameters using chord length approximation.
     const size_t m = std::distance(pb,pe);
@@ -523,14 +522,14 @@ piecewise_cubic_hermite_interp_regular
 
 
 template <class PointIter, class VecsT>
-bspline< typename point_iter_traits<PointIter>::point_t >
+auto
 piecewise_cubic_hermite_interp
 (
     PointIter pb,
     PointIter pe,
     interpolation_options_t opts,
     const VecsT & vecs
-    )
+    ) -> bspline< RAWTYPE(pb[0] ) >
 
 {
     if(opt.end_conditions != periodic)

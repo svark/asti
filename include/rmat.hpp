@@ -5,7 +5,7 @@
 #include <memory>
 #include "rmat_explicit.hpp"
 #include <Eigen/Dense>
-#include "point.hpp"
+#include "point_fwd.hpp"
 #include "geom_exception.hpp"
 #include "type_utils.hpp"
 

@@ -1,4 +1,5 @@
 #include "line.hpp"
+#include "point.hpp"
 
 namespace geom {
 point2d_t

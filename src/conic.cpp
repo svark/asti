@@ -1,3 +1,4 @@
+#include "point.hpp"
 #include "conic.hpp"
 
 namespace geom {
@@ -5,7 +6,7 @@ namespace geom {
 template <class Point>
 conic_arc < Point >
 make_conic_arc_non_parallel(Point p[3],
-                            decltype(Point() - Point()) v[2])
+                            decltype(Point() -  Point()) v[2])
 {
     auto cps = closest_points(make_line(p[0], p[0] + v[0]),
                               make_line(p[2], p[2] + v[1]));

@@ -1,6 +1,5 @@
 #include "box_compute.hpp"
 #include "circle.hpp"
-#include "point.hpp"
 namespace geom {
 
 template <class SplineType>

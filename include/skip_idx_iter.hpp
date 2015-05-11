@@ -66,8 +66,8 @@ operator+( const skip_ith_iter<knots_iter>& iter, size_t i)
     assert(i>=0);
     auto d = std::distance(iter.base_iterator(),iter.current_iter() );
     knots_iter cur_iter = iter.current_iter();
-    cur_iter+=i;
-    if( d <= iter.skip() && d + i >= iter.skip() )
+    cur_iter += i;
+    if( d <= iter.skip() && d + i >= size_t(iter.skip()) )
         cur_iter++;
 
     return skip_ith_iter<knots_iter>(

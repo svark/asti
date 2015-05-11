@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ASTI_BOX_COMPUTE
+#define ASTI_BOX_COMPUTE
 #include "box.hpp"
 #include "circle.hpp"
 namespace geom {
@@ -13,3 +14,4 @@ namespace geom {
         compute_box(const circle<Point> &spl);
     }
 }
+#endif // ASTI_BOX_COMPUTE

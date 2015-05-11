@@ -474,8 +474,6 @@ inline point4d_t make_pt(double s,double t, double w, double x)
   return point4d_t(p);
 }
 
-
-
 inline vector2d_t make_vec(double s,double t)
 {
   double p[] = {s,t};
@@ -613,7 +611,6 @@ mk_stdvec(const double &v)
 }
 
 // ________________________________________________________________
-
 inline std::vector<vector2d_t,Eigen::aligned_allocator<vector2d_t>>
 mk_stdvec(const vector2d_t * vb, const vector2d_t * ve)
 {
@@ -691,7 +688,6 @@ inline double normalize(const double & vec)
 }
 //}}}
 //{{{(@* "make vec from points")
-
 inline vector2d_t _make_vec(const point2d_t & pt)
 {
 	vector2d_t v(pt.cget());
@@ -751,7 +747,7 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
 {
     typedef RAWTYPE(pts[0]) point_t;
 
-    point_t avg = point_t();
+    point_t avg = point_t(0.0);
     int num_pts = 0;
     for(;pts!=end;++pts,++num_pts) {
         avg += *pts;
@@ -774,9 +770,6 @@ void swap( geom::vec_t<dim>& v1, geom::vec_t<dim>&v2)
 {
     v1.v.swap(v2.v);
 }
-#ifdef WIN32
-inline double fmin(double a, double b ) { return a < b? a: b;}
-inline double fmax(double a, double b ) { return b < a? a: b;}
-#endif
+
 }
 #endif//_POINT_HPP

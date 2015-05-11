@@ -1,7 +1,6 @@
 #ifndef ASTI_CONIC_HPP
 #define ASTI_CONIC_HPP
 
-#include "point.hpp"
 #include "line.hpp"
 #include "geom_exception.hpp"
 #include "type_traits"
@@ -19,7 +18,6 @@ struct conic_arc {
     typedef Point point_t;
     enum{ dim = point_dim <Point >::dimension };
     typedef typename inc_dimension<Point>::type pointw_t;
-
 
     conic_arc(point_t p_[],
               double weights[])
@@ -48,7 +46,7 @@ struct conic_arc {
 
     double weight(int i) const { return p[i][dim]; }
 
-    conic_type_t type() const { 
+    conic_type_t type() const {
         double w = weight(1);
         if(tol::eq(w,1))
             return parabola;

@@ -17,6 +17,7 @@ double periodic_param(const std::pair<double, double>& range,
 
     double s = range.first, e = range.second;
     double r = fmod(u - s, (e - s));
+    if( r <  0 ) r += (e - s);
     return s + r;
 }
 
@@ -30,13 +31,6 @@ struct periodic_bspline
     typedef typename bspline<Point>::knots_t knots_t;
     typedef typename bspline<Point>::vcpts_t vcpts_t;
     typedef std::tuple<cpts_t,knots_t, int> tuple_t;
-
-    template <class PointU>
-    static periodic_bspline < PointU >    rebound_type();
-
-    /*static std::tuple<cpts_t,knots_t, int>
-    wrap(const cpts_t& pts, const knots_t &ks, int degree);*/
-
 
     periodic_bspline(cpts_t pts, knots_t ks, int degree_)
         :spl(std::move(pts),std::move(ks),degree_)

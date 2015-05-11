@@ -9,8 +9,7 @@ namespace geom {
 template<class PointContT, class WeightsT>
 auto interleave(const PointContT & ps,
            const WeightsT & ws)
-  -> std::vector<typename inc_dimension < RAWTYPE(ps[0]) >::type,
-		 typename point_dim<typename inc_dimension < RAWTYPE(ps[0]) >::type >::alloc_t>
+    -> RAWTYPE(mk_stdvec(higher_dim(ps[0])))
 {
     typedef typename inc_dimension < RAWTYPE(ps[0]) >::type pointw_t;
     std::vector<pointw_t, typename point_dim<pointw_t>::alloc_t > pws;

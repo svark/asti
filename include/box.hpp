@@ -4,8 +4,7 @@
 #include <math.h>
 #include <limits>
 #include "point_dim.hpp"
-#include "point.hpp"
-
+#include "special.hpp"
 namespace geom {
 
     template <class Point>

@@ -3,6 +3,7 @@
 #include "bspline_cons.hpp"
 #include "periodic_bspline.hpp"
 #include "type_utils.hpp"
+#include <numeric>
 namespace geom {
 
     template <class CptsT, class KnotsT>

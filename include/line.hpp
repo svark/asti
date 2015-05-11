@@ -2,7 +2,7 @@
 #define ASTI_LINE_HPP
 
 #include <algorithm>
-#include "point.hpp"
+#include "point_fwd.hpp"
 #include "geom_exception.hpp"
 namespace geom{
 
@@ -10,7 +10,7 @@ namespace geom{
     struct line
     {
         typedef Point point_t;
-        typedef decltype(Point() - Point()) vector_t;
+        typedef decltype(make_vec(Point())) vector_t;
 
         line(const point_t& p1,
              const vector_t& v)

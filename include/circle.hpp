@@ -1,7 +1,7 @@
 #ifndef ASTI_CIRCLE_HPP
 #define ASTI_CIRCLE_HPP
 #include "rational_bspline_cons.hpp"
-#include "point.hpp"
+#include "point_dim.hpp"
 #include "geom_exception.hpp"
 /*
 

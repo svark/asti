@@ -72,7 +72,7 @@ SET(BII_CREATE_LIB True)
 bii_find_boost()
 IF(APPLE)
    set(CPP_11_FLAGS "-std=c++11 -stdlib=libc++")
-ELSEIF (WIN32 OR UNIX)
+ELSEIF(UNIX)
    set(CPP_11_FLAGS "-std=c++11")
 ENDIF(APPLE)
 

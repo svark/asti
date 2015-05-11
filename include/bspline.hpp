@@ -7,7 +7,6 @@
 #include <vector>
 #include <list>
 #include <Eigen/Core>
-#include "point.hpp"
 #include "point_dim.hpp"
 #include "type_utils.hpp"
 namespace geom {
@@ -19,11 +18,9 @@ struct bspline {
     typedef decltype(make_vec(point_t()))  vector_t;
     enum {dimension = point_dim<point_t>::dimension};
 
-    template <class PointU>
-    static bspline < PointU >    rebound_type();
-
     typedef decltype(mk_stdvec(point_t()))  cpts_t;
     typedef decltype(mk_stdvec(vector_t())) vcpts_t;
+
     typedef std::vector<double> knots_t;
 
     bspline(std::tuple<cpts_t,knots_t,int>&& dat);

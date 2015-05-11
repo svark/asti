@@ -42,8 +42,8 @@ ops::is_periodic(const SplineCurve & crv)
         return false;
 
     std::vector<double> buf1(p + 1), buf2(p + 1);
-    te -= (p + 1);
-
+    te -= 2*(p + 1);
+	tb += (p + 1);
     auto deltas_at_start = buf1.begin();
     // fill up (1 + p) knot ranges) at the start
     std::adjacent_difference(tb,
