@@ -33,7 +33,7 @@ point3d_t  higher_dim(const point2d_t& pt);
 point2d_t higher_dim(double pt);
 //}}}
 //{{{  (@* "mk_stdvec from a single/array of points or vectors")
-#define STDVEC(TYP)  std::vector<TYP, Eigen::aligned_allocator<TYP>>
+
 template <int dim>
 STDVEC(vec_t<dim>)
 mk_stdvec(const vec_t<dim> &v);
