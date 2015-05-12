@@ -1,8 +1,9 @@
 #define CATCH_CONFIG_MAIN
-#include "diego/catch/catch.hpp"
+#include "point_fwd.hpp"
 #include "bspline_x_cons.hpp"
 #include "arclength.hpp"
-
+#include "diego/catch/catch.hpp"
+#include "point.hpp"
 using geom::point2d_t;
 using geom::bspline;
 // We derive a fixture named IntegerFunctionTest from the QuickTest

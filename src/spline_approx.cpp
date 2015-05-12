@@ -1,16 +1,20 @@
 #include <vector>
-#include "spline_approx.hpp"
-#include "Eigen/Core"
-#include "bspline_cons.hpp"
+
 #include <boost/math/tools/roots.hpp>
 #include <boost/math/tools/tuple.hpp>
-#include "spline_traits.hpp"
+
 #include <numeric>
+
 #include "insert_knot.hpp"
 #include "tol.hpp"
 #include "rmat.hpp"
 #include "geom_exception.hpp"
 #include <random>
+#include "spline_approx.hpp"
+#include "bspline_cons.hpp"
+#include "spline_traits.hpp"
+#include "point.hpp"
+
 namespace geom {
 //{{{ -- approximations
 

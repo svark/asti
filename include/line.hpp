@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "point_fwd.hpp"
 #include "geom_exception.hpp"
+#include "tol.hpp"
 namespace geom{
 
     template <class Point>

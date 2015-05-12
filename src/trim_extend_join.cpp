@@ -1,12 +1,14 @@
+#include "point.hpp"
 #include "trim_extend_join.hpp"
 #include "constant_iterator.hpp"
-#include "smat.hpp"
 #include "raise_degree.hpp"
 #include "tol.hpp"
 #include "reparametrize.hpp"
 #include "geom_exception.hpp"
 #include "reverse_curve.hpp"
 #include "insert_knot.hpp"
+#include "smat.hpp"
+
 namespace geom {
 
 template <class SplineType>
@@ -204,6 +206,7 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
 
 //{{{  instantiation
 #include "bspline.hpp"
+#include "rational_bspline.hpp"
 #include "point.hpp"
 namespace geom {
 #include "trim_extend_join_inst.inl"

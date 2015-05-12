@@ -1,20 +1,21 @@
 #define CATCH_CONFIG_MAIN
-#include "point.hpp"
 #include "bspline_x_cons.hpp"
 #include <ostream>
+#include "point.hpp"
+using geom::point2d_t;
+
+#include "diego/catch/catch.hpp"
+using geom::bspline;
 
 namespace std {
 ostream &
 operator<<(ostream& os,
-           const ::geom::pt_t<2>& pt)
+           const point2d_t& pt)
 {
   os << "(" <<pt.p[0] <<"," << pt.p[1] << ")";
   return os;
 }
 }
-#include "diego/catch/catch.hpp"
-using geom::point2d_t;
-using geom::bspline;
 
 TEST_CASE( "bspline eval test", "[bspline][2d][eval][derivative][blossom]" ) {
     typedef   decltype(geom::mk_stdvec(geom::point2d_t())) cpts2d_t;

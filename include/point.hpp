@@ -4,6 +4,7 @@
 #include "tol.hpp"
 #include "type_utils.hpp"
 #include <vector>
+#include "point_fwd.hpp"
 namespace geom {
 
 //{{{(@* "geometric point")
@@ -244,50 +245,6 @@ double sqlen(const vec_t<dim>& v)
 //}}}
 //{{{(@* "linear interpolation methods")
 
-
-
-extern point4d_t
-lerp( double lambda,
-      const point4d_t& p1,
-      const point4d_t& p2);
-
-extern point3d_t
-lerp( double lambda ,
-      const point3d_t& p1,
-      const point3d_t& p2);
-
-extern point2d_t
-lerp( double lambda ,
-      const point2d_t& p1,
-      const point2d_t& p2);
-
-extern double
-lerp( double lambda ,
-      const double& p1,//0
-      const double& p2);//1
-
-////////////////////////////////
-extern point4d_t
-lerp( double lambda , double mu,
-      const point4d_t& p1,//1,0
-      const point4d_t& p2,//0,1
-      const point4d_t& p3//0,0
-    );
-
-extern point3d_t
-lerp( double lambda , double mu,
-      const point3d_t& p1,
-      const point3d_t& p2,
-      const point3d_t& p3
-    );
-
-extern point2d_t
-lerp( double lambda , double mu,
-      const point2d_t& p1,
-      const point2d_t& p2,
-      const point2d_t& p3
-    );
-
 template <class XprType,int BlockRows,int BlockCols,bool InnerPanel>
 Eigen::Block<const XprType,BlockRows,BlockCols,InnerPanel>
 lerp( double lambda,
@@ -297,17 +254,7 @@ lerp( double lambda,
    return Eigen::Block<const XprType,BlockRows,BlockCols,InnerPanel>(
        ((1-lambda)*p1+lambda*p2).eval(),0,0);
 }
-/*
-Eigen::Block<Eigen::Matrix<double,-1,1>,1,1,false>
-lerp( double lambda,
-      const Eigen::Block<Eigen::Matrix<double,-1,1>,1,1,false>& p1,
-      const Eigen::Block<Eigen::Matrix<double,-1,1>,1,1,false>& p2)
-{
-    Eigen::Block<Eigen::Matrix<double,-1,1>,1,1,false> tmp(p1);
-    tmp[0] = lerp(lambda,p1[0],p2[0]) ;
-    return tmp;
-}
-*/
+
 template <int dim>
 pt_t<dim>
 dlerp( double lambda,
@@ -322,7 +269,6 @@ dlerp( double lambda,
 {
     return (p2 - p1)*lambda;
 }
-
 
 
 //}}}
@@ -442,10 +388,14 @@ const vec_t<dim>& operator - ( vec_t<dim>&& v )
     return v;
 }
 
-template <class PointVec>
-auto eigen_vec(const PointVec& ve) -> decltype(ve.cget())
+template <int dim> auto eigen_vec(const pt_t<dim>& pt) -> Eigen::Matrix<double, dim , 1>
 {
-    return ve.cget();
+    return pt.cget();
+}
+
+template <int dim> auto eigen_vec(const vec_t<dim>& ve) -> Eigen::Matrix<double, dim , 1>
+{
+  return ve.cget();
 }
 
 inline Eigen::Matrix<double,1,1> eigen_vec(double ve)
@@ -554,50 +504,50 @@ inline point2d_t higher_dim(double pt)
 
 //}}}
 //{{{(@* "construct an stl vector from geom vector")
-inline std::vector<vector2d_t,Eigen::aligned_allocator<vector2d_t>>
+  inline std::vector<vector2d_t,Eigen::aligned_allocator<vec_t<2>>>
 mk_stdvec(const vector2d_t &v)
 {
-	std::vector<vector2d_t, Eigen::aligned_allocator<vector2d_t>>  vs;
-	vs.push_back(v);
-	return vs;
+   std::vector<vector2d_t, Eigen::aligned_allocator<vec_t<2>>>  vs;
+   vs.push_back(v);
+   return vs;
 }
 
-inline std::vector<vector3d_t,Eigen::aligned_allocator<vector3d_t>>
+ inline std::vector<vector3d_t,Eigen::aligned_allocator<vec_t<3>>>
 mk_stdvec(const vector3d_t &v)
 {
-	std::vector<vector3d_t, Eigen::aligned_allocator<vector3d_t>>  vs;
+  std::vector<vector3d_t, Eigen::aligned_allocator<vec_t<3>>>  vs;
 	vs.push_back(v);
 	return vs;
 }
 
-inline std::vector<vector4d_t,Eigen::aligned_allocator<vector4d_t>>
+  inline std::vector<vector4d_t,Eigen::aligned_allocator<vec_t<4>>>
 mk_stdvec(const vector4d_t &v)
 {
-	std::vector<vector4d_t, Eigen::aligned_allocator<vector4d_t>>  vs;
+  std::vector<vector4d_t, Eigen::aligned_allocator<vec_t<4>>>  vs;
 	vs.push_back(v);
 	return vs;
 }
 
-inline std::vector<point2d_t,Eigen::aligned_allocator<point2d_t>>
+  inline std::vector<point2d_t,Eigen::aligned_allocator<pt_t<2>>>
 mk_stdvec(const point2d_t &v)
 {
-	std::vector<point2d_t, Eigen::aligned_allocator<point2d_t>>  vs;
+  std::vector<point2d_t, Eigen::aligned_allocator<pt_t<2>>>  vs;
 	vs.push_back(v);
 	return vs;
 }
 
-inline std::vector<point3d_t,Eigen::aligned_allocator<point3d_t>>
+  inline std::vector<point3d_t,Eigen::aligned_allocator<pt_t<3>>>
 mk_stdvec(const point3d_t &v)
 {
-	std::vector<point3d_t, Eigen::aligned_allocator<point3d_t>>  vs;
+  std::vector<point3d_t, Eigen::aligned_allocator<pt_t<3>>>  vs;
 	vs.push_back(v);
 	return vs;
 }
 
-inline std::vector<point4d_t,Eigen::aligned_allocator<point4d_t>>
+  inline std::vector<point4d_t,Eigen::aligned_allocator<pt_t<4>>>
 mk_stdvec(const point4d_t &v)
 {
-	std::vector<point4d_t, Eigen::aligned_allocator<point4d_t>>  vs;
+  std::vector<point4d_t, Eigen::aligned_allocator<pt_t<4>>>  vs;
 	vs.push_back(v);
 	return vs;
 }

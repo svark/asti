@@ -5,8 +5,8 @@
 #include <vector>
 #include <utility>
 #include <vector>
-#include <list>
-#include <Eigen/Core>
+//#include <list>
+//#include <Eigen/Core>
 #include "point_dim.hpp"
 #include "type_utils.hpp"
 namespace geom {

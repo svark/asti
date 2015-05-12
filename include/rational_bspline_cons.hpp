@@ -3,6 +3,7 @@
 
 #include "periodic_bspline_cons.hpp"
 #include "rational_bspline.hpp"
+#include "tol.hpp"
 
 namespace geom {
 

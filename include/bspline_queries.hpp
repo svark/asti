@@ -1,5 +1,7 @@
 #include "bspline_fwd.hpp"
 #include "tol.hpp"
+#include "geom_exception.hpp"
+
 namespace geom {
 namespace ops {
 

@@ -3,14 +3,12 @@
 #include <iostream>
 #include <map>
 #include <cmath>
-
 #include "bspline.hpp"
 #include "rmat.hpp"
 #include "tol.hpp"
 #include "util.hpp"
 #include <utility>
 #include <memory>
-#include "point.hpp"
 #include "skip_idx_iter.hpp"
 #include "transformed_back_inserter.hpp"
 //}}}
@@ -156,9 +154,9 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
 }
 //{{{ (@* "template instantiations")
 
+
+
 #include "point.hpp"
-
-
 /*
 Local Variables:
 eval:(load-file "./scripts/temp.el")

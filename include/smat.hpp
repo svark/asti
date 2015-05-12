@@ -2,7 +2,6 @@
 #ifndef ASTI_SMAT_HPP
 #define ASTI_SMAT_HPP
 #include <vector>
-#include <list>
 #include <algorithm>
 #include "rmat.hpp"
 #include "bspline_x_cons.hpp"
@@ -15,9 +14,6 @@ namespace geom {
 // bspline to bezier (and vice versa)  conversion  matrix.  as described in
 // (@file :file-name "b2b.pdf" :to "b2b.pdf" :display "bspline2bezier")
 //
-
-struct  bspline_2_bezier_mat_t{};
-struct  bezier_2_bspline_mat_t{};
 
 //  bspline to bezier conversion and vice versa
 struct smat : rmat_base_vd {

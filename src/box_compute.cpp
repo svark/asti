@@ -1,3 +1,4 @@
+#include "point.hpp"
 #include "box_compute.hpp"
 #include "circle.hpp"
 namespace geom {
@@ -69,7 +70,7 @@ ops::compute_box(const circle<Point> &c)
 //{{{  instantiation
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
-#include "point.hpp"
+
 namespace geom {
 #include "box_compute_inst.inl"
 }
