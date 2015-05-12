@@ -504,52 +504,24 @@ inline point2d_t higher_dim(double pt)
 
 //}}}
 //{{{(@* "construct an stl vector from geom vector")
-  inline std::vector<vector2d_t,Eigen::aligned_allocator<vec_t<2>>>
-mk_stdvec(const vector2d_t &v)
+
+
+template <int dim>
+STDVEC(vec_t < dim > )
+mk_stdvec(const vec_t < dim > &v)
 {
-   std::vector<vector2d_t, Eigen::aligned_allocator<vec_t<2>>>  vs;
+   STDVEC(vec_t < dim > ) vs;
    vs.push_back(v);
    return vs;
 }
 
- inline std::vector<vector3d_t,Eigen::aligned_allocator<vec_t<3>>>
-mk_stdvec(const vector3d_t &v)
+template <int dim>
+STDVEC(pt_t < dim > )
+mk_stdvec(const pt_t<dim> &p)
 {
-  std::vector<vector3d_t, Eigen::aligned_allocator<vec_t<3>>>  vs;
-	vs.push_back(v);
-	return vs;
-}
-
-  inline std::vector<vector4d_t,Eigen::aligned_allocator<vec_t<4>>>
-mk_stdvec(const vector4d_t &v)
-{
-  std::vector<vector4d_t, Eigen::aligned_allocator<vec_t<4>>>  vs;
-	vs.push_back(v);
-	return vs;
-}
-
-  inline std::vector<point2d_t,Eigen::aligned_allocator<pt_t<2>>>
-mk_stdvec(const point2d_t &v)
-{
-  std::vector<point2d_t, Eigen::aligned_allocator<pt_t<2>>>  vs;
-	vs.push_back(v);
-	return vs;
-}
-
-  inline std::vector<point3d_t,Eigen::aligned_allocator<pt_t<3>>>
-mk_stdvec(const point3d_t &v)
-{
-  std::vector<point3d_t, Eigen::aligned_allocator<pt_t<3>>>  vs;
-	vs.push_back(v);
-	return vs;
-}
-
-  inline std::vector<point4d_t,Eigen::aligned_allocator<pt_t<4>>>
-mk_stdvec(const point4d_t &v)
-{
-  std::vector<point4d_t, Eigen::aligned_allocator<pt_t<4>>>  vs;
-	vs.push_back(v);
-	return vs;
+   STDVEC(pt_t < dim > )  ps;
+   ps.push_back(p);
+   return ps;
 }
 
 inline std::vector<double>
@@ -560,46 +532,20 @@ mk_stdvec(const double &v)
 	return vs;
 }
 
-// ________________________________________________________________
-inline std::vector<vector2d_t,Eigen::aligned_allocator<vector2d_t>>
-mk_stdvec(const vector2d_t * vb, const vector2d_t * ve)
+
+template <int dim>
+STDVEC(vec_t<dim>)
+mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve)
 {
-	std::vector<vector2d_t, Eigen::aligned_allocator<vector2d_t>>  vs(vb, ve);
+	STDVEC(vec_t<dim>)  vs(vb, ve);
 	return vs;
 }
 
-inline std::vector<vector3d_t,Eigen::aligned_allocator<vector3d_t>>
-mk_stdvec(const vector3d_t * vb, const vector3d_t * ve)
+template <int dim>
+STDVEC(pt_t<dim>)
+mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve)
 {
-	std::vector<vector3d_t, Eigen::aligned_allocator<vector3d_t>>  vs(vb, ve);
-	return vs;
-}
-
-inline std::vector<vector4d_t,Eigen::aligned_allocator<vector4d_t>>
-mk_stdvec(const vector4d_t * vb, const vector4d_t * ve)
-{
-	std::vector<vector4d_t, Eigen::aligned_allocator<vector4d_t>>  vs(vb, ve);
-	return vs;
-}
-
-inline std::vector<point2d_t,Eigen::aligned_allocator<point2d_t>>
-mk_stdvec(const point2d_t * vb, const point2d_t * ve)
-{
-	std::vector<point2d_t, Eigen::aligned_allocator<point2d_t>>  vs(vb, ve);
-	return vs;
-}
-
-inline std::vector<point3d_t,Eigen::aligned_allocator<point3d_t>>
-mk_stdvec(const point3d_t * vb, const point3d_t * ve)
-{
-	std::vector<point3d_t, Eigen::aligned_allocator<point3d_t>>  vs(vb, ve);
-	return vs;
-}
-
-inline std::vector<point4d_t,Eigen::aligned_allocator<point4d_t>>
-mk_stdvec(const point4d_t * vb, const point4d_t * ve)
-{
-	std::vector<point4d_t, Eigen::aligned_allocator<point4d_t>>  vs(vb, ve);
+	STDVEC(pt_t<dim>)  vs(vb, ve);
 	return vs;
 }
 
