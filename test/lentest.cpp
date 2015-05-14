@@ -1,15 +1,13 @@
-#define CATCH_CONFIG_MAIN
 #include "point_fwd.hpp"
 #include "bspline_x_cons.hpp"
 #include "arclength.hpp"
 #include "diego/catch/catch.hpp"
 #include "point.hpp"
+#include "testutils.hpp"
 using geom::point2d_t;
 using geom::bspline;
-// We derive a fixture named IntegerFunctionTest from the QuickTest
-// fixture.  All tests using this fixture will be automatically
-// required to be quick.
-TEST_CASE( "bspline arc length", "[bspline]" ) {
+
+TEST_CASE( "bspline_arc_length", "[bspline][arclength]" ) {
 
     double pts[3][2] =  {{0.01, 0}, {0.0,1}, { - 1, 0}};
     double ks[] =  {0,0, 0,  1, 1, 1};

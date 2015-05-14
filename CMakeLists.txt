@@ -5,7 +5,7 @@
 
 
 include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
-message (STATUS "atttempting to including boost")
+message (STATUS "atttempting to include boost")
 include(biicode/boost/setup)
 
 # # Initializes block variables
@@ -32,44 +32,27 @@ include(biicode/boost/setup)
 
 
 #SET(BII_LIB_SRC ${SRC_LIST})
-message (${BII_LIB_SRC})
-message(${BII_TEST_SRC})
 # # Actually create targets: EXEcutables and libraries.
+
+
+file(GLOB files "test/*.cpp")
+message (STATUS "${files}")
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(REMOVE_ITEM BII_LIB_SRC ${RELP})
+endforeach()
+
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(APPEND BII_test_main_SRC ${RELP})
+endforeach()
+
+SET(BII_BLOCK_TESTS test_main)
+
 ADD_BII_TARGETS()
-
 SET(BII_CREATE_LIB True)
-# # This function creates the following variables:
-# #     ${BII_BLOCK_TARGETS} List of targets defined in this block
-# #     ${BII_LIB_TARGET}  Target library name, usually in the form "user_block"
-# #     ${BII_exe_name_TARGET}: Executable target (e.g. ${BII_main_TARGET}. You can also use
-# #                            directly the name of the executable target (e.g. user_block_main)
-
-# # Example, if your library links with pthread:
-# #     TARGET_LINK_LIBRARIES(${BII_LIB_TARGET} pthread)
-# #        or directly use the library target name
-# #     TARGET_LINK_LIBRARIES(user_block pthread)
-# #     NOTE:  This can be also done adding pthread to ${BII_LIB_DEPS}
-# #            BEFORE calling ADD_BIICODE_TARGETS()
-# #
-# # Example: how to activate C++11. Uncomment one of this
-# #     target_compile_options(${BII_LIB_TARGET} PUBLIC -std=c++11) # Win, or linux if not gcc problems
-# #     target_compile_options(${BII_LIB_TARGET} PUBLIC -std=c++11  -stdlib=libc++) # MacOS
-# #     target_compile_options(${BII_LIB_TARGET} PUBLIC -std=c++11 -Wl,--no-as-needed) # Ubuntu if gcc problems
-# # with LLVM, you might need to link the target with "-lc++abi"
-# #
-# # Note: If you're in Ubuntu or Windows OS and you get an error with -std=c++11 option , try to use -std=c++0x instead.
-# #
-# # If you want your code to be portable and activate properly C++11, you have to handle it:
-# # if(WIN32)
-# #     target_compile_options(${BII_LIB_TARGET} ... windows
-# # elseif(APPLE)
-# #     target_compile_options(${BII_LIB_TARGET} ... MacOS
-# # elseif(...)
-# #     ...
-# # endif()
-
-
 bii_find_boost()
+
 IF(APPLE)
    set(CPP_11_FLAGS "-std=c++11 -stdlib=libc++")
 ELSEIF(UNIX)

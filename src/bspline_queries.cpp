@@ -7,7 +7,6 @@
 #include <limits>
 #include "point.hpp"
 namespace geom {
-
 //{{{ -- check is periodic
 template <class SplineCurve>
 bool
@@ -75,7 +74,6 @@ ops::is_periodic(const SplineCurve & crv)
                       deltas_at_end + 1);
 }
 //}}}
-
 //{{{ -- is bezier
 template <class SplineType>
 bool ops::is_bezier(const SplineType& spl)
@@ -96,7 +94,6 @@ bool ops::is_bezier(const SplineType& spl)
     return false;
 }
 //}}}
-
 //{{{ -- is regular
 
 // determine if the first d + 1, and last d + 1 knots are equal
@@ -113,7 +110,6 @@ is_regular(const SplineCurve & c)
     return yes;
 }
 //}}}
-
 //{{{ -- curvature and torsion of a spline curve
 template <class SplineType>
 double ops::curvature(const SplineType & spl, double u)
@@ -138,9 +134,7 @@ double ops::torsion(const SplineType & spl, double u)
 }
 
 //}}}
-
 }
-
 //{{{  instantiation scripts
 
 /*
@@ -159,7 +153,6 @@ double ops::torsion(const SplineType & spl, double u)
 // dump all explicitly instantiated templates below
 */
 //}}}
-
 //{{{  instantiation
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"

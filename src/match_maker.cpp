@@ -7,7 +7,7 @@
 // and target vectors upto i and j resp, can be matched with minimum
 // distortion. Distortion is a measure of how disoriented the segments
 // are
-
+#if 0
 template<class VectorContT>
 struct vector_match_maker {
     vector_match_maker( const VectorContT & _svecs,
@@ -319,3 +319,4 @@ private:
     matched_pairs_t matched_pairs;
 };
 
+#endif
