@@ -2,6 +2,7 @@
 #define ASTI_CIRCLE_HPP
 #include "rational_bspline_cons.hpp"
 #include "point_dim.hpp"
+#include <type_traits>
 #include "geom_exception.hpp"
 /*
 
@@ -15,24 +16,18 @@ struct circle
     typedef Point point_t;
     typedef decltype(make_vec(point_t())) vector_t;
 
-    template<class PointU>
-    struct allow_ydir_if_dim_3
-    {
-        typename std::enable_if< point_dim<PointU>::dimension == 3
-                                 && dim ==3, vector3d_t const &>::type type;
-    };
 
-    template<class PointU>
+    template <class PointU>
     struct allow_if_dim_2
     {
-        typename std::enable_if< point_dim<PointU>::dimension == 2
-                                 && dim ==2, vector2d_t const &>::type type;
+        typename std::enable_if< dim == 2 && point_dim < PointU > ::dimension ==2,
+                                 PointU const & >::type type;
     };
 
     template <class PointU>
     circle(const PointU& center_,
            const PointU& point_,
-           typename allow_ydir_if_dim_3<PointU>::type ydir_)
+           RAWTYPE(make_vec(PointU())) const & ydir_)
         :center(center_), start_pt(point_), ydir(ydir_)
     {
         auto x = start_pt - center;
@@ -41,10 +36,10 @@ struct circle
         ydir = normalize(ydir) * len(x);
     }
 
+
     template <class PointU>
-    circle(const PointU& center_,
-           const PointU& point_,
-           typename  allow_if_dim_2 < PointU >::type)
+    circle(const PointU& center_, const PointU & point_, 
+           typename std::enable_if<point_dim < PointU >::dimension == 2, int>::type = 0)
         :center(center_), start_pt(point_)
     {
         auto x = start_pt - center;

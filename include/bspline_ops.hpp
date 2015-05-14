@@ -8,4 +8,7 @@
 #include "trim_extend_join.hpp"
 #include "raise_degree.hpp"
 #include "box_compute.hpp"
+#include "rotate_base_knot.hpp"
+#include "reparametrize.hpp"
+#include "subdivide_curve.hpp"
 #endif //_BSPLINE_OPS_H

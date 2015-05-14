@@ -1,10 +1,11 @@
 #ifndef ASTI_CONIC_HPP
 #define ASTI_CONIC_HPP
-
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "line.hpp"
 #include "geom_exception.hpp"
 #include "type_traits"
-#include <math.h>
+
 #include "tol.hpp"
 #include "rational_bspline_cons.hpp"
 
@@ -88,8 +89,8 @@ reverse_curve(conic_arc < Point > arc)
 }
 
 template <class Point>
-rational_bspline< typename inc_dimension<Point>::type, regular_tag >
-make_rbspline(const conic_arc<Point> &arc) {
+rational_bspline< Point, regular_tag >
+make_rbspline_from_conic(const conic_arc<Point> &arc) {
 
     auto w = arc.weight(1);
     typedef typename inc_dimension<Point>::type PointW;
@@ -98,14 +99,15 @@ make_rbspline(const conic_arc<Point> &arc) {
     {
         auto car = reverse_curve(arc);
         car.p[1][dim] *=- 1;
-        return make_rbspline(car);
+        return make_rbspline_from_conic(car);
     }
     double alpha = angle_between(arc.p[1] - arc.p[0],
                                  arc.p[2] - arc.p[1]);
     if(w >= 1.0 || w > 0 && alpha > M_PI / 3) {
         // single segment parabola or hyperbola
         double ks[] =  {0, 0, 0, 1, 1, 1};
-        auto spl(make_bspline_arr( arc.p, arc.p + 3, ks ,ks+sizeof(ks)/sizeof(double), 2) );
+        auto spl(make_bspline_arr( arc.p, arc.p + 3, ks,
+                                   ks+sizeof(ks)/sizeof(double), 2) );
         return make_rbspline(std::move(spl));
     }else if(w < 0 && alpha > M_PI / 2)
     {
@@ -124,8 +126,9 @@ make_rbspline(const conic_arc<Point> &arc) {
                          s[0],
                          q[2], s[2], r[2],
                          arc.p[2] };
-        auto spl = make_bspline_arr(cpts, cpts + sizeof(cpts)/sizeof(PointW), 
-            ks,ks+sizeof(ks)/sizeof(double), 2);
+        auto spl = make_bspline_arr(cpts,
+                                    cpts + sizeof(cpts)/sizeof(PointW), ks,
+                                    ks+sizeof(ks)/sizeof(double), 2);
         return make_rbspline(std::move(spl));
     }else
     {

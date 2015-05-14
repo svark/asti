@@ -69,6 +69,7 @@ SplineType ops::reverse_curve(const SplineType& spl)
 //{{{  instantiation
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
+#include "rational_bspline.hpp"
 #include "point.hpp"
 namespace geom {
 #include "reverse_curve_inst.inl"

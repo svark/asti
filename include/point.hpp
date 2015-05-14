@@ -112,7 +112,7 @@ struct vec_t
 
     vec_t() {}
 
-    vec_t(const double ve[]): v(ve)
+    explicit vec_t(const double ve[]): v(ve)
     {
     }
 
