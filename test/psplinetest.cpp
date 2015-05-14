@@ -4,7 +4,7 @@
 #include "periodic_bspline_cons.hpp"
 #include "bspline_queries.hpp"
 
-#include "diego/catch/catch.hpp"
+#include "catch.hpp"
 #include "testutils.hpp"
 
 using geom::point2d_t;

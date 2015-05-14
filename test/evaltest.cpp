@@ -1,6 +1,5 @@
-// #define CATCH_CONFIG_MAIN
 #include "bspline_x_cons.hpp"
-#include "diego/catch/catch.hpp"
+#include <catch.hpp>
 #include "point.hpp"
 #include "testutils.hpp"
 

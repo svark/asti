@@ -1,7 +1,7 @@
 #include "point_fwd.hpp"
 #include "bspline_x_cons.hpp"
 #include "arclength.hpp"
-#include "diego/catch/catch.hpp"
+#include "catch.hpp"
 #include "point.hpp"
 #include "testutils.hpp"
 using geom::point2d_t;
