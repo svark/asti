@@ -4,6 +4,7 @@
 #include "point_dim.hpp"
 #include <type_traits>
 #include "geom_exception.hpp"
+#include "smat.hpp"
 /*
 
  */
@@ -120,10 +121,12 @@ struct circle
     {
         return start_pt;
     }
-    vector_t  getPlaneNormal() const
+    
+	decltype(cross(vector_t(),vector_t()))
+    getPlaneNormal() const
     {
-        auto x = (start_pt - center);
-        auto y = ydir;
+        auto const &x = (start_pt - center);
+        auto const &y = ydir;
         return  normalize( cross(x,y) );
     }
 
@@ -161,11 +164,11 @@ make_circle(const Point& p1,
     double lv3 = sqlen(v3);
 
     double d = sqlen( cross( v1, v2) );
-    center = dot(v1, -v3) / d*d;
+    auto center = dot(v1, -v3) / d*d;
     double lens[] = {lv1, lv2, lv3};
-    auto vs[] = {v1,v2,v3};
+    decltype(v1) vs[] = {v1,v2,v3};
 
-    uint idx = std::max_element(lens,lens+3) - lens;
+    size_t idx = std::max_element(lens,lens+3) - lens;
 
     v1 = vs[(idx + 1)%3];   lv1 = lens[(idx + 1)%3];
     v2 = vs[(idx + 2)%3];   lv2 = lens[(idx + 2)%3];
@@ -182,31 +185,45 @@ make_circle(const Point& p1,
     double beta  = lv3 * dot(-v1,v2) *0.5 / ( denom );
 
     auto cp = lerp(alpha,beta,pts[0],pts[1],pts[2]);
-    auto yd = cross(normal,(pts[0] - cp))/len(normal);
-    return circle<point_t>(cp, pts[0], yd);
+	decltype(normal) xdir(pts[0] - cp);
+	auto nnormal (normalize(normal));
+    return circle<point_t>(cp, pts[0], decltype(v1)(cross(nnormal, xdir)));
 }
 
 template <class Point>
-static rational_bspline< Point, periodic_tag >
+static rational_bspline< Point, regular_tag >
 to_rational(const circle<Point>& circ)
 {
     auto start_pt =  circ.getStart();
     auto center =  circ.getCenter();
-    auto x = (start_pt - center);
-    auto y = cross(circ.getPlaneNormal(), x );
+    auto const & x = (start_pt - center);
+    decltype(x) const & y = cross(circ.getPlaneNormal(), decltype(circ.getPlaneNormal())(x) );
 
     double radius =  circ.getRadius();
-    auto a = start_pt + y * 2 * radius  ;
-    auto c = start_pt - y * radius +  x * 2 * cos(M_PI/3) * radius;
-    auto b = center -  y * radius  - x * 2 * cos(M_PI/3) * radius;
-    auto p = lerp(0.5,a,c);
+	
+    auto a = start_pt + 2 * y * radius  * cos( M_PI/6.0);
+    auto c = start_pt - 2 * y * radius  * cos( M_PI/6.0);
+    auto b = center -  2 * x * radius ;
+    
+	auto p = lerp(0.5,a,c);
     auto q = lerp(0.5,a,b);
-    auto r = lerp(0.5,b,c);
+    auto r = lerp(0.5,c,b);
 
-    double weights[] = {1,0.5,1,0.5,1,0.5};
-    Point cpts[] = {p,  a   ,q    ,b    ,r        ,c/*, p*/};
-    double ts[]      = {0,1/6, 1/3,1/3, 0.5, 2/3, 2/3,5/6, 1};
-    return make_periodic_rbspline(cpts,weights,ts,2);
+    double weights[] = {1,0.5,1,0.5,1,0.5,1};
+    Point cpts[] = {p, a   ,q    ,b    ,r   ,c, p};
+    double ts[]  = {0, 0, 0, 2*M_PI/3,2*M_PI/3,4*M_PI/3,4*M_PI/3, 2*M_PI,2*M_PI,2*M_PI};
+	auto spl = make_bspline( 
+     	interleave( mk_stdvec(cpts,cpts+ sizeof(cpts)/sizeof(Point)),
+		std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ), 
+		std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
+		2 );
+	double st[] = {-2*M_PI/3,0,0};
+	double es[] = {2*M_PI, 2*M_PI, 8.0*M_PI/3 };
+	rebase_at_start(spl, st ).swap(spl);
+	rebase_at_end(spl,es).swap(spl);
+
+	return make_rbspline(std::move(spl));
+		
 }
 
 

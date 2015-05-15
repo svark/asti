@@ -1,3 +1,5 @@
+#ifndef ASTI_ROTATE_BASE_KNOT
+#define ASTI_ROTATE_BASE_KNOT
 #include "periodic_bspline_cons.hpp"
 #include <numeric>
 namespace geom {
@@ -30,3 +32,5 @@ rotate_base_knot(const periodic_bspline < Point >& pspl, size_t nu)
 
 }
 }
+
+#endif

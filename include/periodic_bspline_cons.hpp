@@ -4,6 +4,7 @@
 #include "periodic_bspline.hpp"
 #include "type_utils.hpp"
 #include <numeric>
+#include "bspline_queries.hpp"
 namespace geom {
 
     template <class CptsT, class KnotsT>
@@ -13,7 +14,7 @@ namespace geom {
                         int degree)
     {
         assert(degree >= 1);
-        assert(ks.size() && pts.size() && ks.size() == pts.size()+1);
+        assert(pts.size() && ks.size() == pts.size()+1);
         CptsT cpts;
         cpts.reserve(pts.size() + degree);
         // within the range, t_\mu, t_{\mu+1} the spline evaluation
@@ -98,6 +99,13 @@ make_periodic_bspline (CptsT  pts,
                                                         degree_) ));
 }
 
+template <class Point>
+periodic_bspline<Point>
+make_periodic_bspline( bspline<Point>&& spl)
+{
+	assert(ops::is_periodic(spl));
+	return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
+}
  
 }
 #endif // ASTI_PERIODIC_BSPLINE_CONS

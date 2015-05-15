@@ -69,13 +69,12 @@ struct conic_arc {
     split_conic_at_shoulder() const
     {
         // returns Q1, S, R1
-        enum {dim = point_dim < Point >::dimension - 1};
         auto w = p[1][dim];
         auto q1 = lerp(0.5, p[0], p[1]);
         auto r1 = lerp(0.5, p[2], p[1]);
         auto s = lerp(0.5, q1, r1);
-        s[dim] = 1.0;
-        q1[dim] = q1[dim] = sqrt((1 + w) / 2);
+		s *= 1/s[dim];
+		q1 *= sqrt((1 + w) / 2)/q1[dim]; r1 *= sqrt((1 + w) / 2)/r1[dim];
         return std::make_tuple( q1, s, r1);
     }
     pointw_t p[3];
