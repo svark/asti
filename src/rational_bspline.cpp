@@ -34,8 +34,7 @@ template <class Point,class PTag>
 typename rational_bspline<Point,PTag>::point_t
 rational_bspline<Point,PTag>::eval(double u) const
 {
-  auto rbs = make_rbspline(spl_t(this->spline()));
-  return project(rbs.spline().eval(u));
+   return project(spl.eval(u));
 }
 
 template <class Point,class PTag>

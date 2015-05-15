@@ -1,3 +1,5 @@
+#ifndef ASTI_BSPLINE_QUERIES
+#define ASTI_BSPLINE_QUERIES
 #include "bspline_fwd.hpp"
 #include "tol.hpp"
 #include "geom_exception.hpp"
@@ -72,3 +74,5 @@ double torsion_approx(const SplineType & spl, double u)
 }
 
 }}
+
+#endif

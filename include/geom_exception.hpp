@@ -1,5 +1,6 @@
 #ifndef ASTI_GEOM_EXCEPTION_HPP
 #define ASTI_GEOM_EXCEPTION_HPP
+#include <string>
 #include <map>
 namespace geom {
    enum geom_error_code_t

@@ -16,7 +16,7 @@ struct pt_t {
 
     pt_t(){}
 
-    pt_t(const double v[]): p(v)
+    explicit pt_t(const double v[]): p(v)
     {
     }
 
@@ -144,6 +144,7 @@ struct vec_t
     vec_t& operator/=( double a) { this->v/=a; return *this;}
 
     vec_t& negate() { v = -v; return *this;}
+	vec_t operator-() { return vec_t(-v); }
     double operator[](std::size_t i) const { return v[i];}
     double& operator[](std::size_t i) { return v[i];}
     enum { dimension = dim };
