@@ -98,8 +98,8 @@ lerp( double lambda , double mu,
       const point2d_t& p3
     );
 
-template <int dim>
-pt_t<dim> dlerp( double lambda , const pt_t<dim>&p1, const pt_t<dim>&p2);
+template <class PointVec>
+PointVec dlerp( double lambda , const PointVec&p1, const PointVec&p2);
 double dlerp(double lambda, const double &, const double & );
 //}}}
 //{{{  (@* "convert vector to point and vice versa")

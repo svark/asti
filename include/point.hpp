@@ -1,5 +1,6 @@
 #ifndef ASTI__POINT_HPP
 #define ASTI__POINT_HPP
+#include <cmath>
 #include <Eigen/Core>
 #include "tol.hpp"
 #include "type_utils.hpp"
@@ -82,16 +83,6 @@ struct pt_t {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
 };
 
-template struct pt_t<1>;
-template struct pt_t<2>;
-template struct pt_t<3>;
-template struct pt_t<4>;
-
-typedef pt_t<1> point1d_t;
-typedef EIGEN_ALIGN16 pt_t<2> point2d_t;
-typedef pt_t<3> point3d_t;
-typedef EIGEN_ALIGN16 pt_t<4> point4d_t;
-
 template <int dim>
 bool operator!=(const pt_t<dim>& p1, const pt_t<dim>& p2) {
     return !(p1.p==p2.p);
@@ -137,8 +128,8 @@ struct vec_t
             v[i] = ve;
     }
 
-    vec_t& operator+=( const vec_t& v) { this->v+=v.v; return *this;}
-    vec_t& operator-=( const vec_t& v) { this->v-=v.v; return *this;}
+    vec_t& operator+=( const vec_t& v) { this->v += v.v; return *this;}
+    vec_t& operator-=( const vec_t& v) { this->v -= v.v; return *this;}
 
     vec_t& operator*=( double a) { this->v*=a; return *this;}
     vec_t& operator/=( double a) { this->v/=a; return *this;}
@@ -158,13 +149,7 @@ struct vec_t
 
 
 
-template struct vec_t<2>;
-template struct vec_t<3>;
-template struct vec_t<4>;
 
-typedef EIGEN_ALIGN16 vec_t<2> vector2d_t;
-typedef vec_t<3> vector3d_t;
-typedef EIGEN_ALIGN16 vec_t<4> vector4d_t;
 
 
 //}}}
@@ -256,12 +241,15 @@ lerp( double lambda,
        ((1-lambda)*p1+lambda*p2).eval(),0,0);
 }
 
-template <int dim>
-pt_t<dim>
+template <class PointVec>
+PointVec
 dlerp( double lambda,
-       const pt_t<dim> &p1, const pt_t<dim>&p2)
+       const PointVec &p1, const PointVec&p2)
 {
-    return pt_t<dim>((p2.p - p1.p)*lambda);
+    PointVec p(p2);
+    p -= p1;
+    p *= lambda;
+    return p;
 }
 
 inline double
@@ -558,23 +546,10 @@ mk_stdvec(const double *vb, const double *ve)
 }
 //}}}
 //{{{(@* "normalize a vector")
-
-inline vector2d_t normalize(const vector2d_t& vec)
+template <class VecT>
+inline VecT normalize(const VecT& vec)
 {
-    vector2d_t v( vec );
-    v *= (1.0/v.v.norm());
-    return v;
-}
-inline vector3d_t normalize(const vector3d_t& vec)
-{
-    vector3d_t v( vec );
-    v *= (1.0/v.v.norm());
-    return v;
-}
-
-inline  vector4d_t normalize(const vector4d_t& vec)
-{
-    vector4d_t v( vec );
+    VecT v( vec );
     v *= (1.0/v.v.norm());
     return v;
 }

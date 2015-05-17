@@ -34,18 +34,59 @@ include(biicode/boost/setup)
 #SET(BII_LIB_SRC ${SRC_LIST})
 # # Actually create targets: EXEcutables and libraries.
 
-
+# windows keeps src and test in BII_LIB_SRC
 file(GLOB files "test/*.cpp")
 message (STATUS "${files}")
 foreach(file ${files})
   file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
-  LIST(REMOVE_ITEM BII_LIB_SRC ${RELP})
+#  SET(LOC )
+  LIST(FIND BII_LIB_SRC ${RELP} _indx)
+  if(${_indx} GREATER -1)
+     LIST(REMOVE_ITEM BII_LIB_SRC ${RELP})
+  endif()
 endforeach()
 
+# move tests to BII_test_main_SRC
 foreach(file ${files})
   file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
   LIST(APPEND BII_test_main_SRC ${RELP})
 endforeach()
+
+# unix keeps sources and test in BII_test_main_SRC
+file(GLOB files "src/*.cpp")
+message (STATUS "${files}")
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(FIND BII_test_main_SRC ${RELP} _indx)
+  if(${_indx} GREATER -1)
+     LIST(REMOVE_ITEM BII_test_main_SRC ${RELP})
+  endif()
+endforeach()
+
+# move sources to BII_LIB_SRC
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(APPEND BII_LIB_SRC ${RELP})
+endforeach()
+
+file(GLOB files "include/*.hpp")
+message (STATUS "${files}")
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(FIND BII_test_main_SRC ${RELP} _indx)
+  if(${_indx} GREATER -1)
+     LIST(REMOVE_ITEM BII_test_main_SRC ${RELP})
+  endif()     
+endforeach()
+
+# move headers to BII_LIB_SRC
+foreach(file ${files})
+  file(RELATIVE_PATH RELP ${CMAKE_CURRENT_SOURCE_DIR} ${file})
+  LIST(APPEND BII_LIB_SRC ${RELP})
+endforeach()
+
+LIST(REMOVE_DUPLICATES BII_LIB_SRC)
+LIST(REMOVE_DUPLICATES BII_test_main_SRC)
 
 SET(BII_BLOCK_TESTS test_main)
 

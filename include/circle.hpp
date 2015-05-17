@@ -197,7 +197,7 @@ to_rational(const circle<Point>& circ)
     auto start_pt =  circ.getStart();
     auto center =  circ.getCenter();
     auto const & x = (start_pt - center);
-    decltype(x) const & y = cross(circ.getPlaneNormal(), decltype(circ.getPlaneNormal())(x) );
+    decltype(x)  y = cross(circ.getPlaneNormal(), decltype(circ.getPlaneNormal())(x) );
 
     double radius =  circ.getRadius();
 	
