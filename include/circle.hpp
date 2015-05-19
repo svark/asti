@@ -4,6 +4,7 @@
 #include "point_dim.hpp"
 #include <type_traits>
 #include "geom_exception.hpp"
+#include <math.h>
 #include "smat.hpp"
 /*
 
