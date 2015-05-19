@@ -1,6 +1,4 @@
 #include "point.hpp"
-#include "conic.hpp"
-#include "circle.hpp"
 #include <vector>
 #include "catch.hpp"
 #include "testutils.hpp"
