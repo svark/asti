@@ -1,7 +1,7 @@
 #ifndef ASTI_CONIC_HPP
 #define ASTI_CONIC_HPP
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 #include "line.hpp"
 #include "geom_exception.hpp"
 #include "type_traits"
@@ -27,7 +27,7 @@ struct conic_arc {
             if(tol::eq(weights[i], 0.0))
                 p[i] = pointw_t(p_[i], 0.0);
             else {
-                p[i] = pointw_t(p_[i], 1.0) ;
+                p[i] = pointw_t(p_[i], 1.0);
                 p[i]*= weights[i];
             }
     }
