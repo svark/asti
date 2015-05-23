@@ -82,7 +82,7 @@ struct conic_arc {
 
 template <class Point>
 conic_arc < Point >
-reverse_curve(conic_arc < Point > arc)
+reverse_curve(const conic_arc < Point >& arc)
 {
     return conic_arc<Point>(arc.p[2], arc.p[1], arc.p[0]);
 }

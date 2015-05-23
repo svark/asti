@@ -42,7 +42,8 @@ ops::is_periodic(const SplineCurve & crv)
 
     std::vector<double> buf1(p + 1), buf2(p + 1);
     te -= 2*(p + 1);
-	tb += (p + 1);
+    tb += (p + 1);
+
     auto deltas_at_start = buf1.begin();
     // fill up (1 + p) knot ranges) at the start
     std::adjacent_difference(tb,
@@ -117,7 +118,7 @@ double ops::curvature(const SplineType & spl, double u)
     auto const & ds = spl.eval_derivatives(2, u);
     double t = len(ds[1]);
     if(tol::eq(t, 0))
-		return std::numeric_limits<double>::infinity();
+                return std::numeric_limits<double>::infinity();
     return len(cross(ds[1], ds[2])) / (t * t * t);
 }
 
@@ -127,7 +128,7 @@ double ops::torsion(const SplineType & spl, double u)
     auto const &ds = spl.eval_derivatives(3, u);
     auto cp =  cross(ds[1], ds[2]);
     double w =  sqlen(cp);
-	if(tol::eq(w, 0, tol::sqresabs))
+        if(tol::eq(w, 0, tol::sqresabs))
         return std::numeric_limits<double>::infinity();
     double t = dot(decltype(cp)(ds[3]), cp);
     return t / w;
