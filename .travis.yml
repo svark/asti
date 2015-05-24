@@ -9,7 +9,7 @@ install:
   - bii new svark/asti
   - ls
   - pwd
-  - mv ../svark/asti blocks/svark/asti
+  - mv ../svark/asti blocks/svark/
   - ls blocks/svark/asti
 script:
   - bii find --update #Find biicode dependencies 
