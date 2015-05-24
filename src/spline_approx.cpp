@@ -64,7 +64,7 @@ ops::cubic_approx1d(Fn f, std::vector<double> t)
 
 template <class FnType>
 bspline<double>
-ops::quad_approx1d(FnType f, std::vector<double>& t_)
+ops::quad_approx1d(FnType f, std::vector<double> t_)
 {
     assert(t_.size()!=0);
 	auto b = t_.cbegin();
