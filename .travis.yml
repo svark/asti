@@ -10,6 +10,7 @@ install:
   - ls
   - pwd
   - mv ../svark/asti blocks/svark/asti
+  - ls blocks/svark/asti
 script:
   - bii find --update #Find biicode dependencies 
   - bii cpp:configure #Configure block for building
