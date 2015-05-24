@@ -3,9 +3,13 @@ language:
 install:
   - wget http://apt.biicode.com/install.sh && sudo chmod +x install.sh && sudo ./install.sh #Install biicode
   - bii setup:cpp #Install biicode required C/C++ tools (GCC, cmake, etc)
+  - bii init xasti
+  - bii new svark/asti
 script:
+  - cd blocks/svark/asti
   - bii find --update #Find biicode dependencies 
   - bii cpp:configure #Configure block for building
+  - bii deps --detail
   - bii cpp:build #Build block
   - bii test
   
