@@ -316,7 +316,7 @@ End:
 namespace geom {
 #include "spline_approx_inst.inl"
 template bspline<double> ops::cubic_approx1d(
-    class std::function<double (double)>, class std::vector<double> &);
+    class std::function<double (double)>, class std::vector<double> );
 template bspline<double> ops::quad_approx1d(
-    class std::function<double (double)>, class std::vector<double> &);
+    class std::function<double (double)>, class std::vector<double> );
 }
