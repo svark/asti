@@ -5,11 +5,11 @@ namespace ops {
 
 template <class Fn>
 extern bspline<double>
-cubic_approx1d(Fn f, std::vector<double>& t);
+cubic_approx1d(Fn f, std::vector<double> t);
 
 template <class FnType>
 extern bspline<double>
-quad_approx1d(FnType f, std::vector<double>& t);
+quad_approx1d(FnType f, std::vector<double> t);
 
 template <class SplineType>
 extern double
