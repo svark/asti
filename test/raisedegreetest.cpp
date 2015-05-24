@@ -17,7 +17,7 @@ TEST_CASE("raise_degree", "[periodic_bspline][degree]")
   std::vector<double> ks(5);
   ks[0] = 0.0; ks[1] = 0.3; ks[2] = 0.6;
   ks[3] = 0.8; ks[4] = 1.0;
-  geom::periodic_bspline<geom::point2d_t> bs= geom::make_periodic_bspline_wrap(pts, ks,2);
+  geom::periodic_bspline<geom::point2d_t> bs( geom::make_periodic_bspline_wrap(pts, ks,2) );
   auto p0 =  bs.eval(0);
   auto p1 =  bs.eval(.2);
   auto p2 =  bs.eval(0.9);
@@ -31,7 +31,7 @@ TEST_CASE("raise_degree", "[periodic_bspline][degree]")
   INFO("at 0.9999:"<< p4 << "\n");
 
   int p =  bs.degree();
-  bs = geom::ops::raise_degree(bs);
+  geom::ops::raise_degree(bs).swap(bs);
 
   REQUIRE(p == bs.degree() - 1);
   INFO("at 0:"<< bs.eval(0) << "\n");
