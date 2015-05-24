@@ -6,6 +6,7 @@ install:
   - bii init xasti
   - cd xasti
   - bii new svark/asti
+  - mv ../svark/asti blocks/svark/asti
 script:
   - bii find --update #Find biicode dependencies 
   - bii cpp:configure #Configure block for building
