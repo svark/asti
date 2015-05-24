@@ -20,7 +20,7 @@ namespace geom {
 
 template <class Fn>
 bspline<double>
-ops::cubic_approx1d(Fn f, std::vector<double>& t)
+ops::cubic_approx1d(Fn f, std::vector<double> t)
 {
 
     double mindist = std::numeric_limits<double>::infinity();
