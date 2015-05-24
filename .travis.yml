@@ -8,10 +8,4 @@ script:
   - bii cpp:configure #Configure block for building
   - bii cpp:build #Build block
   - bii test
-deploy:
-  provider: biicode
-  user: svark
-  password:
-    secure: DEkxmnlUbR0Zh0ULT4tiQjtfjKstUpAWVgQbRAa4zxXfe/it3NRUyXGa0yVsNkQ/dNGXu41icD+yv1Ige5/kNit6HMcTAvrSIw8Yk2oCeiuO6mhSbqqpc5PwBv//gRFnKdwcVqlNPZvrKuz4cuWRxj4dgeHWXw5zZWJqeTS6kcE20WREoyAWdjDYCzDh3p0760cWDmbWi4s0+MVniUSl5iZaxzJtvLPeIUkDd1ObAlE11mFHSLOvqoAFLjgnPa7Ueaa27fX07QPYT/nlblFBD+pBv2LDHphGngjydg10siJWqr/ZFPJGR4BoaUURUPu+4lBWCpZwwqhMOInUkvgj8UN3PtAGdHi99bS6V3Hj/erKgA2mZn2mxAsCLcPma8fyBxHO4aKEDXZxBPTmF1YhnkmMSvZGd60KcNg7vGq8S/jc3BBmLXgTD6ZvOH/pvjeBtQPq+a+jJTsVY6oCeANmzMdJmLkAPYZrg8F2gclH/pyXUqsxfFKSLp8ozCMmGJVmO/99z0dX2knWsN4yeas61WkcaxiIO2AdDT87Ue3xw09pfYAsw6RaqzDr0vYVe6j9cjDs1O5BegMuKCO4x+Ue3QaxHzPZXgcOYVeTWjHZbgJV6IQ7fdT3F4uozqIaCGHEB5ttL+r8WN16RSLz48FY12q+7HiU1kgKIMXYFK6azxo=
-on:
-   repo: svark/asti
+  
