@@ -11,6 +11,7 @@ This is cagd library with the following functionality implemented so far
 - remove knot for curve fairing.
 - cubic and quad approximation
 - distance of a point to a curve.
+- arc lengths of curves.
 
 [![Build Status](https://travis-ci.org/svark/asti.svg?branch=master)](https://travis-ci.org/svark/asti)
 
