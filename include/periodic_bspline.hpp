@@ -93,17 +93,6 @@ struct periodic_bspline
         return spl.param_range();
     }
 
-    periodic_bspline&
-    translate(const vector_t& t) {
-        spl.translate(t); return *this;
-    }
-
-    // store cpts relative to cg
-    void optimize() { spl.optimize(); }
-
-    // store cpts relative to origin
-    void deoptimize() { spl.deoptimize(); }
-
     void swap( periodic_bspline & other ) {
         spl.swap(other.spl);
     }
@@ -112,7 +101,6 @@ struct periodic_bspline
     const knots_t & knots() const { return spl.knots(); }
     const cpts_t &  control_points() const { return spl.control_points(); }
     int degree() const { return spl.degree(); };
-    const vector_t& base_point() const { return spl.base_point(); }
 private:
     bspline<point_t> spl;
 };

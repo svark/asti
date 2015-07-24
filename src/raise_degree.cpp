@@ -43,7 +43,7 @@ namespace impl
       new_cpts.push_back(make_pt(cv));
     }
     return SplineType(std::move(new_cpts),
-                      std::move(new_knots), p).translate(spl.base_point());
+                      std::move(new_knots), p);
   }
 
   template <class SplineType>

@@ -1,7 +1,7 @@
 #ifndef ASTI_BSPLINE_SURFACE_H
 #define ASTI_BSPLINE_SURFACE_H
 #include <iterator>
-
+#include "rmat.hpp"
 namespace geom {
 
 template <class Point, class RTag = polynomial_tag,
@@ -84,10 +84,10 @@ private:
                       int derOrderU, in derOrderV,
                       rational_tag)
     {
-        point_iter_traits < point_t * >::VectorContT  dsu;
+        vcpts_t  dsu;
         for(int i = 0;i <= derOrderU; ++i)
         {
-            point_iter_traits < point_t * >::VectorContT  dsv;
+            vcpts_t  dsv;
             for(int j = 0;j <= derOrderV; ++j)
             {
                 dsv.push_back(process_vec(
@@ -99,32 +99,38 @@ private:
         return rational_derivatives(dsu).back();
     }
 
-    vec_t process_vec(double u, double v, int derOrderU,
-                      int derOrderV,
+    vec_t process_vec(double u,
+                      double v,
+                      int    derOrderU,
+                      int    derOrderV,
                       polynomial_tag)
     {
         // because we are dealing with tensor product splines,  the
         // u and v derivatives can be computed independently
         // ./media/derivative-tpsurf.png
-        typedef rmat_base_vd::accumulator<Point> ac_t;
-        ac_t  acu = rmat_base_vd(t_u, degu).
-            get_accumulator < Point > (u, derOrderU);
 
-        ac_t  acv = rmat_base_vd(t_v, degv).
-            get_accumulator < Point > (v, derOrderV);
+        std::vector<double> ub, vb;
+        size_t nu_u, nu_v;
 
-        cpts_t tmp;
-        for(size_t j = 0 ;j < sizev(); ++j)
+        std::tie(ub, nu_u) = rmat_base_vd(t_u, degu)
+            .get_basis(u, derOrderU);
+
+        std::tie(vb, nu_v) = rmat_base_vd(t_v, degv)
+            .get_basis(v, derOrderV);
+
+        Point base(0.0);
+
+        int kj = 0;
+        for(size_t j = nu_v - degv;j <= nu_v; ++j)
         {
-            // swap out
-            ac_t acu_tmp(std::move(acu));
-            for(size_t i = 0;i < sizeu(); ++i)
-                acv_tmp.prod(cpts_[i + j * stride]);
+            Point b(0.0);
+            int ki = 0;
+            for(size_t i = nu_u;i <= nu_u - degu; ++i)
+                b += ub[ki++] * make_vec(cpts_[i + j * stride]);
 
-            acv.prod(acu_tmp.get());
-            acu.swap(acu_tmp); // swap in
+            base += vb[kj++] * b;
         }
-        return acv.get();
+        return base;
     }
 
     cpts_t cpts;

@@ -76,7 +76,7 @@ lerp( double lambda , double mu,
 }
 
 point2d_t
-lerp( double lambda , double mu,
+lerp( double lambda, double mu,
       const point2d_t& p1,
       const point2d_t& p2,
       const point2d_t& p3
@@ -87,4 +87,24 @@ lerp( double lambda , double mu,
     res.p[1] = lambda * p1.p[1] + mu * p2.p[1] + (1 - lambda - mu) * p3.p[1];
     return res;
 }
+
+double volume(const point3d_t & a,
+              const point3d_t & b,
+              const point3d_t & c,
+              const point3d_t & d)
+{
+    return dot( (d - a),  cross(b - a, c - a)) / 3;
+}
+
+double area(const point3d_t & p,
+            const point3d_t & q,
+            const point3d_t & r)
+{
+    return 0.5 * len(cross(q - p, r - p));
+}
+
+std::integral_constant<int,0> X;
+std::integral_constant<int,1> Y;
+std::integral_constant<int,2> Z;
+std::integral_constant<int,3> W;
 }

@@ -128,9 +128,9 @@ template <class SplineType>
 SplineType
 ops::extend_curve_end(const SplineType & spl, double delta)
 {
-    auto const & s = clamp_start(spl);
-    auto pr = s.param_range();
-    double v = pr.second;
+    auto const & s  = clamp_start(spl);
+    auto         pr = s.param_range();
+    double       v  = pr.second;
     v += (delta * (pr.second -  pr.first));
     return rebase_at_end(s, util::make_constant_iterator(v));
 }
@@ -140,20 +140,20 @@ SplineType
 ops::extend_curve_end_to_pt(const SplineType & spl,
                             typename SplineType::point_t const & target)
 {
-    auto const & s = reparametrize (clamp_start(spl), 0, 1);
-    auto const & t = s.knots();
-    size_t n    = s.control_points().size();
-    int    d    = s.degree();
-    double chord_len = 0;
-    auto p = s.eval(t[d]);
+    auto const & s         = reparametrize (clamp_start(spl), 0, 1);
+    auto const & t         = s.knots();
+    size_t       n         = s.control_points().size();
+    int          d         = s.degree();
+    double       chord_len = 0;
+    auto         pt         = s.eval(t[d]);
 
     for(size_t r = 0;r < n - d; ++r) {
         auto newc = s.eval(t[d + r + 1]);
-        chord_len += len(newc - p);
-        p = newc;
+        chord_len += len(newc - pt);
+        pt = newc;
     }
 
-    double ld  = len(target - p);
+    double ld  = len(target - pt);
     chord_len += ld;
     auto delta      = ld / chord_len;
 

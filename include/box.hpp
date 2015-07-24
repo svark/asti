@@ -15,10 +15,14 @@ namespace geom {
             lo = Point(inf);
             hi = Point(-inf);
         }
-		template <class PointU>
-		box(const box<PointU>& b) : lo(b.lo),hi(b.hi)
+
+        template <class PointU>
+        box(const box<PointU>& b) : lo(b.lo),hi(b.hi)
 		{
 		}
+
+        template <int i>
+        double size(std::integral_constant<int,i> ) const { return hi[i]-lo[i];}
 
         bool is_invalid() const;
         box &operator +=( const Point& p);

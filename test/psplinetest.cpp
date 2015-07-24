@@ -42,11 +42,6 @@ TEST_CASE("periodic_bspline_basic", "[periodic][2d][eval][derivative][blossom][b
   REQUIRE(bs.periodic_param(1.2) == Approx(0.2));
   REQUIRE(bs.periodic_param(-0.2) == Approx(0.8));
   REQUIRE(bs.periodic_param(-1.2) == Approx(0.8));
-  bs.optimize();
-  INFO( "optimized\nat 0:"<< bs.eval(0) << "\n");
-  REQUIRE(bs.eval(0.0) == make_pt(0.04,0.64));
-  REQUIRE(bs.eval(0.2) == make_pt(-0.128888889,0.337777778));
-  REQUIRE(bs.eval(0.9) == make_pt(0.185,0.6975));
   REQUIRE(geom::ops::is_periodic(bs.spline()));
   REQUIRE(len(bs.eval_derivative(1, 0.9 - 1e-7) - bs.eval_derivative(1, 0.9)) <
           1e-7 * len(bs.eval_derivative(2, 0.9))

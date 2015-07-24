@@ -35,9 +35,8 @@ SplineType ops::reparametrize(const SplineType& spl,
     return make_bspline(std::move(cpts_t(spl.control_points())),
                         std::move(new_knots),
                         spl.degree(),
-                        typename str::ptag(), 
-                        typename str::rtag())
-      .translate(spl.base_point());
+                        typename str::ptag(),
+                        typename str::rtag());
 }
 
 template <class SplineType>
