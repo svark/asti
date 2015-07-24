@@ -8,6 +8,11 @@
 #include "point_fwd.hpp"
 namespace geom {
 
+extern std::integral_constant<int,0> X;
+extern std::integral_constant<int,1> Y;
+extern std::integral_constant<int,2> Z;
+extern std::integral_constant<int,3> W;
+
 //{{{(@* "geometric point")
 template <int dim>
 struct pt_t {
@@ -35,6 +40,13 @@ struct pt_t {
             p[j] = fill;
     }
 
+    template <int i>
+    double c(std::integral_constant<int,i> v)
+    {
+        static_assert(i < dim,
+          "expecting an integral constant with value lesser than point dim");
+        return p[i];
+    }
 
     explicit pt_t(double v)
     {
@@ -627,6 +639,16 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
     scale(avg , 1.0/num_pts);
     return avg;
 }
+
+extern double volume(const point3d_t & a,
+                     const point3d_t & b,
+                     const point3d_t & c,
+                     const point3d_t & d);
+
+extern double area(const point3d_t & p,
+                   const point3d_t & q,
+                   const point3d_t & r);
+
 //}}}
 }
 

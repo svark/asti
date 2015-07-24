@@ -30,7 +30,7 @@ SplineType ops::reverse_curve(const SplineType& spl)
                         spl.degree(),
                         typename str::ptag(),
                         typename str::rtag()
-        ).translate(spl.base_point());
+        );
 }
 
 //}}}

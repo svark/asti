@@ -66,55 +66,8 @@ struct rmat_base {
     // deg + 1, bspline coefficients at u, optimized for parallelism
     std::vector<double> coeffs_par(double u) const;
 
-    template<class Point>
-    struct accumulator  {
-        accumulator(double u, int derOrder):base(0.0), k(0)
-        {
-            size_t nu = locate_nu(u);
-            assert(derOrder >= 0);
-            for(int j = 1;j < deg - derOrder; ++j) {
-                basis_cache *= rmat_explicit<KnotIter>(t + nu, j, u);
-            }
-            for(int j = deg - derOrder;j <= deg; ++j) {
-                basis_cache *= der_rmat_explicit<KnotIter>(t + nu, j, u);
-            }
-        }
-
-        accumulator(accumulator&& other)
-            :basis_cache(other.basis_cache)
-        {
-            k = 0;
-            base = Point(0.0);
-        }
-
-        void prod(const Point& pt)
-        {
-            base = axpy(basis_cache.get(k++), pt, base);
-        }
-
-        Point get() const
-        {
-            return base;
-        }
-
-        void swap(accumulator &other)
-        {
-            basis_cache.swap(other.basis_cache);
-            std::swap(k, other.k);
-            std::swap(base, other.base);
-        }
-    private:
-        mult_rmat basis_cache;
-        int k;
-        Point base;
-    };
-
-    template<class Point>
-    accumulator < Point >
-    get_accumulator(double u, int derOrder = 0)
-    {
-        return accumulator < Point > (u, derOrder);
-    }
+    std::tuple<std::vector<double>, size_t>
+    get_basis(double u,int derOrder = 0) const;
 
     // knot insertion matrix of size:(l - f) * (e - t)
     Eigen::MatrixXd

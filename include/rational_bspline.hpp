@@ -44,7 +44,7 @@ auto rational_derivatives(const VecsT & vecs)
     return vs;
 }
 
-template <class Point, class PTag>
+template <class Point, class PTag = regular_tag>
 struct rational_bspline
 {
 public:
@@ -124,19 +124,6 @@ public:
 
     int degree() const { return spl.degree(); };
 
-    const typename spl_t::vector_t& base_point() const {
-        return spl.base_point();
-    }
-    // store cpts relative to cg
-    void optimize() { spl.optimize(); }
-
-    // store cpts relative to origin
-    void deoptimize() { spl.deoptimize(); }
-
-    rational_bspline& translate(const vectorw_t& t) {
-        spl.translate(t);
-        return *this;
-    }
 private:
 
     template <int d>

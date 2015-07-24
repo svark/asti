@@ -22,7 +22,7 @@ setupQMatrix(PointIter pb, PointIter pe,
              Eigen::Matrix<double,dim,
              dim >& sigmaxy)
 {
-    typedef RAWTYPE(ps[0]) point_t;
+    typedef RAWTYPE(pb[0]) point_t;
     point_t cg(centroid(pb, pe));
     sigmaxy.setZero();
     //should be able to run in parallel
@@ -101,7 +101,7 @@ void find_parameters(PointIter pb,
     std::size_t n = std::distance(pb,pe);
     std::vector<double> widths(n);
     widths[0] = 0.0;
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     Eigen::Matrix<double,dim,dim> Q;
     setupQMatrix<dim>(pb,pe,Q);
     for (size_t i = 0; i < n - 1; ++i) {
@@ -124,7 +124,7 @@ void find_parameters(PointIter pb, PointIter pe,
     std::vector<double> widths(n), thetas(n);
     widths[0] = 0.0;
     thetas[0] = 0.0;
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     Eigen::Matrix<double,dim,dim> Q;
     setupQMatrix<dim>(pb,pe,Q);
     RAWTYPE(eigen_vec(pb[0])) u;
@@ -203,7 +203,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          std::integral_constant<end_conditions_t,periodic>
     )
 {
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     using Eigen::MatrixXd;
     size_t n = std::distance(pb,pe);
 
@@ -246,7 +246,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          VecT& explicit_tgts,
                          std::integral_constant<end_conditions_t,parabolic_blending> )
 {
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
@@ -275,7 +275,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     Eigen::Matrix<double,Eigen::Dynamic,dim> rhs(n);
     // pg 88 of hoschek..  set up equation m p' = n.p for C^2
     // continuity of cubic polynomials at params. eq 3.16 we need to
@@ -309,7 +309,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          VecT& explicit_tgts,
                          std::integral_constant<end_conditions_t,not_a_knot> )
 {
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     size_t n = std::distance(pb,pe);
     Eigen::MatrixXd m(n,n);
     m.setZero();
@@ -363,8 +363,8 @@ pchip_open(PointIter pb, PointIter pe,
            const ParamsT& params, const VecsT& tgts)
            -> bspline<RAWTYPE(pb[0])>
 {
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
-    typedef RAWTYPE(ps[0]) point_t;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
+    typedef RAWTYPE(pb[0]) point_t;
     size_t n = std::distance(pb,pe);
     RAWTYPE(mk_stdvec(pb[0])) cpts(2*n);
     std::vector<double> knots( 2* n + 4);
@@ -386,8 +386,8 @@ pchip_open(PointIter pb, PointIter pe,
     cpts[2*n-2] = pb[n-1] - 1/3 * tgts[n-1] * E(params,n-2);
     cpts[2*n-1] = pb[n-1];
     knots[2*n+3] = knots[2*n+2] = knots[2*n+1] = knots[2*n] = params[n-1];
-    typedef RAWTYPE(ps[0]) point_t;
-    return bspline<point_t>( std::move(cpts), std::move(knots ), 3);
+
+    return make_bspline( std::move(cpts), std::move(knots ), 3);
 }
 
 template <class PointIter, class VecsT,class ParamsT>
@@ -397,10 +397,10 @@ pchip_closed(PointIter pb, PointIter pe,
              const VecsT& tgts
     ) -> periodic_bspline<RAWTYPE(pb[0]) >
 {
-    static const int dim = point_dim<RAWTYPE(p[0])>::dimension;
-    typedef RAWTYPE(ps[0]) point_t;
+    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
+    typedef RAWTYPE(pb[0]) point_t;
     size_t n = std::distance(pb,pe);
-    RAWTYPE(mk_stdvec(ps[0])) cpts(2*n-1);//last cpt is omitted it is the same as the first
+    RAWTYPE(mk_stdvec(pb[0])) cpts(2*n-1);//last cpt is omitted it is the same as the first
     std::vector<double> knots( 2* n);
 //pg 180,188 hoschek
     cpts[0] = pb[0] - 1/3 * tgts[0] *  E(params,n-2) ;
@@ -438,7 +438,7 @@ auto piecewise_cubic_hermite_interp_periodic
     const VecsT & vecs
     ) -> periodic_bspline< RAWTYPE(pb[0]) >
 {
-    typedef RAWTYPE(ps[0]) point_t;
+    typedef RAWTYPE(pb[0]) point_t;
     static const int dim =  point_dim<point_t>::dimension;
 
     // generate parameters using chord length approximation.
@@ -532,10 +532,10 @@ piecewise_cubic_hermite_interp
     ) -> bspline< RAWTYPE(pb[0] ) >
 
 {
-    if(opt.end_conditions != periodic)
+    if(opts.end_conditions != periodic)
         return piecewise_cubic_hermite_interp_regular(pb, pe, opts, vecs);
     else
-        return piecewise_cubic_hermite_interp_periodic(pb, pe, opts, vecs);
+        return piecewise_cubic_hermite_interp_periodic(pb, pe, opts, vecs).spline();
 }
 // }}}
 // }}}

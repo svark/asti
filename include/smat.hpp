@@ -134,7 +134,7 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
       (std::move(newcpts), std::move(ks), deg,
        typename str::ptag(),
        typename str::rtag())
-        .translate(crv.base_point());
+        ;
 }
 
 template <class SplineCurve, class KnotIter>
@@ -170,7 +170,7 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
                          std::move(ks), deg,
                          typename str::ptag(),
                          typename str::rtag())
-        .translate(crv.base_point());
+        ;
 }
 
 template <class SplineCurve, class KnotIter>

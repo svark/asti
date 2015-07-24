@@ -75,6 +75,21 @@ rmat_base<KnotIter>::coeffs_par(double u) const
 {
     return der_coeffs_par(0, u);
 }
+template <class KnotIter>
+std::tuple<std::vector<double>,size_t>
+rmat_base<KnotIter>::get_basis(double u, int derOrder) const
+{
+    size_t nu = locate_nu(u);
+    assert(derOrder >= 0);
+    mult_rmat basis_cache;
+    for(int j = 1;j <= deg - derOrder; ++j) {
+        basis_cache *= make_rmat_explicit(t + nu, j, u);
+    }
+    for(int j = deg - derOrder + 1;j <= deg; ++j) {
+        basis_cache *= make_der_rmat_explicit(t + nu, j, u);
+    }
+    return std::forward_as_tuple(basis_cache.moveb(), nu);
+}
 
 template <class KnotIter>
 Eigen::MatrixXd
@@ -84,7 +99,7 @@ rmat_base<KnotIter>::insertion_matrix(KnotIter f, KnotIter l) const
     size_t n = std::distance(t, e); // old knot size
     Eigen::MatrixXd matrix(m, n);
     matrix.setZero();
-    for(size_t i = 0;i < m; ++i)
+    for(size_t i = 0;i < m - deg - 1; ++i)
     {
         mult_rmat basis_cache;
         size_t nu = locate_nu(f[i]);

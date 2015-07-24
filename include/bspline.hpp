@@ -5,7 +5,7 @@
 #include <vector>
 #include <utility>
 #include <vector>
-//#include <list>
+#include <memory>
 //#include <Eigen/Core>
 #include "point_dim.hpp"
 #include "type_utils.hpp"
@@ -41,16 +41,6 @@ struct bspline {
 
     std::pair<double,double> param_range() const;
 
-    bspline& translate(const vector_t& t) {
-        origin += t; return *this;
-    }
-
-    // store cpts relative to cg
-    bspline& optimize() ;
-
-    // store cpts relative to 0.0
-    bspline& deoptimize() ;
-
     void swap( bspline & other ) ;
 
     // accessors
@@ -59,13 +49,12 @@ struct bspline {
         return cpts;
     }
     int             degree()             const { return deg; };
-    const vector_t& base_point()         const { return origin; }
 
 protected:
+	
     knots_t t;
     cpts_t cpts;
     int deg;
-    vector_t origin;
 };
 
 template <class Point>

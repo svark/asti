@@ -158,6 +158,11 @@ public:
         return basis;
     }
 
+    std::vector<double>&&
+    moveb() {
+        return std::move(basis);
+    }
+
     template<class PointIter>
     auto prod(const PointIter cpts) ->
         RAWTYPE(cpts[0])
@@ -173,6 +178,21 @@ public:
 private:
     std::vector < double > basis;
 };
+
+template <class KnotIter>
+rmat_explicit < KnotIter >
+make_rmat_explicit(KnotIter t, int d, double u)
+{
+    return rmat_explicit < KnotIter > (t, d, u);
+}
+
+template <class KnotIter>
+rmat_explicit < KnotIter >
+make_der_rmat_explicit(KnotIter t, int d, double u)
+{
+    return der_rmat_explicit < KnotIter > (t, d, u);
+}
+
 
 } // namespace geom
 #endif // ASTI_RMAT_EXPLICIT

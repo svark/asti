@@ -38,6 +38,7 @@ private:
 template<class IterT>
 range < IterT > mk_range(IterT b, IterT e) { return range<IterT>(b, e);}
 
+
 template <class IterT>
 struct rrange
 {

@@ -37,7 +37,7 @@ ops::insert_knots(const SplineType& crv,
                         crv.degree(),
                         typename spline_traits<SplineType>::ptag(),
                         typename spline_traits<SplineType>::rtag())
-      .translate(crv.base_point());
+      ;
 }
 
 // ./media/boehm.png
@@ -76,7 +76,7 @@ insert_knot_impl( const SplineType &crv,
                          std::move(newcpts),std::move(newts),p,
                          typename spline_traits<SplineType>::ptag(),
                          typename spline_traits<SplineType>::rtag())
-      .translate(crv.base_point());
+      ;
 }
 
 template <class SplineType>

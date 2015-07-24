@@ -13,8 +13,6 @@ ops::compute_box(const SplineType &spl)
     {
         b += c;
     }
-    b.lo += spl.base_point();
-    b.hi += spl.base_point();
     return b;
 }
 

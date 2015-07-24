@@ -17,8 +17,7 @@ namespace geom {
 template <class Point>
 Point bspline<Point>::eval(double u) const
 {
-    rmat<Point> m(cpts,t, deg);
-    return m.eval(u) + origin;
+    return rmat<Point>(cpts,t,deg).eval(u);
 }
 //}}}
 
@@ -29,9 +28,8 @@ template <class Point>
 typename bspline<Point>::vector_t
 bspline<Point>::eval_derivative(int derOrder, double u) const
 {
-    rmat<Point> m(cpts, t, deg);
     assert(derOrder >= 0);
-    return make_vec( m.eval_derivative(derOrder, u) );
+    return make_vec( rmat<Point>(cpts, t, deg).eval_derivative(derOrder, u) );
 }
 
 template <class Point>
@@ -62,8 +60,7 @@ bspline<Point>::param_range() const
 template <class Point>
 bspline<Point>::bspline(cpts_t  pts,
                         knots_t ks, int degree):
-    t(std::move(ks)),cpts(std::move(pts)),deg(degree),
-    origin(vector_t(0.0))
+    t(std::move(ks)),cpts(std::move(pts)),deg(degree)
 {
 }
 
@@ -71,7 +68,7 @@ template <class Point>
 bspline<Point>::bspline(std::tuple<cpts_t,knots_t,int>&& dat)
     :  t(std::forward<knots_t>(std::get<1>(dat))),
        cpts(std::forward<cpts_t>(std::get<0>(dat))),
-       deg(std::get<2>(dat)),origin(vector_t(0.0))
+       deg(std::get<2>(dat))
 {
 }
 
@@ -79,8 +76,7 @@ template <class Point>
 bspline<Point>::bspline(const bspline<Point>& other):
     t(other.t),
     cpts(other.cpts),
-    deg(other.deg),
-    origin(other.origin)
+    deg(other.deg)
 {
 }
 
@@ -88,34 +84,8 @@ template <class Point>
 bspline<Point>::bspline(bspline<Point>&& other):
     t(std::forward<knots_t>(other.t)),
     cpts(std::forward<cpts_t>(other.cpts)),
-    deg(other.deg),
-    origin(other.origin)
+    deg(other.deg)
 {
-}
-//}}}
-
-//{{{  .(@* "optimize")
-// optimize by storing all points relative to their centroid
-template <class Point>
-bspline<Point>& bspline<Point>::optimize()
-{
-    auto center = make_vec(centroid(cpts.cbegin(), cpts.cend()));
-    std::transform(cpts.begin(), cpts.end(), cpts.begin(),
-                   [&center](decltype(cpts[0]) p){ return p -= center;} );
-    origin += center;
-    return * this;
-}
-
-// deoptimize so that origin is at zero
-template <class Point>
-bspline<Point>& bspline<Point>::deoptimize()
-{
-    if(origin == vector_t(0.0))
-        return *this;
-
-    std::transform(cpts.begin(), cpts.end(), cpts.begin(),
-                   [this](decltype(cpts[0]) p){ return p += this->origin;} );
-    return * this;
 }
 //}}}
 
@@ -127,13 +97,12 @@ void bspline < Point >::swap(bspline & other)
         return;
     t.swap(other.t);
     cpts.swap(other.cpts);
-    std::swap(origin,other.origin);
     std::swap(deg, other.deg);
 }
 
 //}}}
 
-//{{{ --(@*"evaluate bspline blossom f[0],f[1],...,f[deg-1]")
+//{{{ --(@*"evaluate bspline blossom at f[0],f[1],...,f[deg-1]")
 //see
 //(@file :file-name "./media/blossom1.png" :to "./media/blossom1.png" :display "blossom1")
 //(@file :file-name "./media/blossom2.png" :to "./media/blossom2.png" :display "blossom2")
@@ -148,7 +117,7 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
         cache[j] = cpts[nu - p + j];
     }
     m.spline_compute(f, nu, cache.get());
-    return cache[0] + origin;
+    return cache[0];
 }
 //}}}
 }
