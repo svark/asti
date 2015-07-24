@@ -480,7 +480,7 @@ piecewise_cubic_hermite_interp_regular
     PointIter pe,
     interpolation_options_t opts,
     const VecsT & vecs
-    ) -> bspline< typename RAWTYPE(pb[0] ) >
+    ) -> bspline< RAWTYPE(pb[0] ) >
 {
     typedef RAWTYPE(pb[0]) point_t;
     static const int dim =  point_dim < point_t >::dimension;
