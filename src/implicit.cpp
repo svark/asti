@@ -15,7 +15,7 @@
 // expand q_k(p(t))  in terms of \alpha_k(t)
 // coefficients of \alpha_k(t) will form matrix D
 // q(p(t))= (Db)^T [\alpha_k(t)] find b of norm 1
-// corresponding to min eigen value
+// corresponding to min singular value
 
 namespace geom {
 
