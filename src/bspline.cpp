@@ -1,8 +1,5 @@
 //--*-mode:c++-*-
 //{{{ --includes
-#include <iostream>
-#include <map>
-#include <cmath>
 #include "bspline.hpp"
 #include "rmat.hpp"
 #include "tol.hpp"
