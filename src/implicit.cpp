@@ -10,7 +10,7 @@
 #include "point.hpp"
 #include "reparametrize.hpp"
 #include "implicit.hpp"
-
+#include "any_curve.hpp"
 // find a basis q_k of M implicit polynomials
 // expand q_k(p(t))  in terms of \alpha_k(t)
 // coefficients of \alpha_k(t) will form matrix D
@@ -23,29 +23,19 @@ namespace geom {
 template <class Point>
 struct homogc
 {
-    typedef RAWTYPE(make_vec(Point())) VectorT;
-    homogc(const bspline <Point> &s_)
-        :s(s_),center(new VectorT(0.0))
+    //typedef RAWTYPE(make_vec(Point())) VectorT;
+
+    template <class Curve>
+    homogc(Curve c)
+    :s(make_any_curve(std::move(c)))
     {
-        auto  b  = geom::ops::compute_box(s);
-        halfdiag = len(make_vec(b.size(X) / 2, b.size(Y) / 2));
-        *center  =  make_vec( lerp(0.5, b.lo, b.hi) );
     }
 	homogc(homogc&& o)
-		:s(std::forward<bspline<Point> >(o.s)),halfdiag(o.halfdiag),
-		 center(std::move(o.center)){}
+		:s(std::forward<any_curve < Point > >(o.s)){}
 
 	homogc(const homogc& o)
-		:s(o.s),halfdiag(o.halfdiag),
-		 center(new VectorT(*o.center)){}
+		:s(o.s){}
 
-	homogc(bspline <Point> &&s_)
-        :s(std::forward<bspline<Point>>(s_)),center(new VectorT(0.0))
-    {
-        auto  b  = geom::ops::compute_box(s);
-        halfdiag = len(make_vec(b.size(X) / 2, b.size(Y) / 2));
-        *center   =  make_vec(lerp(0.5, b.lo, b.hi));
-	}
 
     Point eval(double param) const
     {
@@ -57,10 +47,7 @@ struct homogc
         return p;
     }
 private:
-    bspline <Point>  s;
-    double           halfdiag;
-
-	std::unique_ptr<VectorT>    center; //made it a pointer to prevent alignment issues
+    any_curve <Point>  s;
 };
 
 double
@@ -76,7 +63,7 @@ implicitCurveFormBase::eval3d(const point3d_t& p3d) const
     int j = 0;
     double qsum = 0;
 
-    
+
     for(int ks = 0; ks <= qdeg; ++ks)
     {
         int k3 = qdeg - ks;
@@ -106,12 +93,12 @@ implicitCurveFormBase::eval3d(const point3d_t& p3d) const
 typedef homogc<point3d_t> homogc3d_t;
 typedef homogc<point2d_t> homogc2d_t;
 //{{{  (@* "2d and 3d implicit forms")
-struct implicitCurveForm3d : public implicitCurveFormBase 
+struct implicitCurveForm3d : public implicitCurveFormBase
 {
     implicitCurveForm3d(std::vector<double> coefficients_,
                         int qdeg_,
                         homogc3d_t hg_)
-        :implicitCurveFormBase 
+        :implicitCurveFormBase
 		(std::move(coefficients_), std::move(qdeg_)), hg(std::move(hg_))
     {
     }
@@ -127,19 +114,19 @@ private:
 
 //{{{  (@* "compute eigen vector correcponding to min eigen value")
 void
-computeEigenVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
+computeSingularVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
 {
-	Eigen::JacobiSVD<Eigen::MatrixXd> svd(mat, Eigen::ComputeThinU|Eigen::ComputeThinV);
-	//Eigen::VectorXd evals = svd.singularValues();
-	
-    int       minIndex     = svd.nonzeroSingularValues()-1;
+	Eigen::JacobiSVD<Eigen::MatrixXd> svd;
+	svd.compute(mat,Eigen::ComputeThinV);
+	int   minIndex = svd.singularValues().size() - 1;
 
     assert(minIndex!=- 1);
-    // std::vector<double> vs;
+
     auto& evs =  svd.matrixV();
     auto& v =  evs.col(minIndex) ;
-	int rows = v.size();
-    for(int i = 0; i < rows; ++i)
+	int sz = v.size();
+
+    for(int i = 0; i < sz; ++i)
     {
 		vs.push_back(v[i]);
     }
@@ -147,23 +134,20 @@ computeEigenVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
 //}}}
 
 // (@file :file-name "./media/implicit.pdf" :to "./media/implicit.pdf" :display "implicitize")
-
-//{{{  (@* "implicitize 2d rational bspline")
-std::unique_ptr < implicitCurveFormBase >
-implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
+//{{{ (@* "implicitize a homog curve")
+std::unique_ptr<implicitCurveFormBase> 
+implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
 {
-    const int sdeg     = spl.degree();
-    homogc < point3d_t > hg( ops::reparametrize(spl.spline(),0,1));
-
-    long c0 = 1;
+	long c0 = 1;
     long L = qdeg*sdeg + 1;       // number of basis functions \alpha_k(t)
     long M = (qdeg + 2) * (qdeg + 1) / 2; // number of monomial basis functions
     Eigen::MatrixXd mat(L,M);
     int  j = 0;
 
-	std::vector<double> ks(2 * L, 0);
-    for(unsigned long i = L;i < ks.size(); ++i)
-        ks[i] = 1.0;
+	std::vector<double> ks(2 * L);
+	std::fill_n(ks.begin(), L, 0);
+	std::fill_n(ks.begin()+L, L, 1.0);
+    
     int basisdeg = L - 1;
     rmat_base_vd rm(ks, basisdeg);
     for(int k12 = 0; k12 <= qdeg; ++k12)
@@ -186,45 +170,78 @@ implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
             auto c = c0 * c1;
             //c = (k1+k2+k3)!/(k1!k2!k3!)
             //  =  (k1+k2+k3)!/(k1+k2)!k3! \times (k1+k2)!/k1!k2!
-            Eigen::MatrixXd qmat(L, L);
+            Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> qmat(L, L);
             qmat.setZero();
-           
+            //  determine c_k such that q_k(\gamma(t)) =  sum{ c_k
+            //  \alpha_k(t) }
+            //  {\alpha_k(t)} are bernstein basis functions of degree L - 1
             Eigen::VectorXd rhs(L);
             for(int i = 0;i < L; ++i) {
-                double  u =  double(i) / (basisdeg);
+                double  u =   double(i) / (basisdeg);
                 std::vector<double>  basis;
-                int nu;
-                std::tie(basis, nu) = rm.get_basis(u);
+                
+                std::tie(basis, std::ignore) = rm.get_basis(u);
                 for(int k = 0;k < L; ++k)  {
-                    qmat(i, nu - basisdeg + k) = basis[k];
+                    qmat(i, k) = basis[k];
                 }
                 auto p3d = hg.eval(u);
                 rhs(i) =
-                    c* std::pow(p3d[0],k1)
-                    * std::pow(p3d[1],k2) * std::pow(p3d[2],k3);
+                    c * std::pow(p3d[0],k1)
+                      * std::pow(p3d[1],k2)
+                      * std::pow(p3d[2],k3);
             }
             mat.col(j) = qmat.lu().solve(rhs);
+#ifndef NDEBUG
+			std::vector<double> cpts(L);
+			for(int l = 0;l  < L;++l)
+			{
+				cpts[l] = mat(l,j);
+			}
+			rmat<double> rm_chk(cpts, ks,basisdeg);
+			assert( tol::eq(rm_chk.eval(0) , rhs(0)) );
+			assert(	tol::eq(rm_chk.eval(1.0/basisdeg), rhs(1)) );
+			assert(	tol::eq(rm_chk.eval(2.0/basisdeg) , rhs(2)) );
+			assert(	tol::eq(rm_chk.eval(1), rhs(L-1)) );
+#endif
         }
     }
 
     std::vector<double> vs;
-    computeEigenVec(mat, vs);
+    vs.reserve(M);
+    computeSingularVec(mat, vs);
 
     return
         std::unique_ptr < implicitCurveFormBase >
         (new implicitCurveForm3d(vs, qdeg, hg));
 }
+
+//}}}
+//{{{  (@* "implicitize 2d rational bspline")
+std::unique_ptr < implicitCurveFormBase >
+implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
+{
+    const int sdeg     = spl.degree();
+	homogc < point3d_t > hg(ops::reparametrize(spl.spline(),0,1));
+	return implicitize(hg, qdeg,sdeg);
+   
+}
+std::unique_ptr<implicitCurveFormBase> 
+implicitize( std::function<point3d_t(double)> f, int qdeg,int sdeg)
+{
+	homogc < point3d_t > hg(f);
+	return implicitize(hg, qdeg, sdeg);
+}
 //}}}
 
 //{{{  (@* "implicitize 2d bspline")
-std::unique_ptr < implicitCurveFormBase > 
+std::unique_ptr < implicitCurveFormBase >
 implicitize(const bspline<point2d_t>& spl, int qdeg)
 {
    auto &cpts = spl.control_points();
    std::vector<double> weights(cpts.size(), 1);
    auto rbs (make_rbspline(cpts, weights, spl.knots(), spl.degree()));
    return implicitize(rbs, qdeg);
-   
+
 }
 //}}}
 
