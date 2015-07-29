@@ -19,7 +19,9 @@ before_build:
 - cmd: bii new svark/asti
 # copy files and folders
 - cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\svark\asti\ /s
+- cmd: bii find --update
 - cmd: bii cpp:configure -G "Visual Studio 12"
+- cmd: bii deps --detail
 build_script:
 - cmd: bii cpp:build
 test_script:
@@ -27,4 +29,3 @@ test_script:
 # to run your custom scripts instead of provider deployments
 deploy_script:
 on_success:
-environment:
