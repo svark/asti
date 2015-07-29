@@ -9,7 +9,7 @@ namespace util
 
 namespace std
 {
-#ifdef _MSC_VER
+#if (_MSC_VER <= 1700)
 inline double fmin(double a, double b ) { return a < b? a: b;}
 inline double fmax(double a, double b ) { return b < a? a: b;}
 #endif
