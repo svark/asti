@@ -23,10 +23,10 @@ protected:
 };
 
 
-std::unique_ptr < implicitCurveFormBase >
+std::vector<std::unique_ptr < implicitCurveFormBase> >
 implicitize(const rational_bspline<point2d_t, regular_tag>& spl, int qdeg);
 
-std::unique_ptr < implicitCurveFormBase >
+std::vector<std::unique_ptr < implicitCurveFormBase> >
 implicitize(const bspline<point2d_t>& spl, int qdeg);
 
 std::unique_ptr < implicitCurveFormBase >

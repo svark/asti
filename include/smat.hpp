@@ -231,7 +231,8 @@ SplineCurve clamp_end(const SplineCurve & crv)
     if(r.end_mult() == deg + 1)
         return SplineCurve(crv);
 
-    return clamp_at_left(crv.param_range().first, crv);
+	double b = t[t.size() - deg - 1];
+    return clamp_at_right(b, crv);
 }
 
 #ifndef NDEBUG

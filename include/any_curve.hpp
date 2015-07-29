@@ -13,13 +13,19 @@ struct  any_curve
     any_curve(Fn fn_):fn(fn_)
     {
     }
+	any_curve(const any_curve& o)
+		:  fn(o.fn){}
 
+	any_curve(any_curve&& o): 
+		fn(std::forward< std::function<Point (double) > >( o.fn) )
+	{
+	}
     Point eval(double u) const
     {
         return fn(u);
     }
-
-    std::function < Point(double u) >  fn;
+	
+    std::function < Point(double ) >  fn;
 };
 
 template <class Point>

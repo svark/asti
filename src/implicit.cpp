@@ -11,6 +11,7 @@
 #include "reparametrize.hpp"
 #include "implicit.hpp"
 #include "any_curve.hpp"
+#include "split_into_bezier_patches.hpp"
 // find a basis q_k of M implicit polynomials
 // expand q_k(p(t))  in terms of \alpha_k(t)
 // coefficients of \alpha_k(t) will form matrix D
@@ -117,13 +118,11 @@ void
 computeSingularVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
 {
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd;
-	svd.compute(mat,Eigen::ComputeThinV);
-	int   minIndex = svd.singularValues().size() - 1;
-
-    assert(minIndex!=- 1);
+	svd.compute(mat,Eigen::ComputeFullV);
+    
 
     auto& evs =  svd.matrixV();
-    auto& v =  evs.col(minIndex) ;
+    auto& v =  evs.col(evs.cols()-1) ;
 	int sz = v.size();
 
     for(int i = 0; i < sz; ++i)
@@ -217,12 +216,18 @@ implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
 
 //}}}
 //{{{  (@* "implicitize 2d rational bspline")
-std::unique_ptr < implicitCurveFormBase >
+std::vector<std::unique_ptr < implicitCurveFormBase> >
 implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
 {
     const int sdeg     = spl.degree();
-	homogc < point3d_t > hg(ops::reparametrize(spl.spline(),0,1));
-	return implicitize(hg, qdeg,sdeg);
+
+	auto const & patches = ops::split_into_bezier_patches(spl);
+	std::vector<  std::unique_ptr<implicitCurveFormBase> > imps;
+	for( auto const &s:  patches ) {
+	   homogc < point3d_t > hg(ops::reparametrize(s.spline(),0,1));
+	   imps.emplace_back(implicitize(hg,qdeg,sdeg) );
+	}
+	return imps;
    
 }
 std::unique_ptr<implicitCurveFormBase> 
@@ -234,7 +239,7 @@ implicitize( const std::function<point3d_t(double)>& f, int qdeg,int sdeg)
 //}}}
 
 //{{{  (@* "implicitize 2d bspline")
-std::unique_ptr < implicitCurveFormBase >
+std::vector<std::unique_ptr < implicitCurveFormBase> >
 implicitize(const bspline<point2d_t>& spl, int qdeg)
 {
    auto &cpts = spl.control_points();
