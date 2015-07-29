@@ -226,7 +226,7 @@ implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
    
 }
 std::unique_ptr<implicitCurveFormBase> 
-implicitize( std::function<point3d_t(double)> f, int qdeg,int sdeg)
+implicitize( const std::function<point3d_t(double)>& f, int qdeg,int sdeg)
 {
 	homogc < point3d_t > hg(f);
 	return implicitize(hg, qdeg, sdeg);

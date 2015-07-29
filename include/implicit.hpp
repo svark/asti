@@ -30,7 +30,7 @@ std::unique_ptr < implicitCurveFormBase >
 implicitize(const bspline<point2d_t>& spl, int qdeg);
 
 std::unique_ptr < implicitCurveFormBase >
-implicitize(std::function<point3d_t(double )>, int qdeg, int sdeg);
+implicitize(const std::function<point3d_t(double )>&, int qdeg, int sdeg);
 
 }
 #endif // ASTI_IMPLICIT
