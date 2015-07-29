@@ -9,6 +9,7 @@ install:
 - ps: wget http://www.biicode.com/downloads/latest/win -OutFile bii-win.exe
 - cmd: bii-win.exe /VERYSILENT
 - cmd: set PATH=%PATH%;C:\Program Files (x86)\BiiCode\bii
+- cmd: set project_name=xasti
 - cmd: bii -v
 - cmd: del bii-win.exe
 - cmd: del cmake.zip
