@@ -15,6 +15,11 @@ This is cagd library with the following functionality implemented so far
 
 [![Build Status](https://travis-ci.org/svark/asti.svg?branch=master)](https://travis-ci.org/svark/asti)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/svark/asti?branch=master&svg=true)](https://ci.appveyor.com/project/svark/asti)
+<br/>
+<a href="https://scan.coverity.com/projects/5900">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/5900/badge.svg"/>
+</a>
 
 My plan is to read up text books Hoschek/Farin/Piegl and translate the book ideas into code as much as I can in here.
 The project uses biicode to handle builds and catch to perform unit testing.
