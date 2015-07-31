@@ -371,19 +371,19 @@ pchip_open(PointIter pb, PointIter pe,
 
     cpts[0] = pb[0];
 
-    cpts[1] = pb[0] + 1/3 * tgts[0] * E(params,0);
+    cpts[1] = pb[0] + 1.0/3 * tgts[0] * E(params,0);
 
     knots[0] = knots[1] = knots[2] = knots[3] = params[0];
 
     for( size_t i = 2; i < n ; ++i) {
-        cpts[2*i-2] = pb[i-1] - 1/3 * tgts[i-1] *  E(params,(i-2)) ;
+        cpts[2*i-2] = pb[i-1] - 1.0/3 * tgts[i-1] *  E(params,(i-2)) ;
 
-        cpts[2*i-1] = pb[i-1] + 1/3 * tgts[i-1] *  E(params,(i-1)) ;
+        cpts[2*i-1] = pb[i-1] + 1.0/3 * tgts[i-1] *  E(params,(i-1)) ;
 
         knots[2*i] = knots[2*i+1] = params[i-1];
     }
 
-    cpts[2*n-2] = pb[n-1] - 1/3 * tgts[n-1] * E(params,n-2);
+    cpts[2*n-2] = pb[n-1] - 1.0/3 * tgts[n-1] * E(params,n-2);
     cpts[2*n-1] = pb[n-1];
     knots[2*n+3] = knots[2*n+2] = knots[2*n+1] = knots[2*n] = params[n-1];
 
@@ -403,23 +403,23 @@ pchip_closed(PointIter pb, PointIter pe,
     RAWTYPE(mk_stdvec(pb[0])) cpts(2*n-1);//last cpt is omitted it is the same as the first
     std::vector<double> knots( 2* n);
 //pg 180,188 hoschek
-    cpts[0] = pb[0] - 1/3 * tgts[0] *  E(params,n-2) ;
+    cpts[0] = pb[0] - 1.0/3 * tgts[0] *  E(params,n-2) ;
 
-    cpts[1] = pb[0] + 1/3 * tgts[0] *  E(params, 0) ;
+    cpts[1] = pb[0] + 1.0/3 * tgts[0] *  E(params, 0) ;
 
     knots[0] = knots[1] = params[0];
 
     for( size_t i = 2; i < n ; ++i ) {
-        cpts[ (2*i-2) ] = pb[i-1]- 1/3 *tgts[i-1] * E(params,(i-2));
+        cpts[ (2*i-2) ] = pb[i-1]- 1.0/3 *tgts[i-1] * E(params,(i-2));
 
-        cpts[ (2*i-1) ] = pb[i-1] + 1/3 * tgts[i-1] * E(params,(i-1)) ;
+        cpts[ (2*i-1) ] = pb[i-1] + 1.0/3 * tgts[i-1] * E(params,(i-1)) ;
 
         knots[2*i-2] = knots[2*i-1] = params[i-1];
     }
 
-    cpts[2*n-2] = pb[n-1] - 1/3 * tgts[n-1] * E(params,n-2) ;
+    cpts[2*n-2] = pb[n-1] - 1.0/3 * tgts[n-1] * E(params,n-2) ;
 
-    auto cp = cpts[0] - pb[n-1] + 1/3 * tgts[n-1] * E(params,0);
+    auto cp = cpts[0] - pb[n-1] + 1.0/3 * tgts[n-1] * E(params,0);
     assert(tol::eq(sqlen(cp),0));
 
     knots[2*n-2] = knots[2*n-1] = params[n-1];

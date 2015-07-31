@@ -636,8 +636,9 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
     for(;pts!=end;++pts,++num_pts) {
         avg += *pts;
     }
-    scale(avg , 1.0/num_pts);
-    return avg;
+    if(num_pts == 0)
+        return avg;
+    return scale(avg , 1.0/num_pts);
 }
 
 extern double volume(const point3d_t & a,
