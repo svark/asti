@@ -12,68 +12,21 @@ template <class SplineCurve>
 bool
 ops::is_periodic(const SplineCurve & crv)
 {
-    typedef typename SplineCurve::point_t point_t;
-    enum {dim = point_dim<point_t>::dimension};
-
-    int p   = crv.degree();
-    auto pb = crv.control_points().cbegin();
-    auto pe = crv.control_points().cend();
-    auto tb =  crv.knots().cbegin();
-    auto te =  crv.knots().cend();
-
-    size_t np = std::distance(pb, pe);
-    size_t nt = std::distance(tb, te);
-
-    if( np < 2 )
-        return false;
-
-    if( nt != np + p + 1 )
-        return false;
-
-    if(nt < size_t(2*p + 2) )
-        return false;
-
-    auto toleq = [](const point_t &v,const point_t& w)  {
-        return tol::eq(len(v - w),0);
-    };
-
-    if(!std::equal(pb, pb + p, pe - p, toleq))
-        return false;
-
-    std::vector<double> buf1(p + 1), buf2(p + 1);
-    te -= 2*(p + 1);
-    tb += (p + 1);
-
-    auto deltas_at_start = buf1.begin();
-    // fill up (1 + p) knot ranges) at the start
-    std::adjacent_difference(tb,
-                             tb + p + 1,
-                             deltas_at_start);
-
-    if( std::all_of( deltas_at_start + 1,
-                     deltas_at_start + p + 1,
-                     [](double v)->bool{
-                         return tol::param_eq(v, 0);
-                     }  ))
-        return false;
-
-    auto deltas_at_end = buf2.begin();
-    // fill up 1 + p knot ranges at the end
-    std::adjacent_difference(te,
-                             te + p + 1,
-                             deltas_at_end);
-
-    if( std::all_of( deltas_at_end + 1,
-                     deltas_at_end + p + 1,
-                     [](double v)->bool{
-                         return tol::param_eq(v, 0);
-                     }  ))
-        return false;
-
-    return std::equal(deltas_at_start + 1,
-                      deltas_at_start + p,
-                      deltas_at_end + 1);
+	auto pr = crv.param_range();
+	
+	auto const & v1 = crv.eval_derivatives(crv.degree()-1, pr.first );
+	auto const & v2 = crv.eval_derivatives(crv.degree()-1, pr.second );
+	bool its_periodic = true;
+	for(int i =0 ; i< crv.degree(); ++i){
+		if( !tol::eq(len(v1[i]-v2[i]), 0) )
+		{
+			its_periodic = false;
+			break;
+		}
+    }
+	return its_periodic;
 }
+
 //}}}
 //{{{ -- is bezier
 template <class SplineType>

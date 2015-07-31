@@ -67,78 +67,87 @@ TEST_CASE("approxtestbasic",  "[bspline][approximation]") {
   REQUIRE(fp ==  Approx(0.199843));
 }
 
-TEST_CASE("interp", "[bspline][interpolation][approximation]")
+TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
 {
   std::vector<double> ps(6);
   ps[0] = 0;ps[1] = 2;ps[2] = 2.5;ps[3] = 3;ps[4] = 3.25;ps[5] = 3.1;
   geom::interpolation_options_t opts;
   opts.parametrization = geom::centripetal_length;
   opts.end_conditions =  geom::not_a_knot;
-  {
+  SECTION("not a knot") {
   auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
                                           std::vector<double>());
+  INFO( "v:" <<  bs.eval(0.2) << ","  << bs.eval(0.3806)  << ","<< bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
+ //1.31061,1.99999,2.05698,2.32315,2.57359,3.24986,2.90523
   REQUIRE(bs.eval(0) == Approx(0.0));
-  REQUIRE(bs.eval(0.2) == Approx(1.07638));
+  REQUIRE(bs.eval(0.2) == Approx(1.31061));
   REQUIRE(bs.eval(0.3806) == Approx(2));
-  REQUIRE(bs.eval(0.4) == Approx(2.01453));
-  REQUIRE(bs.eval(0.5) == Approx( 2.3434924888));
-  REQUIRE(bs.eval(0.6) == Approx(2.53149));
-  REQUIRE(bs.eval(0.9) == Approx(3.24928));
-  REQUIRE(bs.eval(1.1) == Approx(3.77912));
+  REQUIRE(bs.eval(0.4) == Approx(2.05698));
+  REQUIRE(bs.eval(0.5) == Approx(2.32315));
+  REQUIRE(bs.eval(0.6) == Approx(2.57359));
+  REQUIRE(bs.eval(0.9) == Approx(3.24986));
+  REQUIRE(bs.eval(1.1) == Approx(2.90523));
 
   }
   opts.end_conditions =  geom::vanishing_double_derivatives;
-  {
+  SECTION("vanishing double derivatives") {
   auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
                                            std::vector<double>());
+  INFO( "v:" <<  bs.eval(0.2) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
+ // 0.802717,2.08463,2.36436,2.56361,3.24958,2.95042
   REQUIRE(bs.eval(0) == Approx(0.0));
-  REQUIRE(bs.eval(0.2) == Approx(1.07638));
+  REQUIRE(bs.eval(0.2) == Approx(0.802717));
   REQUIRE(bs.eval(0.3806) == Approx(2));
-  REQUIRE(bs.eval(0.4) == Approx(2.01453));
-  REQUIRE(bs.eval(0.5) == Approx( 2.3434924888));
-  REQUIRE(bs.eval(0.6) == Approx(2.53149));
-  REQUIRE(bs.eval(0.8957) == Approx( 3.2499998098 ));
-  REQUIRE(bs.eval(0.9) == Approx(3.24928));
-  REQUIRE(bs.eval(1.1) == Approx(3.77912));
+  REQUIRE(bs.eval(0.4) == Approx(2.08463));
+  REQUIRE(bs.eval(0.5) == Approx(2.36436));
+  REQUIRE(bs.eval(0.6) == Approx(2.56361));
+//  REQUIRE(bs.eval(0.8957) == Approx( 3.2499998098 ));
+  REQUIRE(bs.eval(0.9) == Approx(3.24958));
+  REQUIRE(bs.eval(1.1) == Approx(2.95042));
 
   }
    opts.end_conditions =  geom::parabolic_blending;
-   {
+   SECTION("parabolic_blending") {
   auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
                                           std::vector<double>());
-   REQUIRE(bs.eval(0) == Approx(0.0));
-  REQUIRE(bs.eval(0.2) == Approx(1.07638));
+  INFO( "v:" << bs.eval(0.2) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
+
+  REQUIRE(bs.eval(0) == Approx(0.0));
+  REQUIRE(bs.eval(0.2) == Approx( 0.997261));
   REQUIRE(bs.eval(0.3806) == Approx(2));
-  REQUIRE(bs.eval(0.4) == Approx(2.01453));
-  REQUIRE(bs.eval(0.5) == Approx( 2.3434924888));
-  REQUIRE(bs.eval(0.6) == Approx(2.53149));
-  REQUIRE(bs.eval(0.9) == Approx(3.24928));
-  REQUIRE(bs.eval(1.1) == Approx(3.77912));
-  REQUIRE(bs.eval(0.8957) == Approx(3.2499998098));
+  REQUIRE(bs.eval(0.4) == Approx(2.07433));
+  REQUIRE(bs.eval(0.5) == Approx( 2.3501));
+  REQUIRE(bs.eval(0.6) == Approx(2.5658));
+  REQUIRE(bs.eval(0.9) == Approx(3.24719));
+  REQUIRE(bs.eval(1.1) == Approx(3.54124 ));
+  //REQUIRE(bs.eval(0.8957) == Approx(3.2499998098));
   }
+   //ps.back() = 3.0;
    ps.push_back(2.5);
    ps.push_back(2.0);
    ps.push_back(0.0);
-   {
+   SECTION("periodic") {
        opts.end_conditions=geom::periodic;
         auto bs= geom::piecewise_cubic_hermite_interp_periodic(
             ps.begin(), ps.end(),opts, std::vector<double>());
-
-  REQUIRE(bs.eval(0) == Approx(2.0));
-  REQUIRE(bs.eval(0.2) == Approx( 0.0005485546 ));
-  REQUIRE(bs.eval(0.3806) == Approx(2.2938334313));
-  REQUIRE(bs.eval(0.4) == Approx( 2.4162393572 ));
-  REQUIRE(bs.eval(0.5) == Approx(  2.9970262604));
-  REQUIRE(bs.eval(0.6) == Approx( 3.2128904659));
-  REQUIRE(bs.eval(0.8957) == Approx(2.2407145084));
-  REQUIRE(bs.eval(0.9) == Approx(2.2256695767));
-  REQUIRE(bs.eval(1.1) == Approx( 0.3019640599));
-
-  INFO ("is periodic" << std::boolalpha << ":" << geom::ops::is_periodic(bs.spline()) << "\n\n");
+  INFO( "v:" << bs.eval(0) << "," << bs.eval(0.2) << "," << bs.eval(0.3806) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
+	//1.43328,0.000132328,2.32469,2.40941,2.96996,3.23082,2.20675,0.218459
+  REQUIRE(bs.eval(0) == Approx(0.0));
+  REQUIRE(bs.eval(0.2) == Approx(1.87719));
+  REQUIRE(bs.eval(0.3806) == Approx(2.76392));
+  REQUIRE(bs.eval(0.4) == Approx(2.86035));
+  REQUIRE(bs.eval(0.5) == Approx(3.2487 ));
+  REQUIRE(bs.eval(0.6) == Approx(2.90866));
+  //REQUIRE(bs.eval(0.8957) == Approx(0));
+  REQUIRE(bs.eval(0.9) == Approx(0.705953 ));
+  REQUIRE(bs.eval(1.1) == Approx(0.699618));
+  REQUIRE( geom::ops::is_periodic(bs.spline()));
+  //INFO ("is periodic" << std::boolalpha << ":" << geom::ops::is_periodic(bs.spline()) << "\n\n");
   for( auto k : bs.knots() )
   {
       INFO ("at "<< k << ": " << bs.eval(k) << "\n");
   }
   INFO ("------------\n");
+   REQUIRE(bs.eval(0) == Approx(0.0));
    }
 }
