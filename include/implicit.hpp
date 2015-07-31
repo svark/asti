@@ -14,9 +14,10 @@ struct implicitCurveFormBase
         qdeg(qdeg_)
     {
     }
-	double eval3d(const point3d_t &p3d) const;
+    double eval3d(const point3d_t &p3d) const;
     virtual double eval(const point3d_t& p) const = 0 ;
-	double eval(const point2d_t& p) const;
+    double eval(const point2d_t& p) const;
+    virtual ~implicitCurveBase(){}
 protected:
     int qdeg;
     std::vector<double> coefficients;
