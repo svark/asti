@@ -1,6 +1,4 @@
 // -*- mode:c++ -*-
-#ifndef ASTI_IMPLICIT_HPP
-#define ASTI_IMPLICIT_HPP
 #include "box_compute.hpp"
 #include <math.h>
 #include <utility>
@@ -24,8 +22,6 @@ namespace geom {
 template <class Point>
 struct homogc
 {
-    //typedef RAWTYPE(make_vec(Point())) VectorT;
-
     template <class Curve>
     homogc(Curve c)
     :s(make_any_curve(std::move(c)))
@@ -119,7 +115,7 @@ computeSingularVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
 {
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd;
 	svd.compute(mat,Eigen::ComputeFullV);
-    
+
 
     auto& evs =  svd.matrixV();
     auto& v =  evs.col(evs.cols()-1) ;
@@ -134,7 +130,7 @@ computeSingularVec(const Eigen::MatrixXd & mat, std::vector<double>& vs)
 
 // (@file :file-name "./media/implicit.pdf" :to "./media/implicit.pdf" :display "implicitize")
 //{{{ (@* "implicitize a homog curve")
-std::unique_ptr<implicitCurveFormBase> 
+std::unique_ptr<implicitCurveFormBase>
 implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
 {
 	long c0 = 1;
@@ -146,7 +142,7 @@ implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
 	std::vector<double> ks(2 * L);
 	std::fill_n(ks.begin(), L, 0);
 	std::fill_n(ks.begin()+L, L, 1.0);
-    
+
     int basisdeg = L - 1;
     rmat_base_vd rm(ks, basisdeg);
     for(int k12 = 0; k12 <= qdeg; ++k12)
@@ -178,7 +174,7 @@ implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
             for(int i = 0;i < L; ++i) {
                 double  u =   double(i) / (basisdeg);
                 std::vector<double>  basis;
-                
+
                 std::tie(basis, std::ignore) = rm.get_basis(u);
                 for(int k = 0;k < L; ++k)  {
                     qmat(i, k) = basis[k];
@@ -228,9 +224,9 @@ implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
 	   imps.emplace_back(implicitize(hg,qdeg,sdeg) );
 	}
 	return imps;
-   
 }
-std::unique_ptr<implicitCurveFormBase> 
+
+std::unique_ptr<implicitCurveFormBase>
 implicitize( const std::function<point3d_t(double)>& f, int qdeg,int sdeg)
 {
 	homogc < point3d_t > hg(f);
@@ -251,4 +247,3 @@ implicitize(const bspline<point2d_t>& spl, int qdeg)
 //}}}
 
 }
-#endif //ASTI_IMPLICIT_HPP

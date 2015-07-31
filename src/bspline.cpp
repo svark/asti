@@ -20,7 +20,7 @@ Point bspline<Point>::eval(double u) const
 
 //{{{ --(@* "evaluate derivative of the curve at the param @u")
 
-// throws a spline_exception if u is not in parameter range of this curve
+// throws a geom_exception if u is not in parameter range of this curve
 template <class Point>
 typename bspline<Point>::vector_t
 bspline<Point>::eval_derivative(int derOrder, double u) const
@@ -137,3 +137,4 @@ template <class Point> struct bspline;
 #include "bspline_inst.inl"
 }
 //}}}
+//_
