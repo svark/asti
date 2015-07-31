@@ -2,22 +2,23 @@
 #define ASTI_BEZIER_FORM
 #include <vector>
 #include "point_fwd.hpp"
+#include "bspline.hpp"
 namespace geom {
 
 template <class Point>
 struct bezier_form : public bspline < Point >
 {
-
+    typedef bspline<Point> base_t;
     bezier_form(RAWTYPE(mk_stdvec(Point(0.0))) c):
-        bspline(std::move(c),
+        base_t(std::move(c),
                 std::vector<double>(2 * c.size(), 0.0),
                 c.size() - 1)
     {
-        int deg =  degree();
-        std::fill_n(t.begin() + (deg + 1), deg + 1, 1);
+        int deg =  base_t::degree();
+        std::fill_n(base_t::t.begin() + (deg + 1), deg + 1, 1);
     }
 
-    bezier_form(bspline && b):bspline(std::forward < bspline > (b))
+    bezier_form(base_t && b):base_t(std::forward < base_t > (b))
     {}
 };
 
