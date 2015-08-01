@@ -5,13 +5,15 @@ This is cagd library with the following functionality implemented so far
 - subdivide curve.
 - split splines to bezier segments.
 - extend splines.
-- interpolate points to form splines (both periodic and regular)
+- interpolate points to form splines (both periodic and regular) using pchip.
 - raise degree.
 - insert knots.
 - remove knot for curve fairing.
 - cubic and quad approximation
 - distance of a point to a curve.
 - arc lengths of curves.
+- implicitize 2d curves
+- monomial and Bezier-Bernstein form of polynomial curves and change of basis.
 
 [![Build Status](https://travis-ci.org/svark/asti.svg?branch=master)](https://travis-ci.org/svark/asti)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/svark/asti?branch=master&svg=true)](https://ci.appveyor.com/project/svark/asti)
