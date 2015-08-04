@@ -22,14 +22,14 @@ ops::compute_box(const circle<Point> &c)
 {
     box<Point> b0;
     enum {dim = point_dim<Point>::dimension};
-	typedef decltype(Point()-Point()) vector_t;
+    typedef decltype(Point()-Point()) vector_t;
     for(int i =0; i < dim;++i)
     {
         Point p(0.0);
         p[i] = 1.0;
 
         vector_t ext_vec = cross (c.getPlaneNormal() ,
-			decltype( c.getPlaneNormal()  )( make_vec(p)) );
+                                  decltype( c.getPlaneNormal()  )( make_vec(p)) );
 
         if(tol::eq(len(ext_vec), 0))
             continue;
@@ -63,8 +63,8 @@ ops::compute_box(const circle<Point> &c)
   eval:(instantiate-templates "box_compute" "ops" (list ) (list
   (cons (car methods) spltypes )))
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

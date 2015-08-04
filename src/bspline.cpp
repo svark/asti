@@ -37,7 +37,7 @@ bspline<Point>::eval_derivatives(int derOrder, double u) const
     assert(derOrder >= 0);
     vcpts_t v;
     m.eval_derivatives(derOrder, u,
-        util::transformed_back_inserter(v, &make_vec<point_t> ) );
+                       util::transformed_back_inserter(v, &make_vec<point_t> ) );
     return v;
 }
 //}}}
@@ -124,12 +124,12 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
 
 #include "point.hpp"
 /*
-Local Variables:
-eval:(load-file "./scripts/temp.el")
-eval:(instantiate-templates "bspline" "bspline" (list "double"
-"point2d_t" "point3d_t"  "point4d_t")  (list (cons "blossom_eval" (list "const double *"
-"std::vector<double>::const_iterator" "util::skip_ith_iter<std::vector<double>::const_iterator>" ) )))
-End:
+  Local Variables:
+  eval:(load-file "./scripts/temp.el")
+  eval:(instantiate-templates "bspline" "bspline" (list "double"
+  "point2d_t" "point3d_t"  "point4d_t")  (list (cons "blossom_eval" (list "const double *"
+  "std::vector<double>::const_iterator" "util::skip_ith_iter<std::vector<double>::const_iterator>" ) )))
+  End:
 */
 
 namespace geom {

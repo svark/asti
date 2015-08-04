@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include <vector>
 #include "reverse_curve.hpp"
 #include "bspline_x_cons.hpp"
@@ -62,8 +63,8 @@ SplineType ops::reverse_curve(const SplineType& spl)
   eval:(instantiate-templates "reverse_curve" "ops" (list )
   (product methods spltypes) )
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

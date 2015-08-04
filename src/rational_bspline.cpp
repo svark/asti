@@ -6,8 +6,8 @@ namespace geom
 //{{{ (@* "Constructors" )
 template <class Point,class PTag>
 rational_bspline<Point,PTag>::rational_bspline(wcpts_t pts,
-                                          knots_t ks,
-                                          int degree_):
+                                               knots_t ks,
+                                               int degree_):
     spl(std::move(pts),std::move(ks),degree_)
 {
 }
@@ -34,7 +34,7 @@ template <class Point,class PTag>
 typename rational_bspline<Point,PTag>::point_t
 rational_bspline<Point,PTag>::eval(double u) const
 {
-   return project(spl.eval(u));
+    return project(spl.eval(u));
 }
 
 template <class Point,class PTag>

@@ -43,7 +43,7 @@ rmat_base<KnotIter>::der_n(size_t idx,
                 size + 1, 0.0);
 #else 
     std::fill_n(cache.get(),
-		size + 1, 0.0);
+                size + 1, 0.0);
 #endif
 
     cache[idx - nu + size] = 1;
@@ -224,7 +224,7 @@ size_t rmat_base<KnotIter>::locate_nu(double u,  size_t nu_guess) const
 
         else if(n == size) {       //  n is past
             size_t n = nu_guess - 1;   //  the last knot so lets try
-                                    //  backwards from nu_guess
+            //  backwards from nu_guess
             for (;n >= 0 && tol::param_eq(t[n] , u); --n)
             {
             }
@@ -285,21 +285,21 @@ rmat<Point>::insert_knots(const std::vector<double>& taus)
 }
 #include "point.hpp"
 /*
-Local Variables:
-eval:(load-file "./scripts/temp.el")
-eval:(setq methods_rmat '())
-eval:(setq methods_rmat_base '())
-eval:(setq point_types (list "double"
-                        "point2d_t"
-                        "point3d_t"
-                        "point4d_t" ))
-eval:(setq k_iter_types (list "const double *"
-                        "std::vector<double>::iterator"
-                        "std::vector<double>::const_iterator"
-                        ))
-eval:(instantiate-templates (file-name-sans-extension) "rmat" point_types methods_rmat (list ) )
-eval:(instantiate-templates "rmat_base" "rmat_base" k_iter_types methods_rmat_base (list ) )
-End:
+  Local Variables:
+  eval:(load-file "./scripts/temp.el")
+  eval:(setq methods_rmat '())
+  eval:(setq methods_rmat_base '())
+  eval:(setq point_types (list "double"
+  "point2d_t"
+  "point3d_t"
+  "point4d_t" ))
+  eval:(setq k_iter_types (list "const double *"
+  "std::vector<double>::iterator"
+  "std::vector<double>::const_iterator"
+  ))
+  eval:(instantiate-templates (file-name-sans-extension) "rmat" point_types methods_rmat (list ) )
+  eval:(instantiate-templates "rmat_base" "rmat_base" k_iter_types methods_rmat_base (list ) )
+  End:
 */
 namespace geom {
 // hint to the instantiation elisp that we are dealing with template classes

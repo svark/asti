@@ -358,10 +358,11 @@ operator-(const pt_t<dim>& p1, const pt_t<dim>& p2)
 template <int dim>
 void  scale(pt_t<dim>& p, double fac) {
     p.p*=fac;
+    return p;
 }
 
-inline double scale(double v, double fac) {
-    return v*fac;
+inline void scale(double& v, double fac) {
+    v*= fac;
 }
 
 inline double sqlen(double v ) {
@@ -638,7 +639,7 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
     }
     if(num_pts == 0)
         return avg;
-    return scale(avg , 1.0/num_pts);
+    return scaled_copy(avg , 1.0/num_pts);
 }
 
 extern double volume(const point3d_t & a,

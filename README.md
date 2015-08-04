@@ -14,6 +14,7 @@ This is cagd library with the following functionality implemented so far
 - arc lengths of curves.
 - implicitize 2d curves
 - monomial and Bezier-Bernstein form of polynomial curves and change of basis.
+- point inversion on spline to determine parameters.
 
 [![Build Status](https://travis-ci.org/svark/asti.svg?branch=master)](https://travis-ci.org/svark/asti)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/svark/asti?branch=master&svg=true)](https://ci.appveyor.com/project/svark/asti)
