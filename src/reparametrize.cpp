@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "point.hpp"
 #include "reparametrize.hpp"
 #include "tol.hpp"
@@ -41,7 +42,7 @@ SplineType ops::reparametrize(const SplineType& spl,
 
 template <class SplineType>
 SplineType ops::reparametrize_start(const SplineType& spl,
-                                      double t1)
+                                    double t1)
 {
 
     double first_t,last_t ;
@@ -76,8 +77,8 @@ SplineType ops::reparametrize_start(const SplineType& spl,
   eval:(instantiate-templates "reparametrize" "ops" (list )
   (product methods spltypes ))
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

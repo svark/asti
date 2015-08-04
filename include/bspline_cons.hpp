@@ -9,7 +9,7 @@ namespace impl {
 template <class Point, class CptsT>
 bspline<Point>
 make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, 
-std::true_type/* type of CptsT == bspline::cpts_t */ )
+             std::true_type/* type of CptsT == bspline::cpts_t */ )
 {
     typedef RAWTYPE(pts[0])  point_t;
     static_assert(std::is_same<point_t,Point>::value," deduced and passed val should be same");
@@ -53,7 +53,7 @@ make_bspline( CptsT pts, std::vector<double> ks, int degree_)
         std::move(pts),
         std::move(ks),
         degree_,
-         std::is_same < cpts_t, CptsT >  ()
+        std::is_same < cpts_t, CptsT >  ()
         );
 }
 
@@ -70,7 +70,7 @@ make_bspline_arr(const Point *pts,
     typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::knots_t knots_t;
 
-     return spl_t(
+    return spl_t(
         std::move(cpts_t(pts,ptsEnd)),
         std::move(knots_t(ks,ksEnd)),
         degree_);

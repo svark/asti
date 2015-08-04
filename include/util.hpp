@@ -74,7 +74,7 @@ operator < (Scalar x, std::integral_constant<infix1,boundary_of> i)
 
 template <class Fn,class Scalar>
 bool operator > ( infix_op<Fn> op,
-                   const std::pair<Scalar,Scalar>&  y)
+                  const std::pair<Scalar,Scalar>&  y)
 {
     return op.f(y);
 }

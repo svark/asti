@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "line.hpp"
 #include "point.hpp"
 

@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "smat.hpp"
 #include "rmat.hpp"
 #include "subdivide_curve.hpp"
@@ -9,7 +10,7 @@ namespace geom {
 
 template <class Point>
 std::pair<bspline<Point>, bspline<Point>>
-ops::split_open_curve(const bspline<Point>& spl, double u)
+    ops::split_open_curve(const bspline<Point>& spl, double u)
 {
     return std::make_pair(clamp_at_right(u,spl),
                           clamp_at_left(u,spl));
@@ -55,8 +56,8 @@ ops::split_periodic_curve(const periodic_bspline<Point>& pspl, double u)
   eval:(instantiate-templates "subdivide_curve" "ops" (list )
   (product methods spltypes) )
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

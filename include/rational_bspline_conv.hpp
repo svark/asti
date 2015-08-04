@@ -14,8 +14,8 @@ make_periodic_rbspline(const CptsT & pts,
                        int degree_)
 {
     return make_rbspline(make_periodic_bspline ( spline_wrap_t(),
-                         std::move(interleave<dimension>(pts, weights) ),
-                         std::move(ks), degree_));
+                                                 std::move(interleave<dimension>(pts, weights) ),
+                                                 std::move(ks), degree_));
 }
 
 
@@ -27,8 +27,8 @@ make_rbspline(const CptsT & pts,
               int degree_)
 {
     return make_rbspline(make_bspline (
-                         std::move(interleave<dimension>(pts, weights) ),
-                         std::move(ks), degree_));
+                             std::move(interleave<dimension>(pts, weights) ),
+                             std::move(ks), degree_));
 }
 
 }

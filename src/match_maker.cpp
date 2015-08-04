@@ -295,7 +295,7 @@ struct vector_match_maker {
 
             // update current distortion and match next corner at target
             mpr = update_distortion(max_ij_diff, mpr,
-                                   minDistortion);
+                                    minDistortion);
 
             // have we reached a full match with all corners
             // matching. If yes update minDistortion..

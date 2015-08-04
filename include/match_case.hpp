@@ -2,7 +2,7 @@
 #define ASTI_MATCH_CASE_HPP
 namespace util
 {
-    #ifdef VARIADIC_ARGS_SUPPORTED
+#ifdef VARIADIC_ARGS_SUPPORTED
 template <class FnType,class Args...>
 void switch_bool(b,f,args...) {
     if(b)
@@ -19,10 +19,10 @@ void switch_bool(b,f,args...) {
     }
 
 #define switch_bool_ret(b,f,...) {                                      \
-        if(b)                                                       \
-            return f(__VA_ARGS__, std::integral_constant<bool,true>());    \
-        else                                                        \
-            return f(__VA_ARGS__, std::integral_constant<bool,false>());   \
+        if(b)                                                           \
+            return f(__VA_ARGS__, std::integral_constant<bool,true>()); \
+        else                                                            \
+            return f(__VA_ARGS__, std::integral_constant<bool,false>()); \
     }
 
 #define switch_case_3_inner(EnumT,e,lo,f,...)                   \

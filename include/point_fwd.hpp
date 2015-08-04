@@ -36,22 +36,22 @@ point2d_t higher_dim(double pt);
 
 template <int dim>
 STDVEC(vec_t<dim>)
-mk_stdvec(const vec_t<dim> &v);
+    mk_stdvec(const vec_t<dim> &v);
 
 template <int dim>
 STDVEC(pt_t<dim>)
-mk_stdvec(const pt_t<dim> &v);
+    mk_stdvec(const pt_t<dim> &v);
 
 std::vector<double>
 mk_stdvec(const double &v);
 
 template <int dim>
 STDVEC(vec_t<dim>)
-mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve);
+    mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve);
 
 template <int dim>
 STDVEC(pt_t<dim>)
-mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve);
+    mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve);
 
 std::vector<double>
 mk_stdvec(const double *vb, const double *ve);

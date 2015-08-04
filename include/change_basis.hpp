@@ -3,21 +3,23 @@
 #define ASTI_CHANGE_BASIS
 #include "point.hpp"
 #include "bspline.hpp"
-#include "bspline_queries.hpp"
+#include "bspline_queries.hpp" // for is_bezier
 #include "type_utils.hpp"
 #include "bezier_form.hpp"
 #include "monomial_form.hpp"
 
 namespace geom {
 namespace ops  {
+
 template<class Point>
 monomial_form < Point >
-to_monomial(const bezier_form < Point >& bezf)
+to_monomial(const bspline < Point >& bezf)
 {
-    assert(ops::is_bezier(static_cast<bspline < Point >const & > (bezf)));
+    assert(ops::is_bezier(bezf));
     auto & b = bezf.control_points();
     size_t sz =  b.size();
-    typename monomial_form < Point >::cpts_t monf(sz, Point(0.0));
+    typedef  typename monomial_form < Point >::cpts_t cpts_t;
+    cpts_t monf(sz, Point(0.0));
     long cni = 1;
     short signi = 1;
 	int n = sz - 1;
@@ -34,19 +36,23 @@ to_monomial(const bezier_form < Point >& bezf)
                 cil *= (i - l + 1);
                 cil /= l;
             }
-            monf[i] += (signi * signl * cni * cil * b[l]);
+            auto const & ev(b[l]);
+            double co =  signi * signl * cni * cil ;
+            monf[i] += (scaled_copy(ev, co));
         }
     }
-    return monomial_form < Point > (std::move(monf));
+	double s,e;
+	std::tie(s,e) = bezf.param_range();
+    return monomial_form < Point > (std::move(monf), s, e);
 }
 
 template<class Point>
 bezier_form<Point>
-to_bezier(const monomial_form < Point > & s )
+to_bezier(const monomial_form < Point > & mf )
 {
-    int n  =  s.size() - 1;
+    int n  =  mf.size() - 1;
     typename bezier_form<Point>::cpts_t  cpts(n + 1, Point(0.0));
-    for(size_t l = 0;l < s.size(); ++l) {
+    for(size_t l = 0;l < mf.size(); ++l) {
         long clk = 1, cnk = 1;
         for(size_t k = 0; k <= l; ++k)
         {
@@ -56,10 +62,11 @@ to_bezier(const monomial_form < Point > & s )
                 clk *= (l - k + 1);
                 clk /= k;
             }
-            cpts[l] += double(clk) * s[k]/ cnk;
+            cpts[l] += double(clk) * mf[k]/ cnk;
         }
     }
-    return make_bezier_form(std::move(cpts));
+    return make_bezier_form(std::move(cpts),
+                            mf.start_param(), mf.end_param());
 }
 }
 }

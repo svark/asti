@@ -11,7 +11,7 @@ struct implicitCurveFormBase
 {
     implicitCurveFormBase(std::vector<double> coefficients_,
                           int qdeg_):coefficients(std::move(coefficients_)),
-        qdeg(qdeg_)
+                                     qdeg(qdeg_)
     {
     }
     double eval3d(const point3d_t &p3d) const;

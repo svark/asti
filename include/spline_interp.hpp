@@ -141,10 +141,10 @@ void find_parameters(PointIter pb, PointIter pe,
 
     for (size_t i = 1; i < n - 1; ++i)
         widths[i] *= (1
-                     + 3 *thetas[i] * widths[i - 1]
-                     / 2*( widths[i - 1] + widths[i] )
-                     + 3 *thetas[i + 1] * widths[i + 1]
-                     / 2*( widths[i] + widths[i + 1] ) );
+                      + 3 *thetas[i] * widths[i - 1]
+                      / 2*( widths[i - 1] + widths[i] )
+                      + 3 *thetas[i + 1] * widths[i + 1]
+                      / 2*( widths[i] + widths[i + 1] ) );
 
     std::partial_sum(widths.begin(),widths.end(),t);
 }
@@ -178,7 +178,7 @@ void setup_mat_for_interior_tgts(Matrix &m,
         double c =  3 * (aj1 / aj);
 
         d(j) = ( a *(p[j - 1]) + b*(p[j]) +
-            c * (p[j + 1]));
+                 c * (p[j + 1]));
     }
 
     // use wherever available, explicit information about derivatives.
@@ -295,7 +295,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                                 explicit_tgts, rhs);
     rhs = m.fullPivLu().solve(rhs);
 
-   for(size_t i = 0; i < n; ++i)
+    for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
 }
@@ -332,25 +332,25 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     auto h1 = E(tb,n-2);
 
 	/* this gets messy so I let mathematica do the dirty work:
-	  second derivative at x for the cubic: 
-	  Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
-	  third derivative 
-	  X[i] := Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
+       second derivative at x for the cubic: 
+       Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
+       third derivative 
+       X[i] := Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
 
-	  Not a knot condition both second and third derivatives are same at the knot t[N-2] (last but one)
-	  eqn := Eliminate[ {Y[N-3,t[N-2]]==Y[N-2,t[N-2],X[N-3]==X[N-2]},{Q[N-3]}]
+       Not a knot condition both second and third derivatives are same at the knot t[N-2] (last but one)
+       eqn := Eliminate[ {Y[N-3,t[N-2]]==Y[N-2,t[N-2],X[N-3]==X[N-2]},{Q[N-3]}]
 
-	  eqn[[1,1]] 
-	  >> P[-1+N] (3/(t[-3+N]-t[-2+N])+2/(t[-2+N]-t[-1+N]))
+       eqn[[1,1]] 
+       >> P[-1+N] (3/(t[-3+N]-t[-2+N])+2/(t[-2+N]-t[-1+N]))
 
-	  Table[ Coefficient[eqn[[1,2]],P[-i+N]]//Simplify, {i,2,3}]
+       Table[ Coefficient[eqn[[1,2]],P[-i+N]]//Simplify, {i,2,3}]
 
-	  >>{((t[-3 + N] - t[-1 + N])^2 (2 t[-3 + N] - 3 t[-2 + N] + t[-1 + N]))/((t[-3 + N] - t[-2 + N])^3 (t[-2 + N] - t[-1 + N])),\
-	  (t[-2 + N] - t[-1 + N])^2/(t[-3 + N] - t[-2 + N])^3}
+       >>{((t[-3 + N] - t[-1 + N])^2 (2 t[-3 + N] - 3 t[-2 + N] + t[-1 + N]))/((t[-3 + N] - t[-2 + N])^3 (t[-2 + N] - t[-1 + N])),\
+       (t[-2 + N] - t[-1 + N])^2/(t[-3 + N] - t[-2 + N])^3}
 
-	  Table[ Coefficient[eqn[[1,2]],Q[-i+N]]//Simplify, {i,1,2}]
+       Table[ Coefficient[eqn[[1,2]],Q[-i+N]]//Simplify, {i,1,2}]
 
-	  >> {(-t[-3 + N] + t[-1 + N])/( t[-3 + N] - t[-2 + N]), -((t[-3 + N] - t[-1 + N])^2/(t[-3 + N] - t[-2 + N])^2)}
+       >> {(-t[-3 + N] + t[-1 + N])/( t[-3 + N] - t[-2 + N]), -((t[-3 + N] - t[-1 + N])^2/(t[-3 + N] - t[-2 + N])^2)}
 	*/
 	
     m(n-1,n-1) = (h0+h1)/h1; //note the sign
@@ -358,14 +358,14 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
 
 	rhs.row(n-1) = eigen_vec( 
 	    (3/h0 + 2/h1) * pb[n-1]
-	   + (h0 + h1)*(h0+h1) * (-2*h0 + h1 )/(h0*h0*h0*h1)  * pb[n-2] 
-	   - h1*h1/(h0*h0*h0) * pb[n-3]
+        + (h0 + h1)*(h0+h1) * (-2*h0 + h1 )/(h0*h0*h0*h1)  * pb[n-2] 
+        - h1*h1/(h0*h0*h0) * pb[n-3]
 		);
 
     setup_mat_for_interior_tgts(m, pb, pe, tb, te, explicit_tgts, rhs);
     rhs = m.fullPivLu().solve(rhs);
 
-   for(size_t i = 0; i < n; ++i)
+    for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
 }
@@ -379,7 +379,7 @@ template <class PointIter, class VecsT,class ParamsT>
 auto
 pchip_open(PointIter pb, PointIter pe,
            const ParamsT& params, const VecsT& tgts)
-           -> bspline<RAWTYPE(pb[0])>
+    -> bspline<RAWTYPE(pb[0])>
 {
     static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
     typedef RAWTYPE(pb[0]) point_t;
@@ -464,8 +464,8 @@ auto piecewise_cubic_hermite_interp_periodic
     // generate parameters using chord length approximation.
     const size_t m = std::distance(pb,pe);
     assert( opts.end_conditions !=
-                  periodic
-                  || pe[-1] == pb[0] );
+            periodic
+            || pe[-1] == pb[0] );
     std::vector < double > params(m);
 
     switch_case_4(parametrization_option_t,
@@ -477,7 +477,7 @@ auto piecewise_cubic_hermite_interp_periodic
 
     double sum = params.cend()[-1];
     std::transform(params.cbegin(),params.cend(),params.begin(),
-        [&sum](double v){ return v/sum;} );
+                   [&sum](double v){ return v/sum;} );
 
     typedef Eigen::Matrix<double,Eigen::Dynamic,dim> MatrixXdim;
 
@@ -508,8 +508,8 @@ piecewise_cubic_hermite_interp_regular
     // generate parameters using chord length approximation.
     const size_t m = std::distance(pb,pe);
     assert( opts.end_conditions !=
-                  periodic
-                  || pe[-1] == pb[0] );
+            periodic
+            || pe[-1] == pb[0] );
 
     std::vector < double > params(m);
 
@@ -522,7 +522,7 @@ piecewise_cubic_hermite_interp_regular
 
     double sum = params.cend()[-1];
     std::transform(params.cbegin(),params.cend(),params.begin(),
-        [&sum](double v){ return v/sum;} );
+                   [&sum](double v){ return v/sum;} );
 
     typedef Eigen::Matrix<double,Eigen::Dynamic,dim> MatrixXdim;
 
@@ -531,9 +531,9 @@ piecewise_cubic_hermite_interp_regular
 
 // end conditions depend on options passed..
     switch_case_5( end_conditions_t,
-        opts.end_conditions, periodic, interp_fail,
-        eval_tangents_for_pchip,
-        pb,pe,params.begin(),params.end(),tgts);
+                   opts.end_conditions, periodic, interp_fail,
+                   eval_tangents_for_pchip,
+                   pb,pe,params.begin(),params.end(),tgts);
 
     bool is_periodic = opts.end_conditions == periodic;
     return pchip_open(pb,pe,params,tgts);

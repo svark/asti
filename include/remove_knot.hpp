@@ -13,7 +13,7 @@ rational_bspline<Point, PTag >
 fair_by_knot_removal(const rational_bspline < Point, PTag > & crv,
                      double tol)
 {
-  return make_rbspline( fair_by_knot_removal(crv.spline(), tol));
+    return make_rbspline( fair_by_knot_removal(crv.spline(), tol));
 }
 }
 }

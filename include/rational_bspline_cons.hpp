@@ -9,7 +9,7 @@ namespace geom {
 
 template<class PointContT, class WeightsT>
 auto interleave(const PointContT & ps,
-           const WeightsT & ws)
+                const WeightsT & ws)
     -> RAWTYPE(mk_stdvec(higher_dim(ps[0])))
 {
     typedef typename inc_dimension < RAWTYPE(ps[0]) >::type pointw_t;
@@ -38,8 +38,8 @@ make_periodic_rbspline(const CptsT & pts,
                        int degree_) -> rational_bspline<RAWTYPE(pts[0]), periodic_tag>
 {
     return make_rbspline(make_periodic_bspline_wrap ( 
-                         std::move(interleave(pts, weights) ),
-                         std::move(ks), degree_));
+                             std::move(interleave(pts, weights) ),
+                             std::move(ks), degree_));
 }
 
 template <class CptsT>
@@ -49,8 +49,8 @@ make_periodic_rbspline(CptsT  pts,
                        int degree_) -> rational_bspline<RAWTYPE(lower_dim(pts[0])), periodic_tag>
 {
     return make_rbspline(make_periodic_bspline_wrap( 
-                         std::move(pts),
-                         std::move(ks), degree_));
+                             std::move(pts),
+                             std::move(ks), degree_));
 }
 
 template <class CptsT, class WeightsT>
@@ -61,8 +61,8 @@ make_rbspline(const CptsT & pts,
               int degree_) -> rational_bspline<RAWTYPE(pts[0]), regular_tag>
 {
     return make_rbspline(make_bspline (
-                         std::move(interleave(pts, weights) ),
-                         std::move(ks), degree_));
+                             std::move(interleave(pts, weights) ),
+                             std::move(ks), degree_));
 }
 
 }

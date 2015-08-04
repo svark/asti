@@ -142,12 +142,12 @@ private:
 
 
 template <class VecVecT, class RTag,  class PTagU, class PTagV
-bspline_surface < point_t, RTag, PTagU, PTagV >
-make_bspline_surface(VecVecT cpts_,
-                     knots_u_t t_u_,
-                     knots_v_t t_v_,
-                     int degu, int degv
-    )
+          bspline_surface < point_t, RTag, PTagU, PTagV >
+          make_bspline_surface(VecVecT cpts_,
+                               knots_u_t t_u_,
+                               knots_v_t t_v_,
+                               int degu, int degv
+              )
 {
     typedef typename VecVecT::value_type::value_type point_t;
     typedef typename point_iter_traits <

@@ -89,7 +89,7 @@ make_conic_arc(point3d_t p[3], vector3d_t v[2])
     if( tol::eq(fabs(dot(v[0], v[1])),
                 len(v[0]) * len(v[1])))
     { // tangents are parallel
-       return make_conic_arc_parallel(p, v[0]);
+        return make_conic_arc_parallel(p, v[0]);
     }
     return  make_conic_arc_non_parallel(p,v);
 
@@ -103,9 +103,9 @@ make_conic_arc(point2d_t p[3], vector2d_t v[2])
     if( tol::eq(fabs(dot(v[0], v[1])),
                 len(v[0]) * len(v[1])))
     { // tangents are parallel
-       return  make_conic_arc_parallel(p, v[0]);
+        return  make_conic_arc_parallel(p, v[0]);
     }else
-       return  make_conic_arc_non_parallel(p,v);
+        return  make_conic_arc_non_parallel(p,v);
 }
 
 

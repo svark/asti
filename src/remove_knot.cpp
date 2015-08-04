@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "bspline_x_cons.hpp"
 #include "remove_knot.hpp"
 #include "raise_degree.hpp"
@@ -64,7 +65,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     return make_bspline(std::move(newcpts),
                         std::move(t), crv.degree() ,
                         typename str::ptag(), 
-			typename str::rtag());
+                        typename str::rtag());
 }
 
 
@@ -87,8 +88,8 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
   eval:(instantiate-templates "remove_knot" "ops" (list ) (product
   methods spltypes ))
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
 #include "rational_bspline.hpp"

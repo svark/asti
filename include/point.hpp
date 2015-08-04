@@ -44,7 +44,7 @@ struct pt_t {
     double c(std::integral_constant<int,i> v)
     {
         static_assert(i < dim,
-          "expecting an integral constant with value lesser than point dim");
+                      "expecting an integral constant with value lesser than point dim");
         return p[i];
     }
 
@@ -249,8 +249,8 @@ lerp( double lambda,
       const Eigen::Block<XprType,BlockRows,BlockCols,InnerPanel>& p1,
       const Eigen::Block<XprType,BlockRows,BlockCols,InnerPanel>& p2)
 {
-   return Eigen::Block<const XprType,BlockRows,BlockCols,InnerPanel>(
-       ((1-lambda)*p1+lambda*p2).eval(),0,0);
+    return Eigen::Block<const XprType,BlockRows,BlockCols,InnerPanel>(
+        ((1-lambda)*p1+lambda*p2).eval(),0,0);
 }
 
 template <class PointVec>
@@ -318,24 +318,24 @@ point_t operator-(const point_t & pt,
 template <int dim>
 vec_t<dim> operator / ( vec_t<dim> &vec, double s)
 {
-  return vec_t<dim>(vec.v*(1/s));
+    return vec_t<dim>(vec.v*(1/s));
 }
 
 template <int dim>
 vec_t<dim> operator * ( const vec_t<dim> &vec, double s)
 {
-  return vec_t<dim>( vec.v * s );
+    return vec_t<dim>( vec.v * s );
 }
 template <int dim>
 vec_t<dim> operator / (const vec_t<dim> &vec , double s)
 {
-  return vec_t<dim>(vec.v*(1/s));
+    return vec_t<dim>(vec.v*(1/s));
 }
 
 template <int dim>
 vec_t<dim> operator * ( double s, const vec_t<dim> &vec)
 {
-  return  vec_t<dim>(vec.v * s);
+    return  vec_t<dim>(vec.v * s);
 }
 
 template<typename PointVec, int dim>
@@ -358,10 +358,11 @@ operator-(const pt_t<dim>& p1, const pt_t<dim>& p2)
 template <int dim>
 void  scale(pt_t<dim>& p, double fac) {
     p.p*=fac;
+    return p;
 }
 
-inline double scale(double v, double fac) {
-    return v*fac;
+inline void scale(double& v, double fac) {
+    v*= fac;
 }
 
 inline double sqlen(double v ) {
@@ -396,7 +397,7 @@ template <int dim> auto eigen_vec(const pt_t<dim>& pt) -> Eigen::Matrix<double, 
 
 template <int dim> auto eigen_vec(const vec_t<dim>& ve) -> Eigen::Matrix<double, dim , 1>
 {
-  return ve.cget();
+    return ve.cget();
 }
 
 inline Eigen::Matrix<double,1,1> eigen_vec(double ve)
@@ -409,38 +410,38 @@ inline Eigen::Matrix<double,1,1> eigen_vec(double ve)
 //{{{(@* "construct points and vectors from explicitly set coordinates")
 inline point2d_t make_pt(double s,double t)
 {
-  double p[] = {s,t};
-  return point2d_t(p);
+    double p[] = {s,t};
+    return point2d_t(p);
 }
 
 inline point3d_t make_pt(double s,double t, double w)
 {
-  double p[] = {s,t,w};
-  return point3d_t(p);
+    double p[] = {s,t,w};
+    return point3d_t(p);
 }
 
 inline point4d_t make_pt(double s,double t, double w, double x)
 {
-  double p[] = {s,t,w,x};
-  return point4d_t(p);
+    double p[] = {s,t,w,x};
+    return point4d_t(p);
 }
 
 inline vector2d_t make_vec(double s,double t)
 {
-  double p[] = {s,t};
-  return vector2d_t(p);
+    double p[] = {s,t};
+    return vector2d_t(p);
 }
 
 inline vector3d_t make_vec(double s,double t, double w)
 {
-  double p[] = {s,t,w};
-  return vector3d_t(p);
+    double p[] = {s,t,w};
+    return vector3d_t(p);
 }
 
 inline vector4d_t make_vec(double s,double t, double w, double x)
 {
-  double p[] = {s,t,w,x};
-  return vector4d_t(p);
+    double p[] = {s,t,w,x};
+    return vector4d_t(p);
 }
 
 //}}}
@@ -509,20 +510,20 @@ inline point2d_t higher_dim(double pt)
 
 template <int dim>
 STDVEC(vec_t < dim > )
-mk_stdvec(const vec_t < dim > &v)
+    mk_stdvec(const vec_t < dim > &v)
 {
-   STDVEC(vec_t < dim > ) vs;
-   vs.push_back(v);
-   return vs;
+    STDVEC(vec_t < dim > ) vs;
+    vs.push_back(v);
+    return vs;
 }
 
 template <int dim>
 STDVEC(pt_t < dim > )
-mk_stdvec(const pt_t<dim> &p)
+    mk_stdvec(const pt_t<dim> &p)
 {
-   STDVEC(pt_t < dim > )  ps;
-   ps.push_back(p);
-   return ps;
+    STDVEC(pt_t < dim > )  ps;
+    ps.push_back(p);
+    return ps;
 }
 
 inline std::vector<double>
@@ -536,7 +537,7 @@ mk_stdvec(const double &v)
 
 template <int dim>
 STDVEC(vec_t<dim>)
-mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve)
+    mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve)
 {
 	STDVEC(vec_t<dim>)  vs(vb, ve);
 	return vs;
@@ -544,7 +545,7 @@ mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve)
 
 template <int dim>
 STDVEC(pt_t<dim>)
-mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve)
+    mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve)
 {
 	STDVEC(pt_t<dim>)  vs(vb, ve);
 	return vs;
@@ -638,7 +639,7 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
     }
     if(num_pts == 0)
         return avg;
-    return scale(avg , 1.0/num_pts);
+    return scaled_copy(avg , 1.0/num_pts);
 }
 
 extern double volume(const point3d_t & a,

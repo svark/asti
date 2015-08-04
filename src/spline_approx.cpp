@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include <vector>
 
 #include <boost/math/tools/roots.hpp>
@@ -14,6 +15,7 @@
 #include "bspline_cons.hpp"
 #include "spline_traits.hpp"
 #include "point.hpp"
+#include "find_param.hpp"
 
 namespace geom {
 //{{{ -- approximations
@@ -67,10 +69,10 @@ bspline<double>
 ops::quad_approx1d(FnType f, std::vector<double> t_)
 {
     assert(t_.size()!=0);
-	auto b = t_.cbegin();
-	auto e = t_.cend();
+    auto b = t_.cbegin();
+    auto e = t_.cend();
 
-	static const int p = 2;
+    static const int p = 2;
     size_t n = t_.size() - p - 1;
     std::vector<double> pts(n,0);
 
@@ -97,7 +99,7 @@ namespace kts{
 
 template <int p>
 static void build_knots_helper(const std::vector<double>& uniqts,
-                        std::vector<double>& t)
+                               std::vector<double>& t)
 {
     if(uniqts.size() < 2)
         throw geom_exception(bad_knot_spacing_t);
@@ -136,8 +138,8 @@ static void build_knots_helper(const std::vector<double>& uniqts,
 
 template <int p, class KnotIter>
 static void build_knots(KnotIter b,
-                 KnotIter e,
-                 std::vector<double>& t, periodic_tag)
+                        KnotIter e,
+                        std::vector<double>& t, periodic_tag)
 {
     size_t sz = std::distance(b, e);
     t.reserve(std::max(sz, size_t(2*p)));
@@ -151,8 +153,8 @@ static void build_knots(KnotIter b,
 
 template <int p, class KnotIter>
 static void build_knots(KnotIter b,
-                 KnotIter e,
-                 std::vector<double>& t, regular_tag)
+                        KnotIter e,
+                        std::vector<double>& t, regular_tag)
 {
     size_t sz = std::distance(b, e);
     t.reserve(sz + 2*p);
@@ -172,44 +174,6 @@ static void build_knots(KnotIter b,
 }
 }
 
-static std::pair<double, bool>
-find_next_rootc(geom::bspline<double>& spl,
-                double prev,
-                double tol)
-{
-    auto const &t = spl.knots();
-    auto const &c = spl.control_points();
-    int p = spl.degree();
-
-    size_t k = 1;
-    while( k < c.size() && t[k] < prev)
-        ++k;
-
-    for(; ; )
-    {
-        auto const &t = spl.knots();
-        auto const &c = spl.control_points();
-        auto tcap = [&t, p](size_t i) -> double {
-            return std::accumulate( &t[i+1], &t[i + 1] + p, 0.0 )/p;
-        };
-
-        size_t n = c.size();
-        while(k < n && ( c[k-1]*c[k] > 0 ))
-            ++k;
-
-        if( k >= n)
-            break;
-
-        double root =
-            tcap(k) - (c[k]/p) * (t[k+p] - t[k] )/(c[k] - c[k-1] );
-
-        if( fabs(spl.eval(root)) < tol)
-            return std::make_pair(root, true);
-
-        ops::insert_knot(spl, root).swap(spl);
-    }
-    return std::make_pair(prev, false);
-}
 
 
 template <class SplineType>
@@ -286,27 +250,27 @@ ops::foot_param(const SplineType &spl,
 }
 
 /*
-Local Variables:
-eval:(load-file "./scripts/temp.el")
-eval:(setq methods (list "foot_param"
-                         ))
-eval:(setq spltypes (list "bspline<double>"
-                           "bspline<point2d_t>"
-                           "bspline<point3d_t>"
-                           "bspline<point4d_t>"
-                           "periodic_bspline<double>"
-                           "periodic_bspline<point2d_t>"
-                           "periodic_bspline<point3d_t>"
-                           "periodic_bspline<point4d_t>"
-                           "rational_bspline < point2d_t,regular_tag>"
-                           "rational_bspline < point3d_t,regular_tag>"
-                           "rational_bspline < double, regular_tag>"
-                           "rational_bspline < point2d_t,periodic_tag>"
-                           "rational_bspline < point3d_t,periodic_tag>"
-                           "rational_bspline < double,periodic_tag>"
-                           ))
-eval:(instantiate-templates "spline_approx" "ops" (list ) (product methods spltypes) )
-End:
+  Local Variables:
+  eval:(load-file "./scripts/temp.el")
+  eval:(setq methods (list "foot_param"
+  ))
+  eval:(setq spltypes (list "bspline<double>"
+  "bspline<point2d_t>"
+  "bspline<point3d_t>"
+  "bspline<point4d_t>"
+  "periodic_bspline<double>"
+  "periodic_bspline<point2d_t>"
+  "periodic_bspline<point3d_t>"
+  "periodic_bspline<point4d_t>"
+  "rational_bspline < point2d_t,regular_tag>"
+  "rational_bspline < point3d_t,regular_tag>"
+  "rational_bspline < double, regular_tag>"
+  "rational_bspline < point2d_t,periodic_tag>"
+  "rational_bspline < point3d_t,periodic_tag>"
+  "rational_bspline < double,periodic_tag>"
+  ))
+  eval:(instantiate-templates "spline_approx" "ops" (list ) (product methods spltypes) )
+  End:
 */
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"

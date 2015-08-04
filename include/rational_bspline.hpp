@@ -54,7 +54,7 @@ public:
                                                  >::type spl_traits;
 
     typedef typename get_traits_type_from_tags<PTag, polynomial_tag, 
-					       Point>::type ldim_spl_traits;
+                                               Point>::type ldim_spl_traits;
 
     typedef typename spl_traits::spline_type spl_t;
     enum {dimension =  spl_t::dimension  - 1};
@@ -105,7 +105,7 @@ public:
     }
 
     static point_t project(const pointw_t &pt)  {
-       return _project(pt, std::integral_constant<int,dimension>());
+        return _project(pt, std::integral_constant<int,dimension>());
     }
 
     const spl_t spline() const { return spl; }
@@ -145,18 +145,18 @@ private:
 template <class WSplineType>
 struct rbspline_from_spline
 {
-  typedef typename dec_dimension<typename WSplineType::point_t>::type  point_t;
-  typedef rational_bspline<point_t,
-                           typename spline_traits < WSplineType >::ptag
-                           >  type;
+    typedef typename dec_dimension<typename WSplineType::point_t>::type  point_t;
+    typedef rational_bspline<point_t,
+                             typename spline_traits < WSplineType >::ptag
+                             >  type;
 };
 
 template <class SplineType>
 typename rbspline_from_spline < SplineType >::type
 make_rbspline(SplineType&& spl)
 {
-  typedef typename rbspline_from_spline < SplineType >::type rspl_t;
-  return rspl_t(std::forward<SplineType>(spl));
+    typedef typename rbspline_from_spline < SplineType >::type rspl_t;
+    return rspl_t(std::forward<SplineType>(spl));
 }
 
 

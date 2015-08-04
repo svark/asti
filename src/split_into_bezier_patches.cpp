@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "tol.hpp"
 #include "split_into_bezier_patches.hpp"
 #include "smat.hpp"
@@ -39,21 +40,21 @@ ops::split_into_bezier_patches(const SplineType &spl)
     return patches;
 }
 
-  /*template <class SplineType>
-std::list< rational_bspline < SplineType>,
-           Eigen::aligned_allocator<rational_bspline < SplineType >>>
+/*template <class SplineType>
+  std::list< rational_bspline < SplineType>,
+  Eigen::aligned_allocator<rational_bspline < SplineType >>>
   split_into_bezier_patches(const rational_bspline < SplineType > &spl)
-{
-    std::list<rational_bspline < SplineType>,
-              Eigen::aligned_allocator<rational_bspline < SplineType>> > res;
-    auto l = split_into_bezier_patches(spl.spline());
-    for(auto pc:l)
-    {
-        res.push_back(make_rbspline(std::move(pc)));
-    }
-    return res;
-}
-  */
+  {
+  std::list<rational_bspline < SplineType>,
+  Eigen::aligned_allocator<rational_bspline < SplineType>> > res;
+  auto l = split_into_bezier_patches(spl.spline());
+  for(auto pc:l)
+  {
+  res.push_back(make_rbspline(std::move(pc)));
+  }
+  return res;
+  }
+*/
 
 //}}}
 
@@ -63,7 +64,7 @@ std::list< rational_bspline < SplineType>,
   Local Variables:
   eval:(load-file "./scripts/temp.el")
   eval:(setq methods (list "split_into_bezier_patches"
-   ))
+  ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"
   "bspline<point3d_t>"
@@ -82,8 +83,8 @@ std::list< rational_bspline < SplineType>,
   eval:(instantiate-templates "split_into_bezier_patches" "ops" (list )
   (product methods spltypes ))
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

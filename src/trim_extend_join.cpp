@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #include "point.hpp"
 #include "trim_extend_join.hpp"
 #include "constant_iterator.hpp"
@@ -42,12 +43,12 @@ ops::join_starts(const SplineType& spl1,
     rmat_base_vd r(spl2_clamped.knots(),p);
     ptrdiff_t nk = join_cont + 1 - r.mult(a);
     for( ;nk > 0; --nk ) {
-       insert_knot(spl2_clamped,a).swap(spl2_clamped);
+        insert_knot(spl2_clamped,a).swap(spl2_clamped);
     }
     rmat_base_vd(spl1_clamped.knots(),p).swap(r);
     nk = join_cont + 1 - r.mult(a);
     for( ;nk > 0; --nk ) {
-       insert_knot(spl1_clamped,a).swap(spl1_clamped);
+        insert_knot(spl1_clamped,a).swap(spl1_clamped);
     }
 
     rebase_at_start(spl1_clamped, ks.begin()).swap(spl1_clamped);
@@ -85,7 +86,7 @@ ops::join_starts(const SplineType& spl1,
     return make_bspline (std::move(cpts),
                          std::move(newknots), p,
                          typename str::ptag(),
-			 typename str::rtag()
+                         typename str::rtag()
         );
 }
 
@@ -169,8 +170,8 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
 
     typedef spline_traits<SplineType> str;
     return make_bspline
-      (std::move(newcpts), std::move(newks), d,
-       typename str::ptag(), typename str::rtag());
+        (std::move(newcpts), std::move(newks), d,
+         typename str::ptag(), typename str::rtag());
 
 }
 
@@ -198,10 +199,10 @@ ops::extend_curve_end_to_pt(const SplineType & spl,
   "rational_bspline < double, regular_tag>"
   ))
   eval:(instantiate-templates "trim_extend_join" "ops" (list )
-   (product methods spltypes ))
+  (product methods spltypes ))
   End:
-// dump all explicitly instantiated templates below
-*/
+  // dump all explicitly instantiated templates below
+  */
 //}}}
 
 //{{{  instantiation

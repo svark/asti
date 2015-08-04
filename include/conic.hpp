@@ -58,8 +58,8 @@ struct conic_arc {
     point_t eval(double u) const {
         pointw_t ep
             = make_pt((1 - u) * (1 - u) * make_vec( p[0] )
-            +  2 * u  * (1 - u) * make_vec( p[1] )
-            +  u * u  * make_vec( p[2] ) );
+                      +  2 * u  * (1 - u) * make_vec( p[1] )
+                      +  u * u  * make_vec( p[2] ) );
         point_t pep(ep);
         pep *= 1 / ep[dim];
         return pep;
@@ -121,10 +121,10 @@ make_rbspline_from_conic(const conic_arc<Point> &arc) {
         std::tie(q[1], s[1], r[1]) = c1arc.split_conic_at_shoulder();
         std::tie(q[2], s[2], r[2]) = c2arc.split_conic_at_shoulder();
         PointW cpts[] = { arc.p[0],
-                         q[1], s[1], r[1],
-                         s[0],
-                         q[2], s[2], r[2],
-                         arc.p[2] };
+                          q[1], s[1], r[1],
+                          s[0],
+                          q[2], s[2], r[2],
+                          arc.p[2] };
         auto spl = make_bspline_arr(cpts,
                                     cpts + sizeof(cpts)/sizeof(PointW), ks,
                                     ks+sizeof(ks)/sizeof(double), 2);
@@ -135,10 +135,10 @@ make_rbspline_from_conic(const conic_arc<Point> &arc) {
         std::tie(q, s, r) = arc.split_conic_at_shoulder();
         double ks[] = {0, 0, 0, 0.5, 0.5,1, 1, 1};
         PointW cpts[] = {arc.p[0],
-                        q,s,r,
-                        arc.p[2]};
+                         q,s,r,
+                         arc.p[2]};
         auto spl = make_bspline_arr(cpts, cpts+ sizeof(cpts)/sizeof(PointW),
-            ks,ks+sizeof(ks)/sizeof(double), 2);
+                                    ks,ks+sizeof(ks)/sizeof(double), 2);
         return make_rbspline(std::move(spl));
     }
 }

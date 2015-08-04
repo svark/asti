@@ -40,7 +40,7 @@ back_n_insert_iterator<ContT> back_n_inserter(int n, ContT&v) {
 
 template <class ContT>
 struct std::iterator_traits<util::back_n_insert_iterator<ContT>> :
-    std::iterator_traits<std::back_insert_iterator<ContT> >
+        std::iterator_traits<std::back_insert_iterator<ContT> >
 {
 };
 }

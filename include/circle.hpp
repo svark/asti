@@ -83,7 +83,7 @@ struct circle
             *out =  atan2(dot(v,y) *y , dot(v,x) * x);
         }
     }
-   //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "eval at param")
+    //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "eval at param")
     point_t eval(double u) const
     {
         auto x = (start_pt - center);
@@ -97,9 +97,9 @@ struct circle
         auto x = (start_pt - center);
         auto y = ydir;
         for( ;us!=end;++us,++out) {
-           auto u = *us;
-           *out = center + x * cos(u) + y * sin(u);
-	}
+            auto u = *us;
+            *out = center + x * cos(u) + y * sin(u);
+        }
     }
 
     vector_t tangent(double u) const
@@ -215,7 +215,7 @@ to_rational(const circle<Point>& circ)
     double ts[]  = {0, 0, 0, 2*M_PI/3,2*M_PI/3,4*M_PI/3,4*M_PI/3, 2*M_PI,2*M_PI,2*M_PI};
 	auto spl = make_bspline( 
      	interleave( mk_stdvec(cpts,cpts+ sizeof(cpts)/sizeof(Point)),
-		std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ), 
+                    std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ), 
 		std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
 		2 );
 	double st[] = {-2*M_PI/3,0,0};

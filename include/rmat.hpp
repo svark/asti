@@ -94,7 +94,7 @@ struct rmat_base {
 
     template <class KnotIterU, class PointIter>
     void spline_compute(KnotIterU us, size_t nu, //location of us[0] in
-                                                //knot seq t
+                        //knot seq t
                         PointIter cache) const;
 
 protected:
@@ -106,9 +106,9 @@ template <class KnotIter>
 template <class PointIter>
 void
 rmat_base<KnotIter>::spline_compute(size_t nu,
-                        double u,
-                        int derOrder,
-                        PointIter cache) const
+                                    double u,
+                                    int derOrder,
+                                    PointIter cache) const
 {
     int size = deg;
     auto t_ =  t + nu;

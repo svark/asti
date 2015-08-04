@@ -6,7 +6,7 @@ namespace util {
 
 template <class knots_iter>
 struct skip_ith_iter :
-    std::iterator<std::random_access_iterator_tag, double>
+        std::iterator<std::random_access_iterator_tag, double>
 {
     skip_ith_iter(int i_, const knots_iter& t_)
         :t(t_), i(i_),iter(t_)
@@ -126,7 +126,7 @@ template <class KnotIter>
 skip_ith_iter <KnotIter>
 make_skip_iter(int i, KnotIter kn )
 {
-  return skip_ith_iter<KnotIter>(i, kn);
+    return skip_ith_iter<KnotIter>(i, kn);
 }
 
 

@@ -20,7 +20,7 @@ template <>
 struct point_dim<double>
 {
     enum {dimension = 1};
-  //    typedef std::allocator<double> alloc_t;
+    //    typedef std::allocator<double> alloc_t;
 };
 
 template <int dim>

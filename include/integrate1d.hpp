@@ -2,12 +2,12 @@
   gl[n_, x_] := Solve[LegendreP[n, x] == 0];
   gldash[n_, a] := D[LegendreP[n, x], x] /. x -> a;
   weights[n_, x_] := 2/((1 - x^2) gldash[n, x]^2);
-  */
+*/
 
 
 /*
-Gauss-Legendre n-points quadrature, The method is exact for a
-polynomial of degree <=2n-1 in exact arithmetic
+  Gauss-Legendre n-points quadrature, The method is exact for a
+  polynomial of degree <=2n-1 in exact arithmetic
 */
 
 template <int n>
