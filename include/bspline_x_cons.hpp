@@ -9,7 +9,7 @@ namespace geom {
 
 // to remove when you have c++14
 #define MAKE_BSPLINE  make_bspline(std::forward < CptsT > (pts),        \
-                                   std::forward < KnotsT > (ks), deg) 
+                                   std::forward < KnotsT > (ks), deg)
 
 #define MAKE_PERIODIC_BSPLINE   make_periodic_bspline(std::forward<CptsT> (pts), \
                                                       std::forward<KnotsT> (ks), \

@@ -51,7 +51,7 @@ struct bspline {
     int             degree()             const { return deg; };
 
 protected:
-	
+
     knots_t t;
     cpts_t cpts;
     int deg;

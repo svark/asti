@@ -19,7 +19,7 @@ TEST_CASE( "bspline_arc_length", "[bspline][arclength]" ) {
     }
     bspline <point2d_t > spl2d (
         geom::make_bspline_arr(cpts, cpts + 3,
-                           ks, ks + sizeof(ks) / sizeof(double), 2));
+                               ks, ks + sizeof(ks) / sizeof(double), 2));
     SECTION("arc length test") {
         REQUIRE(arclength(spl2d, 0, 1) == Approx(1.5457504021));
     }

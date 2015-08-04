@@ -91,7 +91,7 @@ struct pt_t {
 
 
     enum { dimension = dim };
-	EMT  p;
+    EMT  p;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
 };
 
@@ -147,7 +147,7 @@ struct vec_t
     vec_t& operator/=( double a) { this->v/=a; return *this;}
 
     vec_t& negate() { v = -v; return *this;}
-	vec_t operator-() { return vec_t(-v); }
+    vec_t operator-() { return vec_t(-v); }
     double operator[](std::size_t i) const { return v[i];}
     double& operator[](std::size_t i) { return v[i];}
     enum { dimension = dim };
@@ -529,9 +529,9 @@ STDVEC(pt_t < dim > )
 inline std::vector<double>
 mk_stdvec(const double &v)
 {
-	std::vector<double>  vs;
-	vs.push_back(v);
-	return vs;
+    std::vector<double>  vs;
+    vs.push_back(v);
+    return vs;
 }
 
 
@@ -539,23 +539,23 @@ template <int dim>
 STDVEC(vec_t<dim>)
     mk_stdvec(const vec_t<dim> * vb, const vec_t<dim> * ve)
 {
-	STDVEC(vec_t<dim>)  vs(vb, ve);
-	return vs;
+    STDVEC(vec_t<dim>)  vs(vb, ve);
+    return vs;
 }
 
 template <int dim>
 STDVEC(pt_t<dim>)
     mk_stdvec(const pt_t<dim> * vb, const pt_t<dim> * ve)
 {
-	STDVEC(pt_t<dim>)  vs(vb, ve);
-	return vs;
+    STDVEC(pt_t<dim>)  vs(vb, ve);
+    return vs;
 }
 
 inline std::vector<double>
 mk_stdvec(const double *vb, const double *ve)
 {
-	std::vector<double>  vs(vb, ve);
-	return vs;
+    std::vector<double>  vs(vb, ve);
+    return vs;
 }
 //}}}
 //{{{(@* "normalize a vector")
@@ -575,20 +575,20 @@ inline double normalize(const double & vec)
 //{{{(@* "make vec from points")
 inline vector2d_t _make_vec(const point2d_t & pt)
 {
-	vector2d_t v(pt.cget());
+    vector2d_t v(pt.cget());
     return v;
 }
 
 inline vector3d_t _make_vec(const point3d_t & pt)
 {
     vector3d_t v(pt.cget());
-	return v;
+    return v;
 }
 
 inline vector4d_t _make_vec(const point4d_t & pt)
 {
     vector4d_t v(pt.cget());
-	return v;
+    return v;
 }
 
 inline double _make_vec(const double& pt)

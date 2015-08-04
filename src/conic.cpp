@@ -85,7 +85,7 @@ make_conic_arc(point3d_t p[3], vector3d_t v[2])
         throw geom_exception(vectors_not_in_plane_of_points);
     if(!tol::eq(dot(nrml, v[1]), 0.0))
         throw geom_exception(vectors_not_in_plane_of_points);
-    
+
     if( tol::eq(fabs(dot(v[0], v[1])),
                 len(v[0]) * len(v[1])))
     { // tangents are parallel

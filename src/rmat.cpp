@@ -41,7 +41,7 @@ rmat_base<KnotIter>::der_n(size_t idx,
 #ifdef WIN32
     std::fill_n(stdext::make_checked_array_iterator(cache.get(),size+1),
                 size + 1, 0.0);
-#else 
+#else
     std::fill_n(cache.get(),
                 size + 1, 0.0);
 #endif

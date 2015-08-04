@@ -52,7 +52,7 @@ lerp( double lambda , double mu,
       const point4d_t& p1,//1,0
       const point4d_t& p2,//0,1
       const point4d_t& p3//0,0
-	)
+    )
 {
     point4d_t res;
     res.p[0] = lambda * p1.p[0] + mu * p2.p[0] + (1 - lambda - mu) * p3.p[0];
@@ -67,7 +67,7 @@ lerp( double lambda , double mu,
       const point3d_t& p1,
       const point3d_t& p2,
       const point3d_t& p3
-	)
+    )
 {
     point3d_t res;
     res.p[0] = lambda * p1.p[0] + mu * p2.p[0] + (1 - lambda - mu) * p3.p[0];
@@ -81,7 +81,7 @@ lerp( double lambda, double mu,
       const point2d_t& p1,
       const point2d_t& p2,
       const point2d_t& p3
-	)
+    )
 {
     point2d_t res;
     res.p[0] = lambda * p1.p[0] + mu * p2.p[0] + (1 - lambda - mu) * p3.p[0];

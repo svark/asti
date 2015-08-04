@@ -30,9 +30,9 @@ struct bezier_form : public bspline < Point >
 
 template <class CptsT>
 auto make_bezier_form(CptsT cpts,
-                      double a,  double b) -> bezier_form<RAWTYPE(cpts[0])> 
+                      double a,  double b) -> bezier_form<RAWTYPE(cpts[0])>
 {
-	return bezier_form<RAWTYPE(cpts[0])>(std::move(cpts), a, b);
+    return bezier_form<RAWTYPE(cpts[0])>(std::move(cpts), a, b);
 }
 
 }

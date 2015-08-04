@@ -8,7 +8,7 @@ namespace impl {
 
 template <class Point, class CptsT>
 bspline<Point>
-make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, 
+make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_,
              std::true_type/* type of CptsT == bspline::cpts_t */ )
 {
     typedef RAWTYPE(pts[0])  point_t;
@@ -42,7 +42,7 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, std::false_typ
 
 template <class CptsT>
 auto
-make_bspline( CptsT pts, std::vector<double> ks, int degree_) 
+make_bspline( CptsT pts, std::vector<double> ks, int degree_)
     -> bspline < RAWTYPE(pts[0]) >
 {
     typedef RAWTYPE(pts[0])  point_t;
@@ -59,8 +59,8 @@ make_bspline( CptsT pts, std::vector<double> ks, int degree_)
 
 template <class Point>
 bspline <Point>
-make_bspline_arr(const Point *pts, 
-                 const Point *ptsEnd, 
+make_bspline_arr(const Point *pts,
+                 const Point *ptsEnd,
                  const double * ks,
                  const double *ksEnd,
                  int degree_)

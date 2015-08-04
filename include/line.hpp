@@ -86,7 +86,7 @@ make_line_seg(const Point& p1,
 
 //.  ./media/intersect_lines1.png
 
-template <class Point>    
+template <class Point>
 std::pair<Point, Point >
 closest_points(const line < Point >& l1,
                const line < Point >& l2)
@@ -102,7 +102,7 @@ closest_points(const line < Point >& l1,
 
     if(tol::eq(d, 0))
         return std::make_pair(l1.start_pt(), l2.start_pt()+f*l2.direction());
-    
+
     auto p1 = l1.start_pt() +  d1 * (dot(d1, (d2 * f - r )) / d);
     auto p2 = l2.start_pt() +  d2 * (dot(d2, (r - d1 * c)) / d);
     return std::make_pair(p1, p2);

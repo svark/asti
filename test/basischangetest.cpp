@@ -18,9 +18,9 @@ TEST_CASE("change basis", "[bezier][monomial]"){
             mon[i] = i + 1;
 
         monomial_form < double >  mf(mon, 0, 1.0);
-        auto &      bzf      = to_bezier(mf);
+        auto const &bzf      = to_bezier(mf);
         REQUIRE(bzf.eval(.1) == Approx(mf.eval(.1)));
-		auto const &mf_dual  = to_monomial(bzf);
+        auto const &mf_dual  = to_monomial(bzf);
         auto const &cfs      = mf_dual.coeffs();
         REQUIRE(cfs.size()  == mon.size());
         for(size_t i = 0;i < cfs.size(); ++i)
@@ -34,7 +34,7 @@ TEST_CASE("change basis", "[bezier][monomial]"){
             c[i] = i + 1;
 
         bezier_form < double > bf(c, 1, 2.0);
-		auto const & bf_dual = to_bezier (to_monomial(bf));
+        auto const & bf_dual = to_bezier (to_monomial(bf));
         auto const &  cfs = bf_dual.control_points();
         REQUIRE(cfs.size() == c.size());
         for(size_t i = 0;i < cfs.size(); ++i)

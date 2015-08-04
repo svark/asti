@@ -203,8 +203,8 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
                          std::integral_constant<end_conditions_t,periodic>
     )
 {
-	typedef RAWTYPE(pb[0]) point_t;
-	static const int dim = point_dim<point_t>::dimension;
+    typedef RAWTYPE(pb[0]) point_t;
+    static const int dim = point_dim<point_t>::dimension;
     using Eigen::MatrixXd;
     size_t n = std::distance(pb,pe);
 
@@ -215,14 +215,14 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     mat.setZero();
     Eigen::Matrix<double,Eigen::Dynamic,dim> rhs(n);
 
-	mat(0,n-2) = E(tb,0);
+    mat(0,n-2) = E(tb,0);
     mat(0,1)   = E(tb,n-2);
     mat(0,0)   = 2*( mat(0,n-2) + mat(0,1) );
 
     double a0 = mat(0,n-2)/mat(0,1);
     rhs.row(0) = eigen_vec( (3*a0)* E(pb,0) + (3/a0) * E(pb,n-2));
 
-	// p0' = pn'
+    // p0' = pn'
     mat(n-1,n-1) = -1;
     mat(n-1,0)   = 1;
 
@@ -327,20 +327,20 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
         -(b0 + b1)        * pb[0]
         +(b0  - b2  + b1) * pb[1]
         + b2              * pb[2] );
-    
+
     auto h0 = E(tb,n-3);
     auto h1 = E(tb,n-2);
 
-	/* this gets messy so I let mathematica do the dirty work:
-       second derivative at x for the cubic: 
+    /* this gets messy so I let mathematica do the dirty work:
+       second derivative at x for the cubic:
        Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
-       third derivative 
+       third derivative
        X[i] := Y[i_, x_] := 6*P[i + 1]*(1/(t[i + 1] - t[i])^2 - (2*(x - t[i]))/(t[i + 1] - t[i])^3) + 6*P[i]*((2*(x - t[i]))/(t[i + 1] - t[i])^3 - 1/(t[i + 1] - t[i])^2) + 2*Q[i + 1]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 1/(t[i + 1] - t[i])) + 2*Q[i]*((3*(x - t[i]))/(t[i + 1] - t[i])^2 - 2/(t[i + 1] - t[i]))
 
        Not a knot condition both second and third derivatives are same at the knot t[N-2] (last but one)
        eqn := Eliminate[ {Y[N-3,t[N-2]]==Y[N-2,t[N-2],X[N-3]==X[N-2]},{Q[N-3]}]
 
-       eqn[[1,1]] 
+       eqn[[1,1]]
        >> P[-1+N] (3/(t[-3+N]-t[-2+N])+2/(t[-2+N]-t[-1+N]))
 
        Table[ Coefficient[eqn[[1,2]],P[-i+N]]//Simplify, {i,2,3}]
@@ -351,16 +351,16 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
        Table[ Coefficient[eqn[[1,2]],Q[-i+N]]//Simplify, {i,1,2}]
 
        >> {(-t[-3 + N] + t[-1 + N])/( t[-3 + N] - t[-2 + N]), -((t[-3 + N] - t[-1 + N])^2/(t[-3 + N] - t[-2 + N])^2)}
-	*/
-	
-    m(n-1,n-1) = (h0+h1)/h1; //note the sign
-	m(n-1,n-2) = (h0+h1)*(h0+h1)/(h0*h0); 
+    */
 
-	rhs.row(n-1) = eigen_vec( 
-	    (3/h0 + 2/h1) * pb[n-1]
-        + (h0 + h1)*(h0+h1) * (-2*h0 + h1 )/(h0*h0*h0*h1)  * pb[n-2] 
+    m(n-1,n-1) = (h0+h1)/h1; //note the sign
+    m(n-1,n-2) = (h0+h1)*(h0+h1)/(h0*h0);
+
+    rhs.row(n-1) = eigen_vec(
+        (3/h0 + 2/h1) * pb[n-1]
+        + (h0 + h1)*(h0+h1) * (-2*h0 + h1 )/(h0*h0*h0*h1)  * pb[n-2]
         - h1*h1/(h0*h0*h0) * pb[n-3]
-		);
+        );
 
     setup_mat_for_interior_tgts(m, pb, pe, tb, te, explicit_tgts, rhs);
     rhs = m.fullPivLu().solve(rhs);
@@ -426,7 +426,7 @@ pchip_closed(PointIter pb, PointIter pe,
     cpts[1] = pb[0] + 1.0/3 * tgts[0] *  E(params, 0) ;
 
     knots[0] = knots[1] = params[0] -  E(params,n-2);
-	knots[2] = knots[3] = params[0];
+    knots[2] = knots[3] = params[0];
 
     for( size_t i = 1; i < n - 1 ; ++i) {
         cpts[2*i] = pb[i] - 1.0/3 * tgts[i] *  E(params,(i-1)) ;
@@ -437,13 +437,13 @@ pchip_closed(PointIter pb, PointIter pe,
     }
 
     cpts[2*n-2] = pb[n-1] - 1.0/3 * tgts[n-1] * E(params,n-2);
-	cpts[2*n-1] = pb[n-1] + 1.0/3 * tgts[n-1] * E(params, 0 );
+    cpts[2*n-1] = pb[n-1] + 1.0/3 * tgts[n-1] * E(params, 0 );
 
     auto cp = cpts[0] - pb[n-1] + 1.0/3 * tgts[n-1] * E(params,0);
     assert(tol::eq(sqlen(cp),0));
 
     knots[2*n] = knots[2*n+1] = params[n-1];
-	knots[2*n+2] = knots[2*n+3] = params[n-1] + E(params,0);
+    knots[2*n+2] = knots[2*n+3] = params[n-1] + E(params,0);
     assert( pb[n-1] == pb[0]);
     return  make_periodic_bspline( make_bspline( std::move(cpts), std::move(knots ), 3) );
 }

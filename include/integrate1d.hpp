@@ -102,14 +102,14 @@ const double gl_points_weights < 1024 >::weights[] = {0.0030664603092439083,0.00
 
 
 template <class Fn, int n>
-double integrate1d(Fn f, std::integral_constant < int, n >, 
+double integrate1d(Fn f, std::integral_constant < int, n >,
                    double a,
                    double b)
 {
-	const double* points = gl_points_weights < n >::points;
-	const double* w = gl_points_weights < n >::weights;
+    const double* points = gl_points_weights < n >::points;
+    const double* w = gl_points_weights < n >::weights;
 
-	size_t m = n>>1;
+    size_t m = n>>1;
 
     double ga =  0.5 * (b - a);
     double mn =  0.5 * (b + a);
@@ -124,5 +124,5 @@ double integrate1d(Fn f, std::integral_constant < int, n >,
     {
         s += w[i] * auxf(points[i]);
     }
-  	return ga*s;
+    return ga*s;
 }

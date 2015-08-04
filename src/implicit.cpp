@@ -194,9 +194,9 @@ implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
             }
             rmat<double> rm_chk(cpts, ks,basisdeg);
             assert( tol::eq(rm_chk.eval(0) , rhs(0)) );
-            assert(	tol::eq(rm_chk.eval(1.0/basisdeg), rhs(1)) );
-            assert(	tol::eq(rm_chk.eval(2.0/basisdeg) , rhs(2)) );
-            assert(	tol::eq(rm_chk.eval(1), rhs(L-1)) );
+            assert( tol::eq(rm_chk.eval(1.0/basisdeg), rhs(1)) );
+            assert( tol::eq(rm_chk.eval(2.0/basisdeg) , rhs(2)) );
+            assert( tol::eq(rm_chk.eval(1), rhs(L-1)) );
 #endif
         }
     }

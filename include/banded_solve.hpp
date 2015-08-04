@@ -15,7 +15,7 @@ template <typename MatrixT, typename VectorT>
 void
 banded_lu_solve(const MatrixT & _A, VectorT & b)
 {
-	size_t n = _A.rows();
+    size_t n = _A.rows();
     for(size_t j = 0;j < n; ++j)
     {
         b[j + 1] -= _A(j + 1, j) * b[j];

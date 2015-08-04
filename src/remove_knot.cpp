@@ -64,7 +64,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     typedef spline_traits<SplineCurve> str;
     return make_bspline(std::move(newcpts),
                         std::move(t), crv.degree() ,
-                        typename str::ptag(), 
+                        typename str::ptag(),
                         typename str::rtag());
 }
 

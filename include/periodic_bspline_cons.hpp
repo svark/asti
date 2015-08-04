@@ -103,9 +103,9 @@ template <class Point>
 periodic_bspline<Point>
 make_periodic_bspline( bspline<Point>&& spl)
 {
-	assert(ops::is_periodic(spl));
-	return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
+    assert(ops::is_periodic(spl));
+    return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
 }
- 
+
 }
 #endif // ASTI_PERIODIC_BSPLINE_CONS

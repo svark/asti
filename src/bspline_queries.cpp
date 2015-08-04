@@ -13,7 +13,7 @@ bool
 ops::is_periodic(const SplineCurve & crv)
 {
     auto pr = crv.param_range();
-	
+
     auto const & v1 = crv.eval_derivatives(crv.degree()-1, pr.first );
     auto const & v2 = crv.eval_derivatives(crv.degree()-1, pr.second );
     bool its_periodic = true;

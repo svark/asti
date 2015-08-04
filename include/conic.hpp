@@ -73,8 +73,8 @@ struct conic_arc {
         auto q1 = lerp(0.5, p[0], p[1]);
         auto r1 = lerp(0.5, p[2], p[1]);
         auto s = lerp(0.5, q1, r1);
-		s *= 1/s[dim];
-		q1 *= sqrt((1 + w) / 2)/q1[dim]; r1 *= sqrt((1 + w) / 2)/r1[dim];
+        s *= 1/s[dim];
+        q1 *= sqrt((1 + w) / 2)/q1[dim]; r1 *= sqrt((1 + w) / 2)/r1[dim];
         return std::make_tuple( q1, s, r1);
     }
     pointw_t p[3];

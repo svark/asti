@@ -53,7 +53,7 @@ TEST_CASE("hyperbola", "[conic][2d][hyperbola]") {
     INFO( c.eval(0) << "," << c.eval(0.5) << c.eval(1.0)<< "\n" );
     REQUIRE( c.eval(0) ==  make_pt(0, 0));
     REQUIRE( c.eval(1) ==  make_pt(1, 0));
-	auto s = make_pt(1.0237873,-0.825972281);
+    auto s = make_pt(1.0237873,-0.825972281);
     REQUIRE( c.eval(0.5) ==  s);
     REQUIRE(c.type()== geom::hyperbola);
 
@@ -74,13 +74,13 @@ TEST_CASE("circle", "[circle][2d]"){
     REQUIRE(c.eval(3*M_PI/2) ==  make_pt(1, 0));
     REQUIRE(c.eval(2 * M_PI) ==  make_pt(0, 1));
 
-	auto ac = geom::make_circle( geom::make_pt(0,1.0), geom::make_pt(1,0), geom::make_pt(-1,0));
-	REQUIRE( c.getCenter() == ac.getCenter());
-	REQUIRE( c.getRadius() == Approx(ac.getRadius()));
-	REQUIRE( len (c.getPlaneNormal()  + ac.getPlaneNormal() ) == Approx(0));
+    auto ac = geom::make_circle( geom::make_pt(0,1.0), geom::make_pt(1,0), geom::make_pt(-1,0));
+    REQUIRE( c.getCenter() == ac.getCenter());
+    REQUIRE( c.getRadius() == Approx(ac.getRadius()));
+    REQUIRE( len (c.getPlaneNormal()  + ac.getPlaneNormal() ) == Approx(0));
 
-	auto const & rbsc = geom::to_rational( c );
-	REQUIRE(rbsc.eval(0 ) == make_pt(0, 1));
+    auto const & rbsc = geom::to_rational( c );
+    REQUIRE(rbsc.eval(0 ) == make_pt(0, 1));
     REQUIRE(rbsc.eval(2*M_PI/3.0 ) == make_pt(-0.866025404,-0.5));
     REQUIRE(rbsc.eval(2*M_PI/6.0) == make_pt(-0.866025404,0.5));
     REQUIRE(rbsc.eval(2*M_PI/2) ==  make_pt(0, -1));

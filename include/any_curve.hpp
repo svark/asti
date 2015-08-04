@@ -7,8 +7,8 @@
 namespace geom
 {
 
-// 
-// abstract curve that uses type erasure to provide an 
+//
+// abstract curve that uses type erasure to provide an
 // interface consisting of the eval function. Use make_any_curve to turn any
 // curve that has eval method into any_curve.
 // you could for example provide a quick interface to the twisted cubic (t, t^2,
@@ -24,13 +24,13 @@ struct  any_curve
     any_curve(Fn fn_):fn(fn_)
     {
     }
-	any_curve(const any_curve& o)
-		:  fn(o.fn){}
+    any_curve(const any_curve& o)
+        :  fn(o.fn){}
 
-	any_curve(any_curve&& o):
-		fn(std::forward< std::function<Point (double) > >( o.fn) )
-	{
-	}
+    any_curve(any_curve&& o):
+        fn(std::forward< std::function<Point (double) > >( o.fn) )
+    {
+    }
     Point eval(double u) const
     {
         return fn(u);

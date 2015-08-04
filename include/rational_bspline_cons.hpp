@@ -13,7 +13,7 @@ auto interleave(const PointContT & ps,
     -> RAWTYPE(mk_stdvec(higher_dim(ps[0])))
 {
     typedef typename inc_dimension < RAWTYPE(ps[0]) >::type pointw_t;
-	RAWTYPE(mk_stdvec(pointw_t())) pws;
+    RAWTYPE(mk_stdvec(pointw_t())) pws;
     pws.reserve(ps.size());
     auto witer = std::begin(ws);
     enum {dim = point_dim<pointw_t>::dimension };
@@ -37,7 +37,7 @@ make_periodic_rbspline(const CptsT & pts,
                        std::vector<double> ks,
                        int degree_) -> rational_bspline<RAWTYPE(pts[0]), periodic_tag>
 {
-    return make_rbspline(make_periodic_bspline_wrap ( 
+    return make_rbspline(make_periodic_bspline_wrap (
                              std::move(interleave(pts, weights) ),
                              std::move(ks), degree_));
 }
@@ -48,7 +48,7 @@ make_periodic_rbspline(CptsT  pts,
                        std::vector<double> ks,
                        int degree_) -> rational_bspline<RAWTYPE(lower_dim(pts[0])), periodic_tag>
 {
-    return make_rbspline(make_periodic_bspline_wrap( 
+    return make_rbspline(make_periodic_bspline_wrap(
                              std::move(pts),
                              std::move(ks), degree_));
 }

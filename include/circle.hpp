@@ -40,7 +40,7 @@ struct circle
 
 
     template <class PointU>
-    circle(const PointU& center_, const PointU & point_, 
+    circle(const PointU& center_, const PointU & point_,
            typename std::enable_if<point_dim < PointU >::dimension == 2, int>::type = 0)
         :center(center_), start_pt(point_)
     {
@@ -122,8 +122,8 @@ struct circle
     {
         return start_pt;
     }
-    
-	decltype(cross(vector_t(),vector_t()))
+
+    decltype(cross(vector_t(),vector_t()))
     getPlaneNormal() const
     {
         auto const &x = (start_pt - center);
@@ -186,8 +186,8 @@ make_circle(const Point& p1,
     double beta  = lv3 * dot(-v1,v2) *0.5 / ( denom );
 
     auto cp = lerp(alpha,beta,pts[0],pts[1],pts[2]);
-	decltype(normal) xdir(pts[0] - cp);
-	auto nnormal (normalize(normal));
+    decltype(normal) xdir(pts[0] - cp);
+    auto nnormal (normalize(normal));
     return circle<point_t>(cp, pts[0], decltype(v1)(cross(nnormal, xdir)));
 }
 
@@ -201,30 +201,30 @@ to_rational(const circle<Point>& circ)
     decltype(x)  y = cross(circ.getPlaneNormal(), decltype(circ.getPlaneNormal())(x) );
 
     double radius =  circ.getRadius();
-	
+
     auto a = start_pt + 2 * y * radius  * cos( M_PI/6.0);
     auto c = start_pt - 2 * y * radius  * cos( M_PI/6.0);
     auto b = center -  2 * x * radius ;
-    
-	auto p = lerp(0.5,a,c);
+
+    auto p = lerp(0.5,a,c);
     auto q = lerp(0.5,a,b);
     auto r = lerp(0.5,c,b);
 
     double weights[] = {1,0.5,1,0.5,1,0.5,1};
     Point cpts[] = {p, a   ,q    ,b    ,r   ,c, p};
     double ts[]  = {0, 0, 0, 2*M_PI/3,2*M_PI/3,4*M_PI/3,4*M_PI/3, 2*M_PI,2*M_PI,2*M_PI};
-	auto spl = make_bspline( 
-     	interleave( mk_stdvec(cpts,cpts+ sizeof(cpts)/sizeof(Point)),
-                    std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ), 
-		std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
-		2 );
-	double st[] = {-2*M_PI/3,0,0};
-	double es[] = {2*M_PI, 2*M_PI, 8.0*M_PI/3 };
-	rebase_at_start(spl, st ).swap(spl);
-	rebase_at_end(spl,es).swap(spl);
+    auto spl = make_bspline(
+        interleave( mk_stdvec(cpts,cpts+ sizeof(cpts)/sizeof(Point)),
+                    std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ),
+        std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
+        2 );
+    double st[] = {-2*M_PI/3,0,0};
+    double es[] = {2*M_PI, 2*M_PI, 8.0*M_PI/3 };
+    rebase_at_start(spl, st ).swap(spl);
+    rebase_at_end(spl,es).swap(spl);
 
-	return make_rbspline(std::move(spl));
-		
+    return make_rbspline(std::move(spl));
+
 }
 
 

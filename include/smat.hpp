@@ -130,7 +130,7 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
     smat(a, b, ks, deg).reval(newcpts.begin());
 
     typedef spline_traits<SplineCurve> str;
-    return make_bspline 
+    return make_bspline
         (std::move(newcpts), std::move(ks), deg,
          typename str::ptag(),
          typename str::rtag())
@@ -147,7 +147,7 @@ SplineCurve rebase_at_right(const SplineCurve & crv,
     auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
 
-	size_t nu = r.locate_nu(b - tol::param_tol/2);
+    size_t nu = r.locate_nu(b - tol::param_tol/2);
     //  assert(r.locate_nu(b+tol::param_tol/2)==nu+1);
     double a = t[nu];
     // all the knots in us are expected to be >= b
@@ -231,7 +231,7 @@ SplineCurve clamp_end(const SplineCurve & crv)
     if(r.end_mult() == deg + 1)
         return SplineCurve(crv);
 
-	double b = t[t.size() - deg - 1];
+    double b = t[t.size() - deg - 1];
     return clamp_at_right(b, crv);
 }
 

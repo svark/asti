@@ -1,4 +1,4 @@
-//-*- mode:c++ -*- 
+//-*- mode:c++ -*-
 #ifndef ASTI_TRIM_EXTEND_JOIN
 #define ASTI_TRIM_EXTEND_JOIN
 namespace geom

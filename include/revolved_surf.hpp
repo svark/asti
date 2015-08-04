@@ -8,7 +8,7 @@ struct revolved_bspline_surf {
     revolved_bspline_surf(const line & axis,
                           const SplineCurve & c)
     {
-        
+
     }
 };
 }

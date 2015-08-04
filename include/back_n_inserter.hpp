@@ -33,8 +33,8 @@ struct back_n_insert_iterator : std::back_insert_iterator<ContT>
 };
 
 template <class ContT>
-back_n_insert_iterator<ContT> back_n_inserter(int n, ContT&v) { 
-    return (back_n_insert_iterator<ContT>(n,v)); 
+back_n_insert_iterator<ContT> back_n_inserter(int n, ContT&v) {
+    return (back_n_insert_iterator<ContT>(n,v));
 }
 
 

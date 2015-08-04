@@ -9,7 +9,7 @@ namespace geom
 
 template <class VecsT>
 auto rational_derivatives(const VecsT & vecs)
-	->  decltype(mk_stdvec(lower_dim(vecs[0])))
+    ->  decltype(mk_stdvec(lower_dim(vecs[0])))
 {
     int derOrder = vecs.size() - 1;
     typedef decltype(lower_dim(vecs[0])) vec_t;
@@ -18,13 +18,13 @@ auto rational_derivatives(const VecsT & vecs)
     decltype(mk_stdvec(vec_t())) vs;
     vs.reserve(derOrder+1);
 
-	std::vector<double>  ws;
-	ws.reserve(derOrder+1);
+    std::vector<double>  ws;
+    ws.reserve(derOrder+1);
 
-	std::vector<double> bbasis(derOrder + 1, 0.0);
+    std::vector<double> bbasis(derOrder + 1, 0.0);
     bbasis[0] =  1.0;
 
-	for(int i = 0; i <= derOrder; ++i) {
+    for(int i = 0; i <= derOrder; ++i) {
         // update the pascals triangle.
         for(int j = i - 1;j >= 1; --j)
             bbasis[j] = bbasis[j] + bbasis[j - 1];
@@ -53,7 +53,7 @@ public:
                                                  typename inc_dimension < Point >::type
                                                  >::type spl_traits;
 
-    typedef typename get_traits_type_from_tags<PTag, polynomial_tag, 
+    typedef typename get_traits_type_from_tags<PTag, polynomial_tag,
                                                Point>::type ldim_spl_traits;
 
     typedef typename spl_traits::spline_type spl_t;

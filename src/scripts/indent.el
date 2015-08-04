@@ -14,5 +14,5 @@
 (c-set-style "my-style")        ; use my-style defined above
 (auto-fill-mode)
 (indent-region (point-min) (point-max) nil)
-
-
+(untabify (point-min) (point-max) nil)
+(delete-trailing-whitespace)

@@ -22,14 +22,14 @@ to_monomial(const bspline < Point >& bezf)
     cpts_t monf(sz, Point(0.0));
     long cni = 1;
     short signi = 1;
-	int n = sz - 1;
+    int n = sz - 1;
     for(size_t i =  0;i < sz; ++i, signi = -signi) {
         if(i != 0){
             cni *= (n - i + 1) ;
             cni /= i;
         }
         long cil =  1;
-		short signl = 1;
+        short signl = 1;
         for(size_t l =  0;l <= i; ++l, signl = -signl)
         {
             if(l != 0) {
@@ -41,8 +41,8 @@ to_monomial(const bspline < Point >& bezf)
             monf[i] += (scaled_copy(ev, co));
         }
     }
-	double s,e;
-	std::tie(s,e) = bezf.param_range();
+    double s,e;
+    std::tie(s,e) = bezf.param_range();
     return monomial_form < Point > (std::move(monf), s, e);
 }
 
