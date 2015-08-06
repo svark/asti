@@ -17,7 +17,7 @@ TEST_CASE("find_param",  "[bspline][point inversion]") {
     std::vector<double> ks(3+3+2);
     ks[0] = ks[1] = ks[2] = 0.0;
     ks[3] = 0.5; ks[4] = 0.8;
-    ks[5] = ks[6] = ks[7] = 1.0;
+    ks[5] = ks[6] = ks[7] = 1.2;
     geom::bspline<geom::point2d_t> bs(std::move(pts), std::move(ks),2);
     bool ok;
     double u;

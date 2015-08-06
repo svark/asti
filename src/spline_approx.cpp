@@ -237,7 +237,7 @@ ops::foot_param(const SplineType &spl,
         auto d = dist(u);
         if( d < mindist ) { mindist = d; minu = u; }
         rootQ = find_next_rootc(splapprox,
-                                std::max(u, rootQ.first)+2.0e-3,
+                                std::max(u, rootQ.first)+tol::param_tol,
                                 tol::param_tol);//TODO:adjust
     }
     double db = dist(t.back());

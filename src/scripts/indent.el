@@ -1,4 +1,6 @@
 ; emacs --batch foo.c -l indent -f save-buffer >& log
+; for /f "usebackq" %i in (`dir /s /b *.hpp *.cpp`) do emacs --batch %i -l %projroot%src\scripts\indent.el -f
+save-buffer
 (require 'cc-mode)
 (c-add-style "my-style"
              '("stroustrup"

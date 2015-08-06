@@ -1,3 +1,4 @@
+//-*- mode: c++ -*-
 #ifndef ASTI_SPLIT_INTO_BEZIER_PATCHES
 #define ASTI_SPLIT_INTO_BEZIER_PATCHES
 
@@ -10,10 +11,13 @@ template <class SplineType>
 extern std::list<SplineType,Eigen::aligned_allocator<SplineType> >
 split_into_bezier_patches(const SplineType &spl);
 
-/*template <class SplineType>
-  extern std::list< rational_bspline < SplineType>,
-  Eigen::aligned_allocator<rational_bspline < SplineType >>>
-  split_into_bezier_patches(const rational_bspline < SplineType > &spl); */
+template <class SplineType>
+extern SplineType
+first_bezier_patch(const SplineType &spl);
+
+template <class SplineType>
+extern SplineType
+last_bezier_patch(const SplineType &spl);
 
 }
 }

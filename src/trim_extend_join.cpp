@@ -18,7 +18,7 @@ ops::join_starts(const SplineType& spl1,
                  const SplineType& spl2,
                  int join_cont)
 {
-    SplineType spl1_clamped (clamp_end(spl1));
+    SplineType spl1_clamped (clamp_start(spl1));
     SplineType spl2_clamped (clamp_start(spl2));
 
     // let the two splines have the same start parameters
@@ -33,7 +33,7 @@ ops::join_starts(const SplineType& spl1,
 
     typename SplineType::knots_t ks(p + 1);
 
-    auto a = spl1_clamped.knots().begin()[p+1];
+    auto a = spl1_clamped.knots()[p+1];
     auto b = spl2_clamped.knots()[p+1];
 
     if(a > b ) std::swap(a,b);

@@ -14,7 +14,7 @@ namespace geom {
 // bspline to bezier (and vice versa)  conversion  matrix.  as described in
 // (@file :file-name "b2b.pdf" :to "b2b.pdf" :display "bspline2bezier")
 //
-
+// http://amsacta.unibo.it/853/1/preprint.pdf
 //  bspline to bezier conversion and vice versa
 struct smat : rmat_base_vd {
     double a; // interval start from which to extract curve, end will be
@@ -43,7 +43,7 @@ struct smat : rmat_base_vd {
         for(int j = 0; j <= size; ++j) {
             cpts_t cacheb(cachea, cachea + size + 1);
             for(int sz = size; sz > j; --sz) {
-                // ./media/reval.png
+                // ../src/media/reval.png
                 double lambda = sdiv(t_[j + 1 - sz] - a, b - a);
                 if(tol::param_eq(lambda,  0)) continue;
                 for(int i = 0; i < sz; ++i){
@@ -52,7 +52,7 @@ struct smat : rmat_base_vd {
             }
 
             for(int sz = j; sz >= 1; --sz) {
-                // ./media/reval2.png
+                // ../src/media/reval2.png
                 double mu =  sdiv(t_[sz] - a, b - a);
                 if(tol::param_eq(mu,  0)) continue;
                 for(int i = 0; i < sz; ++i){
@@ -132,6 +132,53 @@ SplineCurve rebase_at_left(const SplineCurve & crv,
     typedef spline_traits<SplineCurve> str;
     return make_bspline
         (std::move(newcpts), std::move(ks), deg,
+         typename str::ptag(),
+         typename str::rtag())
+        ;
+}
+
+template <class SplineCurve, class FnType>
+SplineCurve transform_at_left(const SplineCurve & crv,
+                              FnType f /*std::function<void(PointIter&)>*/
+    )
+{
+    double a = crv.param_range().first;
+    int deg  = crv.degree();
+    auto const & cpts = crv.control_points();
+    double b = crv.knots()[deg+1];
+    transform_at(crv,a,b,std::forward<FunType>(f));
+}
+
+// modify curve by changing the bezier control points between a,b of
+// given curve. New curve has the same knots as the old.
+template <class SplineCurve, class FnType>
+SplineCurve transform_at(const SplineCurve & crv,
+                         double a, double b,
+                         FnType f /*std::function<void(PointIter&)>*/
+                        )
+{
+    auto const & t = crv.knots();
+    int deg  = crv.degree();
+    auto const & cpts = crv.control_points();
+    rmat_base_vd r(t, deg);
+    size_t nu = r.locate_nu(a);
+    // all the knots in us are expected to be <= a
+#ifndef NDEBUG
+    std::for_each(us, us + (deg + 1), [&a](double u){ assert(u <= a);});
+#endif
+    typedef typename SplineCurve::cpts_t cpts_t;
+    typedef typename SplineCurve::knots_t knots_t;
+    double b = t[nu+1];
+    cpts_t newcpts(cpts);
+    // get control points wrt bernstein basis
+    smat(a, b, t, deg).seval(newcpts.begin());
+    // switch back to bspline basis after transforming the points
+    f(newcpts.begin(),a,b);
+    smat(a, b, t, deg).reval(newcpts.begin());
+
+    typedef spline_traits<SplineCurve> str;
+    return make_bspline
+        (std::move(newcpts), t, deg,
          typename str::ptag(),
          typename str::rtag())
         ;

@@ -40,21 +40,63 @@ ops::split_into_bezier_patches(const SplineType &spl)
     return patches;
 }
 
-/*template <class SplineType>
-  std::list< rational_bspline < SplineType>,
-  Eigen::aligned_allocator<rational_bspline < SplineType >>>
-  split_into_bezier_patches(const rational_bspline < SplineType > &spl)
-  {
-  std::list<rational_bspline < SplineType>,
-  Eigen::aligned_allocator<rational_bspline < SplineType>> > res;
-  auto l = split_into_bezier_patches(spl.spline());
-  for(auto pc:l)
-  {
-  res.push_back(make_rbspline(std::move(pc)));
-  }
-  return res;
-  }
-*/
+template <class SplineType>
+SplineType
+ops::first_bezier_patch(const SplineType &spl)
+{
+    typedef typename SplineType::knots_t knots_t;
+    typedef typename SplineType::point_t point_t;
+
+    auto &ts    = spl.knots();
+    int   deg   = spl.degree();
+    int   order = deg + 1;
+
+    assert(!tol::param_eq(ts.front(), ts.back()));
+    SplineType s ( clamp_start(spl) );
+
+    knots_t newts;
+    auto ts2 = s.knots();
+    assert( ts2.size() );
+    newts.reserve( ts2.size() );
+    double firstu= ts2.front();
+    auto biter =
+        std::find_if_not(
+            ts2.begin(),
+            ts2.end(),
+            std::bind(tol::param_eq, _1,firstu));
+    assert(biter!=ts2.end());
+    return clamp_at_right(*biter,s);
+}
+
+template <class SplineType>
+SplineType
+ops::last_bezier_patch(
+    const SplineType &spl)
+{
+    typedef typename SplineType::knots_t knots_t;
+    typedef typename SplineType::point_t point_t;
+
+    auto &ts    = spl.knots();
+    int   deg   = spl.degree();
+    int   order = deg + 1;
+
+    assert(!tol::param_eq(ts.front(), ts.back()));
+    SplineType s(clamp_end(spl) );
+
+    knots_t newts;
+    auto ts2 = s.knots();
+    assert( ts2.size() );
+    newts.reserve( ts2.size() );
+    double lastu= ts2.back();
+    using namespace std::placeholders;
+    auto biter =
+        std::find_if_not(
+            ts2.rbegin(),
+            ts2.rend(),
+            std::bind(tol::param_eq, _1,lastu));
+    assert(biter!=ts2.rend());
+    return clamp_at_left(*biter,s);
+}
 
 //}}}
 
