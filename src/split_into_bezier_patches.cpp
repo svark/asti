@@ -59,6 +59,7 @@ ops::first_bezier_patch(const SplineType &spl)
     assert( ts2.size() );
     newts.reserve( ts2.size() );
     double firstu= ts2.front();
+    using namespace std::placeholder;
     auto biter =
         std::find_if_not(
             ts2.begin(),
