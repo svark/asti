@@ -162,13 +162,10 @@ SplineCurve transform_at(const SplineCurve & crv,
     auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
     size_t nu = r.locate_nu(a);
-    // all the knots in us are expected to be <= a
-#ifndef NDEBUG
-    std::for_each(us, us + (deg + 1), [&a](double u){ assert(u <= a);});
-#endif
+    
     typedef typename SplineCurve::cpts_t cpts_t;
     typedef typename SplineCurve::knots_t knots_t;
-    double b = t[nu+1];
+ 
     cpts_t newcpts(cpts);
     // get control points wrt bernstein basis
     smat(a, b, t, deg).seval(newcpts.begin());
