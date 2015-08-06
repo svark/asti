@@ -146,7 +146,7 @@ SplineCurve transform_at_left(const SplineCurve & crv,
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     double b = crv.knots()[deg+1];
-    transform_at(crv,a,b,std::forward<FunType>(f));
+    transform_at(crv,a,b,f);
 }
 
 // modify curve by changing the bezier control points between a,b of
