@@ -29,13 +29,13 @@ TEST_CASE("trimextendjointest",  "[bspline][trim][extend][join]")
         auto c2 ( geom::ops::trim_curve(bs,0.6,1.2) );
         for(int i =0;i < 6;i+=2)
         {
-            auto &p =  c1.eval(i/10.0);
+            auto const &p =  c1.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
         for(int i =6;i < 12;i+=2)
         {
-            auto &p =  c2.eval(i/10.0);
+            auto const &p =  c2.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
@@ -46,13 +46,13 @@ TEST_CASE("trimextendjointest",  "[bspline][trim][extend][join]")
         auto c3 = geom::ops::extend_curve_start(geom::ops::extend_curve_end(c1,0.1),0.1);
          for(int i =0;i < 6;i+=2)
         {
-            auto &p =  c3.eval(i/10.0);
+            auto const &p =  c3.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
         for(int i =7;i < 12;i+=2)
         {
-            auto &p =  c3.eval(i/10.0);
+            auto const &p =  c3.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
@@ -65,13 +65,13 @@ TEST_CASE("trimextendjointest",  "[bspline][trim][extend][join]")
                                                 geom::ops::reverse_curve(c1), c2, 1) ,0,1.2)) ;
         for(int i =0;i < 6;i+=2)
         {
-            auto &p =  c3.eval(i/10.0);
+            auto const &p =  c3.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
         for(int i =7;i < 12;i+=2)
         {
-            auto &p =  c3.eval(i/10.0);
+            auto const &p =  c3.eval(i/10.0);
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
