@@ -30,3 +30,5 @@ test_script:
 # to run your custom scripts instead of provider deployments
 deploy_script:
 on_success:
+cache:
+- %USERPROFILE%\.biicode
