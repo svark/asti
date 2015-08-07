@@ -21,4 +21,7 @@ script:
   - bii cpp:configure #Configure block for building
   - bii cpp:build #Build block
   - bii test
-  
+cache:
+  directories:
+  - $HOME/.biicode
+
