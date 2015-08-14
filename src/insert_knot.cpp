@@ -174,8 +174,8 @@ bool
 ops::match_knots(SplineType& spl1, SplineType& spl2)
 {
     assert(spl1.degree() == spl2.degree());
-    auto & rspl1 = reparametrize(spl1); // get a 0, 1 parametrization
-    auto & rspl2 = reparametrize(spl2);
+    auto const & rspl1 = reparametrize(spl1); // get a 0, 1 parametrization
+    auto const & rspl2 = reparametrize(spl2);
 
     insert_knots(rspl1, rspl2.knots()).swap(spl1);
     insert_knots(rspl2, rspl1.knots()).swap(spl2);
