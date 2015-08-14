@@ -81,7 +81,8 @@ constant_iterator<T>  make_constant_iterator( T v, std::ptrdiff_t idx=0) {
     return constant_iterator<T>(v, idx) ;
 }
 }
-
+#ifdef WIN32
+//msvc checked iter
 namespace std {
 template<class T>
 struct _Is_checked_helper<util::constant_iterator<T> >
@@ -89,5 +90,6 @@ struct _Is_checked_helper<util::constant_iterator<T> >
 {   // mark constant_iterator as checked
 };
 }
+#endif 
 
 #endif //CONSTANT_ITER_HPP
