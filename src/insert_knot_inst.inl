@@ -1,5 +1,5 @@
 //-*-mode:c++-*-
-//Generated on: Fri May  8 17:54:00 2015. Do not edit
+//Generated on: Fri Aug 14 17:41:38 2015. Do not edit
 //________________________________________________________
 // method:insert_knots
 template bspline<double> ops::insert_knots(const bspline<double>& crv,
@@ -60,3 +60,19 @@ template rational_bspline < point3d_t,periodic_tag> ops::insert_knot(const ratio
                  double u) ;
 template rational_bspline < double,periodic_tag> ops::insert_knot(const rational_bspline < double,periodic_tag>& crv,
                  double u) ;
+//________________________________________________________
+// method:match_knots
+template bool ops::match_knots(bspline<double>& s1, bspline<double>& s2) ;
+template bool ops::match_knots(bspline<point2d_t>& s1, bspline<point2d_t>& s2) ;
+template bool ops::match_knots(bspline<point3d_t>& s1, bspline<point3d_t>& s2) ;
+template bool ops::match_knots(bspline<point4d_t>& s1, bspline<point4d_t>& s2) ;
+template bool ops::match_knots(periodic_bspline<double>& s1, periodic_bspline<double>& s2) ;
+template bool ops::match_knots(periodic_bspline<point2d_t>& s1, periodic_bspline<point2d_t>& s2) ;
+template bool ops::match_knots(periodic_bspline<point3d_t>& s1, periodic_bspline<point3d_t>& s2) ;
+template bool ops::match_knots(periodic_bspline<point4d_t>& s1, periodic_bspline<point4d_t>& s2) ;
+template bool ops::match_knots(rational_bspline < point2d_t,regular_tag>& s1, rational_bspline < point2d_t,regular_tag>& s2) ;
+template bool ops::match_knots(rational_bspline < point3d_t,regular_tag>& s1, rational_bspline < point3d_t,regular_tag>& s2) ;
+template bool ops::match_knots(rational_bspline < double, regular_tag>& s1, rational_bspline < double, regular_tag>& s2) ;
+template bool ops::match_knots(rational_bspline < point2d_t,periodic_tag>& s1, rational_bspline < point2d_t,periodic_tag>& s2) ;
+template bool ops::match_knots(rational_bspline < point3d_t,periodic_tag>& s1, rational_bspline < point3d_t,periodic_tag>& s2) ;
+template bool ops::match_knots(rational_bspline < double,periodic_tag>& s1, rational_bspline < double,periodic_tag>& s2) ;

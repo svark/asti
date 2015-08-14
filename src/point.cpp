@@ -104,6 +104,21 @@ double area(const point3d_t & p,
     return 0.5 * len(cross(q - p, r - p));
 }
 
+vector3d_t
+perp_in_plane(const vector3d_t& v, const point3d_t p[] )
+{
+    return cross( v, normalize(
+                      cross( p[1] - p[0],
+                             p[2] - p[0]) ))
+        ;
+}
+
+vector2d_t
+perp_in_plane(const vector2d_t& v, const point2d_t [] )
+{
+    return make_vec(-v[1],v[0]);
+}
+
 std::integral_constant<int,0> X;
 std::integral_constant<int,1> Y;
 std::integral_constant<int,2> Z;

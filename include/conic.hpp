@@ -12,8 +12,7 @@
 namespace geom {
 
 enum conic_type_t {parabola, hyperbola, ellipse} ;
-//conic arc passing through three points start,intermediate point and
-//an end
+
 template <class Point>
 struct conic_arc {
     typedef Point point_t;
@@ -31,6 +30,7 @@ struct conic_arc {
                 p[i]*= weights[i];
             }
     }
+
     conic_arc(const pointw_t & p1,
               const pointw_t & p2,
               const pointw_t & p3)
@@ -39,6 +39,7 @@ struct conic_arc {
         p[1] = p2;
         p[2] = p3;
     }
+
     conic_arc(pointw_t p_[])
     {
         for(int i = 0;i < 3; ++i)
@@ -55,6 +56,7 @@ struct conic_arc {
             return ellipse;
         return hyperbola;
     }
+
     point_t eval(double u) const {
         pointw_t ep
             = make_pt((1 - u) * (1 - u) * make_vec( p[0] )
@@ -74,7 +76,8 @@ struct conic_arc {
         auto r1 = lerp(0.5, p[2], p[1]);
         auto s = lerp(0.5, q1, r1);
         s *= 1/s[dim];
-        q1 *= sqrt((1 + w) / 2)/q1[dim]; r1 *= sqrt((1 + w) / 2)/r1[dim];
+        q1 *= sqrt((1 + w) / 2)/q1[dim];
+        r1 *= sqrt((1 + w) / 2)/r1[dim];
         return std::make_tuple( q1, s, r1);
     }
     pointw_t p[3];
@@ -89,8 +92,8 @@ reverse_curve(const conic_arc < Point >& arc)
 
 template <class Point>
 rational_bspline< Point, regular_tag >
-make_rbspline_from_conic(const conic_arc<Point> &arc) {
-
+make_rbspline_from_conic(const conic_arc<Point> &arc)
+{
     auto w = arc.weight(1);
     typedef typename inc_dimension<Point>::type PointW;
     enum{ dim = point_dim < Point >::dimension };
@@ -151,6 +154,23 @@ extern
 conic_arc<point2d_t>
 make_conic_arc(point2d_t p[3], vector2d_t v[2]);
 
+template <class Point>
+conic_arc<Point>
+make_circular_arc(Point p[3])
+{
+    auto   m     = p[0] + p[2];
+    double ang   = angle_between(p[0] - p[1], p[2] - p[1]);
+    double theta = (M_PI - ang);
+    auto   w     = normalize( p[2] - p[0] );
+    auto   v     = perp_in_plane( w, p);
 
+    if(dot(p[1] - p[0], v) < 0 )
+        v = negate(v);
+    vector3d_t tgts[] = { sin(theta) * v  + cos(theta) * w,
+                         -sin(theta) * v  + cos(theta) * w };
+    return make_conic_arc(p,tgts);
+}
+
+ 
 }
 #endif // ASTI_CONIC_HPP

@@ -6,8 +6,42 @@
 #include "util.hpp"
 #include <numeric>
 #include "type_utils.hpp"
+#include "reparametrize.hpp"
 
 namespace geom {
+	
+//{{{ --(@* "merge knots keeping duplicates where possible")
+std::vector<double>
+merge_knots(std::vector<double> t1, std::vector<double> t2)
+{
+	auto first1 = t1.cbegin(); 
+	auto first2 = t2.cbegin();
+
+	auto last1 = t1.cend();
+	auto last2 = t2.cend();
+	std::vector<double> t;
+	t.reserve(t1.size() + t2.size() );
+    while( first1 != last1 && first2 != last2 )
+	{
+		if(tol::eq(*first1,*first2))
+		{
+			t.push_back(*first1);
+			first1++;
+			first2++;
+		}
+		else if(*first1 < *first2)
+		{
+			t.push_back(*first1++);
+		}else 
+			t.push_back(*first2++);
+	}
+	auto dest = std::copy(first1, last1, std::back_inserter(t));	// copy any tail
+	std::copy(first2, last2, dest);
+	return t;
+
+}
+//}}}
+
 //{{{ --(@* "implements the oslo algorithm to insert knots")
 // see(@url :file-name "http://www.uio.no/studier/emner/matnat/ifi/INF-MAT5340/v09/undervisningsmateriale/book.pdf#page=100" :display "page100")
 
@@ -24,9 +58,9 @@ ops::insert_knots(const SplineType& crv,
     taus.reserve( new_knots.size() + t.size() );
     auto const & cpts = crv.control_points();
     typedef decltype(cpts) cpts_t;
-    std::merge(t.begin(), t.end(),
-               new_knots.begin(), new_knots.end(),
-               std::back_inserter(taus));
+    taus = merge_knots(t,new_knots);
+	if(taus.size() == t.size() )
+		return SplineType(crv);
 
     typedef RAWTYPE(cpts[0]) point_t;
     rmat<point_t> m(cpts, t, crv.degree());
@@ -78,6 +112,7 @@ insert_knot_impl( const SplineType &crv,
         typename spline_traits<SplineType>::rtag())
         ;
 }
+
 
 template <class SplineType>
 SplineType
@@ -133,12 +168,27 @@ ops::insert_knot(const SplineType& crv,
 //}}}
 
 
+//{{{
+template <class SplineType>
+bool
+ops::match_knots(SplineType& spl1, SplineType& spl2)
+{
+    assert(spl1.degree() == spl2.degree());
+    auto & rspl1 = reparametrize(spl1); // get a 0, 1 parametrization
+    auto & rspl2 = reparametrize(spl2);
+
+    insert_knots(rspl1, rspl2.knots()).swap(spl1);
+    insert_knots(rspl2, rspl1.knots()).swap(spl2);
+    return true;
+}
+
+//}}}
 }
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")
   eval:(setq methods (list "insert_knots"
-  "insert_knot"
+  "insert_knot" "match_knots"
   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"

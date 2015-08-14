@@ -1,38 +1,71 @@
+//-*- mode:c++ -*-
 #ifndef ASTI_BSPLINE_SURFACE_H
 #define ASTI_BSPLINE_SURFACE_H
 #include <iterator>
 #include "rmat.hpp"
+#include "spline_traits.hpp"
+#include "bspline.hpp"
+#include <type_traits>
 namespace geom {
 
-template <class Point, class RTag = polynomial_tag,
+
+enum bsurf_type {extruded_surf,ruled_surf, loft_surf, revolved_surf, generic};
+
+template <class RTag = polynomial_tag,
           class PTagU = regular_tag,
-          class PTagV = regular_tag>
+          class PTagV = regular_tag,
+          int surfType = generic >
 struct bspline_surface_traits
 {
     typedef RTag rtag;
     typedef PTagU ptagu;
     typedef PTagV ptagv;
+    enum{ stype = surfType};
 };
 
 template <class Point, class SurfaceTraits =
-          struct bspline_surface_traits<Point>  >
+          struct bspline_surface_traits<>  >
 class bspline_surface {
 public:
 
     typedef typename SurfaceTraits::ptagu ptagu;
     typedef typename SurfaceTraits::ptagv ptagv;
     typedef typename SurfaceTraits::rtag rtag;
+    enum{is_rational = std::is_same<rtag, rational_tag>::value };
+
+    typedef typename get_traits_type_from_tags<ptagu, rtag, Point>::type spl_traits;
+
     typedef Point point_t;
-    typedef decltype(mk_stdvec(point_t()))  cpts_t;
-    typedef decltype(mk_stdvec(vector_t())) vcpts_t;
+    typedef RAWTYPE(make_vec(point_t())) vec_t;
+
+    typedef typename spl_traits::spline_type spl_t;
+
+    typedef typename spl_t::point_t  pointw_t;
+    typedef typename spl_t::vector_t vectorw_t;
+    typedef typename spl_t::knots_t  knots_t;
+
+    typedef typename spl_t::cpts_t  cpts_t;
+    typedef typename spl_t::vcpts_t vwcpts_t;
+
+    bspline_surface(std::tuple<
+                    cpts_t,size_t,
+                    knots_t,knots_t,int,int>&& o)
+        :cpts(std::forward<cpts_t>(o.get<0>())),
+         stride( o.get<1>()),
+         t_u(std::forward<knots_t>(o.get<2>())),
+         t_v(std::forward<knots_t>(o.get<3>())),
+         degu(o.get<4>()),
+         degv(o.get<5>())
+    {
+    }
 
     bspline_surface(cpts_t cpts_,
-                    size_t stride,
-                    knots_u_t  t_u_,
-                    knots_v_t  t_v_,
+                    size_t stride_,
+                    knots_t  t_u_,
+                    knots_t  t_v_,
                     int degu_,
                     int degv_):stride(stride_),
-                               cpts_t(std::move(cpts_)),
+                               cpts(std::move(cpts_)),
                                t_u(std::move(t_u_)),
                                t_v(std::move(t_v_)),
                                degu(degu_),
@@ -40,7 +73,7 @@ public:
     {
     }
 
-    Point eval(double u, double v) const
+    point_t eval(double u, double v) const
     {
         return make_pt(eval_derivative(0, 0, u, v));
     }
@@ -52,8 +85,9 @@ public:
         u =  process_param(u, ptagu());
         v =  process_param(v, ptagv());
 
-        assert(order >= 0);
-        return process_vec(u, v, derOrderU, derOrderV, rtag());
+        assert(derOrderU >= 0 && derOrderV >= 0);
+        return process_vec(u, v, derOrderU,
+                           derOrderV, rtag());
     }
 
     std::pair<double, double> param_rangeu() const
@@ -81,18 +115,19 @@ private:
     }
 
     vec_t process_vec(double u, double v,
-                      int derOrderU, in derOrderV,
-                      rational_tag)
+                      int derOrderU,
+                      int derOrderV,
+                      rational_tag) const
     {
-        vcpts_t  dsu;
+        vwcpts_t  dsu;
         for(int i = 0;i <= derOrderU; ++i)
         {
-            vcpts_t  dsv;
+            vwcpts_t  dsv;
             for(int j = 0;j <= derOrderV; ++j)
             {
                 dsv.push_back(process_vec(
                                   u, v, i,
-                                  j, polynomial_tag));
+                                  j, polynomial_tag()));
             }
             dsu.push_back(rational_derivatives(dsv).back());
         }
@@ -103,9 +138,9 @@ private:
                       double v,
                       int    derOrderU,
                       int    derOrderV,
-                      polynomial_tag)
+                      polynomial_tag) const
     {
-        // because we are dealing with tensor product splines,  the
+        // as we are dealing with tensor product splines,  the
         // u and v derivatives can be computed independently
         // ./media/derivative-tpsurf.png
 
@@ -118,52 +153,30 @@ private:
         std::tie(vb, nu_v) = rmat_base_vd(t_v, degv)
             .get_basis(v, derOrderV);
 
-        Point base(0.0);
+        vec_t base(0.0);
 
         int kj = 0;
-        for(size_t j = nu_v - degv;j <= nu_v; ++j)
+        for(size_t j = nu_v - degv;j <= nu_v; ++j,++kj)
         {
-            Point b(0.0);
+            vec_t b(0.0);
             int ki = 0;
-            for(size_t i = nu_u;i <= nu_u - degu; ++i)
-                b += ub[ki++] * make_vec(cpts_[i + j * stride]);
+            for(size_t i = nu_u;i <= nu_u - degu; ++i,++ki)
+                b += ub[ki] * make_vec(cpts[i + j * stride]);
 
-            base += vb[kj++] * b;
+            base += vb[kj] * b;
         }
         return base;
     }
 
     cpts_t cpts;
     size_t stride;
-    knots_u_t t_u;
-    knots_v_t t_v;
+    knots_t t_u;
+    knots_t t_v;
     int degu, degv;
 };
 
 
-template <class VecVecT, class RTag,  class PTagU, class PTagV
-          bspline_surface < point_t, RTag, PTagU, PTagV >
-          make_bspline_surface(VecVecT cpts_,
-                               knots_u_t t_u_,
-                               knots_v_t t_v_,
-                               int degu, int degv
-              )
-{
-    typedef typename VecVecT::value_type::value_type point_t;
-    typedef typename point_iter_traits <
-        point_t * >::PointContainerT cpts_t;
 
-    typedef decltype(cpts_.begin()) iter_t;
-    return bspline_surface < point_t, RTag, PTagU, PTagV >
-        ( std::accumulate(
-            std::move_iterator<iter_t>(cpts_.begin()),
-            std::move_iterator<iter_t>(cpts_.end()),
-            cpts_t() ),
-          cpts_.size(),
-          std::move(t_u_),
-          std::move(t_v_),
-          degu, degv );
-}
 
 }
 #endif

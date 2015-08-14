@@ -52,8 +52,7 @@ bool ops::is_bezier(const SplineType& spl)
 
 // determine if the first d + 1, and last d + 1 knots are equal
 template <class SplineCurve>
-bool
-is_regular(const SplineCurve & c)
+bool ops::is_clamped(const SplineCurve & c)
 {
     auto & ts = c.knots();
     int p = c.degree();
@@ -94,7 +93,8 @@ double ops::torsion(const SplineType & spl, double u)
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")
-  eval:(setq methods (list "is_periodic" "is_bezier" "curvature" "torsion"
+  eval:(setq methods (list "is_periodic" "is_bezier" "is_regular"
+  "curvature" "torsion"
   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"

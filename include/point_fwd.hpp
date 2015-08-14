@@ -148,5 +148,16 @@ template <class PointIter>
 auto
 centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0]);
 //}}}
+
+//{{{
+extern std::integral_constant<int,0> X;
+extern std::integral_constant<int,1> Y;
+extern std::integral_constant<int,2> Z;
+extern std::integral_constant<int,3> W;
+
+template <class Point,int i>
+double coord(const Point&, std::integral_constant<int, i>);
+
+//}}}
 }
 #endif

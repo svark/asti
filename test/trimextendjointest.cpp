@@ -75,5 +75,17 @@ TEST_CASE("trimextendjointest",  "[bspline][trim][extend][join]")
             auto fp =  geom::ops::foot_param(bs,p);
             REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
         }
+
+        auto c4( geom::ops::reparametrize(
+                     geom::ops::extend_curve_end_to_pt(
+                         geom::ops::reverse_curve(c1), bs.eval(0.601)), 0,.601));
+        for(int i =0;i < 6;i+=2)
+        {
+            auto const &p =  c4.eval(i/10.0);
+            auto fp =  geom::ops::foot_param(bs,p);
+            REQUIRE(len(bs.eval(fp) - p) == Approx(0.0));
+        }
+        REQUIRE(len(bs.eval(0.601) - c4.eval(0.601)) == Approx(0.0));
+
     }
 }

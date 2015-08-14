@@ -76,10 +76,41 @@ struct spline_traits<rational_bspline< Point,periodic_tag > >
 };
 template <class Point>
 struct spline_traits<rational_bspline< Point, regular_tag > >
-    : spline_traits_base <bspline<  Point > >
+    : spline_traits_base <rational_bspline<  Point,regular_tag > >
 {
     typedef regular_tag ptag;
     typedef rational_tag rtag;
+};
+
+
+template <class SplineType>
+struct is_rational_type
+{
+    enum{ value = false };
+};
+
+template <class Point,class PTag>
+struct is_rational_type<rational_bspline<Point, PTag> >
+{
+    enum{ value = true };
+};
+
+template <class SplineType>
+struct is_periodic_type
+{
+    enum{ value = false };
+};
+
+template <class Point>
+struct is_periodic_type<rational_bspline<Point, periodic_tag> >
+{
+    enum{ value = true };
+};
+
+template <class Point>
+struct is_periodic_type<periodic_bspline<Point> >
+{
+    enum{ value = true };
 };
 
 }

@@ -81,4 +81,13 @@ constant_iterator<T>  make_constant_iterator( T v, std::ptrdiff_t idx=0) {
     return constant_iterator<T>(v, idx) ;
 }
 }
+
+namespace std {
+template<class T>
+struct _Is_checked_helper<util::constant_iterator<T> >
+    : public true_type
+{   // mark constant_iterator as checked
+};
+}
+
 #endif //CONSTANT_ITER_HPP

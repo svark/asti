@@ -68,6 +68,9 @@ struct line_seg
         return std::make_pair(a,b);
     }
 
+    point_t start() const { return eval(a); }
+    point_t end() const { return eval(b); }
+
     line<point_t> getLine() const { return l;}
 
 private:
@@ -108,9 +111,18 @@ closest_points(const line < Point >& l1,
     return std::make_pair(p1, p2);
 }
 
+template <class Point>
+Point
+closest_point_on_line(const line<Point> &l1,const Point& p)
+{
+    Point p = l.start_pt();
+    p += l.direction() * dot(p - l.start_pt(), l.direction());
+    return p;
+}
+
 extern point2d_t
-intersect_lines(const line < point2d_t >& l1,
-                const line < point2d_t >& l2);
+intersect_lines(const line<point2d_t>& l1,
+                const line<point2d_t>& l2);
 
 }
 

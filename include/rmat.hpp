@@ -139,7 +139,7 @@ rmat_base<KnotIter>::spline_compute(size_t nu,
     }
     cache[0] *= double(fac);
 }
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template <class KnotIter>
 template <class KnotIterU, class PointIter>
 void
@@ -159,8 +159,7 @@ rmat_base<KnotIter>::spline_compute(
         }
     }
 }
-
-// utility class derived from above that works with a vector<double> iterator
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 struct rmat_base_vd: rmat_base < std::vector<double>::const_iterator >
 {
     typedef std::vector<double> knots_t;
@@ -168,7 +167,7 @@ struct rmat_base_vd: rmat_base < std::vector<double>::const_iterator >
         rmat_base(t.cbegin(), t.cend(), deg){}
 
 };
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template<class Point>
 struct rmat : public rmat_base_vd {
     typedef Point point_t;
@@ -179,7 +178,6 @@ struct rmat : public rmat_base_vd {
     {
     }
 
-    // evaluate the bspline curve at parameter u
     point_t
     eval(double u) const {
         return eval_derivative(0,u);

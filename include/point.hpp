@@ -8,10 +8,6 @@
 #include "point_fwd.hpp"
 namespace geom {
 
-extern std::integral_constant<int,0> X;
-extern std::integral_constant<int,1> Y;
-extern std::integral_constant<int,2> Z;
-extern std::integral_constant<int,3> W;
 
 //{{{(@* "geometric point")
 template <int dim>
@@ -94,6 +90,15 @@ struct pt_t {
     EMT  p;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
 };
+
+template <class Point,int i>
+double coord(const Point& p, std::integral_constant<int, i> )
+{
+    static_assert(Point::dimension > i,
+                  "coordinate index must be less than point dimension" );
+    return p[i];
+}
+
 
 template <int dim>
 bool operator!=(const pt_t<dim>& p1, const pt_t<dim>& p2) {
@@ -641,6 +646,12 @@ centroid (PointIter pts,PointIter end) -> RAWTYPE(pts[0])
         return avg;
     return scaled_copy(avg , 1.0/num_pts);
 }
+
+extern vector3d_t
+perp_in_plane(const vector3d_t& v, const point3d_t p[] );
+
+extern vector2d_t
+perp_in_plane(const vector2d_t& v, const point2d_t [] );
 
 extern double volume(const point3d_t & a,
                      const point3d_t & b,
