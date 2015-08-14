@@ -113,7 +113,7 @@ closest_points(const line < Point >& l1,
 
 template <class Point>
 Point
-closest_point_on_line(const line<Point> &l1,const Point& p)
+closest_point_on_line(const line<Point> &l,const Point& p)
 {
     Point p1 = l.start_pt();
     p1 += l.direction() * dot(p - l.start_pt(), l.direction());
