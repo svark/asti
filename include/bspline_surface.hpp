@@ -47,7 +47,7 @@ public:
     typedef typename spl_t::cpts_t  cpts_t;
     typedef typename spl_t::vcpts_t vwcpts_t;
 
-    bspline_surface(std::tuple<
+    /*bspline_surface(std::tuple<
                     cpts_t,size_t,
                     knots_t,knots_t,int,int>&& o)
         :cpts(std::forward<cpts_t>(o.get<0>())),
@@ -57,7 +57,7 @@ public:
          degu(o.get<4>()),
          degv(o.get<5>())
     {
-    }
+    }*/
 
     bspline_surface(cpts_t cpts_,
                     size_t stride_,
