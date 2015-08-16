@@ -100,7 +100,7 @@ public:
         return std::make_pair(t_v[degv], t_v[sizev()]);
     }
 
-    size_t sizev() const {return cpts_.size() / stride;}
+    size_t sizev() const {return cpts.size() / stride;}
     size_t sizeu() const {return stride;}
 
 private:
