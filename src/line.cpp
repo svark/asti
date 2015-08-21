@@ -3,9 +3,10 @@
 #include "point.hpp"
 
 namespace geom {
+
 point2d_t
 intersect_lines(const line < point2d_t >& l1,
-                const line < point2d_t >& l2)
+				const line < point2d_t >& l2)
 {
     auto d1 = l1.direction();
     auto d2 = l2.direction();
@@ -17,7 +18,7 @@ intersect_lines(const line < point2d_t >& l1,
     double d = 1.0 - b * b;
 
     if(tol::eq(d, 0))
-        throw geom_exception(lines_do_not_meet);
+        return point2d_t::infinity();
 
     auto p1 = l1.start_pt() +  d1 * (dot(d1, (d2 * f - r )) / d);
     return p1;

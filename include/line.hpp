@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include "point_fwd.hpp"
-#include "geom_exception.hpp"
 #include "tol.hpp"
 namespace geom{
 
@@ -33,11 +32,20 @@ private:
 
 template <class Point>
 static line<Point>
-make_line(const Point& p1,
-          const Point& p2
+make_line_joining(const Point& p1,
+                  const Point& p2
     )
 {
     auto dir = normalize(p2-p1);
+    return line<Point>(p1, dir);
+}
+
+template <class Point,class Vec>
+static line<Point>
+make_line(const Point& p1,
+          const Vec& dir
+    )
+{
     return line<Point>(p1, dir);
 }
 

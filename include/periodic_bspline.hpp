@@ -1,12 +1,13 @@
 #ifndef ASTI_PERIODIC_BSPLINE_HPP
 #define ASTI_PERIODIC_BSPLINE_HPP
+
 #include "bspline.hpp"
 #include <utility>
 #include <vector>
 #include "util.hpp"
+
 namespace geom
 {
-struct spline_wrap_t{};
 
 static
 double periodic_param(const std::pair<double, double>& range,
@@ -20,6 +21,7 @@ double periodic_param(const std::pair<double, double>& range,
     if( r <  0 ) r += (e - s);
     return s + r;
 }
+
 
 template <class Point>
 struct periodic_bspline
@@ -80,11 +82,11 @@ struct periodic_bspline
         return spl.blossom_eval(modfs.cbegin());
     }
 
-    vector_t eval_derivative(int derOrder,double u) const
+    auto eval_derivative(int derOrder,double u) const -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivative(derOrder,u))
     {
         return spl.eval_derivative(derOrder,periodic_param(u));
     }
-    vcpts_t eval_derivatives(int derOrder,double u) const
+    auto eval_derivatives(int derOrder,double u) const -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivatives(derOrder,u))
     {
         return spl.eval_derivatives(derOrder,periodic_param(u));
     }

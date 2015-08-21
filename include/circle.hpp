@@ -6,6 +6,7 @@
 #include "geom_exception.hpp"
 #include <math.h>
 #include "smat.hpp"
+
 /*
 
  */
@@ -33,7 +34,7 @@ struct circle
         :center(center_), start_pt(point_), ydir(ydir_)
     {
         auto x = start_pt - center;
-        assert(!tol::eq(len(x),0));
+        assert(tol::not_small(len(x)));
         ydir -= x*dot((start_pt-center),ydir)/len(x);
         ydir = normalize(ydir) * len(x);
     }
@@ -48,58 +49,13 @@ struct circle
         ydir = normalize( make_vec( - x[1], x[0]) ) * len(x);
     }
 
-    double
-    static foot_param(const circle &c,
-                      const point_t& p)
-    {
-        auto x = normalize(c.start_pt - c.center);
-        auto y = normalize(c.ydir);
 
-        auto v = (p - c.center);
-
-        if( sqlen(v) < tol::sqresabs)
-            throw geom_exception(point_at_axis_error);
-
-        return atan2(dot(v,y) *y , dot(v,x) * x);
-    }
-
-    template <class PointIter,class ParamIter>
-    void
-    static foot_param(const circle &c,
-                      PointIter ps,
-                      PointIter end, ParamIter out)
-    {
-        auto x = normalize(c.start_pt - c.center);
-        auto y = normalize(c.ydir);
-
-        for( ;ps!=end; ++ps, ++out ) {
-
-            auto p =*ps;
-            auto v = (p - c.center);
-
-            if( sqlen(v) < tol::sqresabs)
-                throw geom_exception(point_at_axis_error);
-
-            *out =  atan2(dot(v,y) *y , dot(v,x) * x);
-        }
-    }
     //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "eval at param")
     point_t eval(double u) const
     {
         auto x = (start_pt - center);
         auto y = ydir;
         return center + x * cos(u) + y * sin(u);
-    }
-
-    template <class ParamIter ,class PointIter>
-    void eval(ParamIter us, ParamIter end, PointIter out) const
-    {
-        auto x = (start_pt - center);
-        auto y = ydir;
-        for( ;us!=end;++us,++out) {
-            auto u = *us;
-            *out = center + x * cos(u) + y * sin(u);
-        }
     }
 
     vector_t tangent(double u) const
@@ -118,6 +74,7 @@ struct circle
     {
         return center;
     }
+
     point_t getStart() const
     {
         return start_pt;
@@ -141,6 +98,22 @@ private:
     vector_t ydir;
 };
 
+
+template <class Point>
+static double
+foot_param(const circle<Point> &c,
+           const Point& p)
+{
+    auto x = normalize(c.start_pt - c.center);
+    auto y = normalize(c.ydir);
+
+    auto v = (p - c.center);
+
+    if(tol::small(dot(v,y)) && tol::small(dot(v,x)))
+        throw geom_exception(point_at_axis_error);
+
+    return atan2(dot(v,y) *y , dot(v,x) * x);
+}
 
 template <class Point>
 static circle<Point>
@@ -188,6 +161,7 @@ make_circle(const Point& p1,
     auto cp = lerp(alpha,beta,pts[0],pts[1],pts[2]);
     decltype(normal) xdir(pts[0] - cp);
     auto nnormal (normalize(normal));
+    assert(!isnan(nnormal));
     return circle<point_t>(cp, pts[0], decltype(v1)(cross(nnormal, xdir)));
 }
 

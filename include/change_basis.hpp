@@ -15,7 +15,7 @@ template<class Point>
 monomial_form < Point >
 to_monomial(const bspline < Point >& bezf)
 {
-    assert(ops::is_bezier(bezf));
+    assert(qry::is_bezier(bezf));
     auto & b = bezf.control_points();
     size_t sz =  b.size();
     typedef  typename monomial_form < Point >::cpts_t cpts_t;

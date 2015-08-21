@@ -6,11 +6,8 @@
 #include "rmat_explicit.hpp"
 #include <Eigen/Dense>
 #include "point_fwd.hpp"
-#include "geom_exception.hpp"
 #include "type_utils.hpp"
-
 namespace geom {
-
 template <class KnotIter>
 struct rmat_base {
 
@@ -59,13 +56,10 @@ struct rmat_base {
     double der_n(size_t idx, int derOrder, double u) const;
 
     // get the array of deg + 1 bspline basis functions at u
-    // function is optimized for parallelism
-    std::vector<double> der_coeffs_par(int derOrder,
-                                       double u) const;
-
-    // deg + 1, bspline coefficients at u, optimized for parallelism
-    std::vector<double> coeffs_par(double u) const;
-
+    //.  ./media/basis_comp.png
+    // returns the vector b = (B_{\mu - p, p}(u), \ldots, B_{\mu, p}(x)), mu =
+    // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
+    //also  returned is the index in the knot array -> \mu.
     std::tuple<std::vector<double>, size_t>
     get_basis(double u,int derOrder = 0) const;
 
@@ -85,16 +79,15 @@ struct rmat_base {
     locate_nu(double u, size_t nu_guess) const;
 
     template <class T>
-    void spline_compute(size_t nu, double u, int derOrder, T cache) const;
+    void spline_compute(size_t nu, double u,
+                        int derOrder, T cache) const;
 
-    //.  ./media/basis_comp.png
-    // returns the vector b = (B_{\mu - p, p}(u), \ldots, B_{\mu, p}(x)), mu =
-    // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
-    std::vector<double> basis(double u);
+    //leaner implementation of get_basis
+    std::pair<std::vector<double>,size_t> basis(double u);
 
     template <class KnotIterU, class PointIter>
     void spline_compute(KnotIterU us, size_t nu, //location of us[0] in
-                        //knot seq t
+                                  //knot seq t
                         PointIter cache) const;
 
 protected:
@@ -110,6 +103,7 @@ rmat_base<KnotIter>::spline_compute(size_t nu,
                                     int derOrder,
                                     PointIter cache) const
 {
+    assert(t[nu] <= u || u < t[deg] );
     int size = deg;
     auto t_ =  t + nu;
     size_t fac = 1;
@@ -117,13 +111,16 @@ rmat_base<KnotIter>::spline_compute(size_t nu,
     typedef RAWTYPE(cache[0]) point_t;
     if(derOrder > size )
         cache[0] = point_t(0.0);
-
+	else
     for(int sz = size; sz > size - derOrder; --sz) {
         fac *= sz;
         for(int j = 1; j <= sz; ++j) {
             double d = t_[j] - t_[j - sz];
             if(d < tol::param_tol)
-                throw geom_exception(knot_not_in_range_error_der);
+            {
+                set_quiet_NaN(cache[0]);
+                return;
+            }
 
             double lambda =  1 / d;
             cache[j - 1] = dlerp(lambda, cache[j - 1], cache[j]);
@@ -148,6 +145,7 @@ rmat_base<KnotIter>::spline_compute(
     size_t nu, //location of us[0] in knot seq t
     PointIter cache) const
 {
+    assert(t[nu] <= *us || *us < t[deg] );
     int size = deg;
     auto t_ =  t + nu;
     assert(nu >= size_t(size));
@@ -193,9 +191,10 @@ struct rmat : public rmat_base_vd {
     }
 
     template <class ParamIter,class PointOutIter>
-    void eval_derivatives(int derOrder,
-                          ParamIter us, ParamIter end,
-                          PointOutIter out)
+    void
+    eval_derivatives(int derOrder,
+                     ParamIter us, ParamIter end,
+                     PointOutIter out) const
     {
         int size = degree();
         std::unique_ptr<point_t[]> cache(new point_t[size+1]);
@@ -209,14 +208,16 @@ struct rmat : public rmat_base_vd {
                 cache[j] = control_pt(j + nu - size);
 
             spline_compute(nu,* us, derOrder, cache.get());
+
             *out =  cache[0];
         }
     }
 
     template <class PointOutIter>
-    void eval_derivatives(int derOrder,
-                          double u,
-                          PointOutIter out)
+    void
+    eval_derivatives(int derOrder,
+                     double u,
+                     PointOutIter out)
     {
         int size = degree();
         std::unique_ptr<point_t[]> cache(new point_t[size+1]);
@@ -228,7 +229,8 @@ struct rmat : public rmat_base_vd {
                 cache[j] = control_pt(j + nu - size);
 
             spline_compute(nu, u, i, cache.get());
-            *out =  cache[0];
+
+            *out = cache[0];
         }
     }
 

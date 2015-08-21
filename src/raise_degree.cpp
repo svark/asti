@@ -1,7 +1,8 @@
 //-*- mode:c++ -*-
 #include "skip_idx_iter.hpp"
 #include "raise_degree.hpp"
-#include "rational_bspline_cons.hpp"
+#include "bspline_x_cons.hpp"
+
 namespace geom {
 
 //{{{ --(@* "raise the degree by 1")
@@ -43,8 +44,13 @@ SplineType raise_degree_helper(const SplineType& spl, polynomial_tag)
         cv *= (1.0/p);
         new_cpts.push_back(make_pt(cv));
     }
-    return SplineType(std::move(new_cpts),
-                      std::move(new_knots), p);
+	typedef spline_traits<SplineType> spl_traits;
+    return make_bspline(std::move(new_cpts),
+	                     std::move(new_knots), p, 
+						 typename spl_traits::ptag(),
+						 typename spl_traits::rtag()
+					  );
+
 }
 
 template <class SplineType>

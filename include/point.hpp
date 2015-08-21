@@ -6,6 +6,8 @@
 #include "type_utils.hpp"
 #include <vector>
 #include "point_fwd.hpp"
+#include <limits>
+#include "special.hpp"
 namespace geom {
 
 
@@ -42,6 +44,14 @@ struct pt_t {
         static_assert(i < dim,
                       "expecting an integral constant with value lesser than point dim");
         return p[i];
+    }
+
+    static pt_t quiet_NaN() {
+        return pt_t(std::numeric_limits<double>::quiet_NaN());
+    }
+
+    static pt_t infinity() {
+        return pt_t(std::numeric_limits<double>::infinity());
     }
 
     explicit pt_t(double v)
@@ -99,6 +109,11 @@ double coord(const Point& p, std::integral_constant<int, i> )
     return p[i];
 }
 
+template <int dim>
+bool isnan(const pt_t<dim>& pt)
+{
+    return (std::isnan(pt[0]));
+}
 
 template <int dim>
 bool operator!=(const pt_t<dim>& p1, const pt_t<dim>& p2) {
@@ -157,6 +172,11 @@ struct vec_t
     double& operator[](std::size_t i) { return v[i];}
     enum { dimension = dim };
 
+    static vec_t quiet_NaN() { return vec_t(std::numeric_limits<double>::quiet_NaN());}
+    static vec_t infinity() {
+        return vec_t(std::numeric_limits<double>::infinity());
+    }
+
     EMT& get() { return v; }
     const EMT& cget() const { return v; }
 
@@ -164,9 +184,15 @@ struct vec_t
     EMT v;
 };
 
+static const vector3d_t vector_inf3d(std::numeric_limits<double>::infinity());
+static const vector2d_t vector_inf2d(std::numeric_limits<double>::infinity());
 
 
-
+template <int dim>
+bool isnan(const vec_t<dim>& vec)
+{
+    return std::isnan(vec[0]);
+}
 
 
 //}}}
@@ -218,6 +244,8 @@ template <int dim>
 double angle_between(const vec_t<dim>&v1,
                      const vec_t<dim>&v2)
 {
+    if(tol::small(len(v1)) || tol::small(len(v2)))
+        return std::numeric_limits<double>::quiet_NaN();
     return atan2(len(cross(v1,v2)),dot(v1,v2));
 }
 
@@ -235,6 +263,8 @@ double angle_between(const vec_t<dim>&v1,
 {
     auto nrml = cross(v1,v2);
     auto sign = dot(nrml,axis) > 0 ? 1 : -1;
+    if(tol::small(len(v1)) || tol::small(len(v2)))
+        return std::numeric_limits<double>::quiet_NaN();
     return atan2(len(nrml),dot(v1,v2))*sign;
 }
 
@@ -292,10 +322,26 @@ double len(const vec_t < dim >& vec)
 }
 
 template<int dim>
-double odist(pt_t< dim >& pt)
+double plen(const pt_t< dim >& pt)
 {
     return pt.p.norm();
 }
+inline double plen(double p)
+{
+	return p;
+}
+
+template <class PtVec>
+void set_quiet_NaN(PtVec& v)
+{
+	v = PtVec::quiet_NaN();
+}
+
+inline void set_quiet_NaN(double& v)
+{
+	v = std::numeric_limits<double>::quiet_NaN();
+}
+
 
 template<class point_t,int dim>
 point_t operator+(const point_t & pt, const vec_t<dim>& vec)
@@ -567,8 +613,11 @@ mk_stdvec(const double *vb, const double *ve)
 template <class VecT>
 inline VecT normalize(const VecT& vec)
 {
+	double nrm = vec.v.norm();
+    if(tol::small(nrm))
+        return VecT::quiet_NaN();
     VecT v( vec );
-    v *= (1.0/v.v.norm());
+    v *= (1.0/nrm);
     return v;
 }
 

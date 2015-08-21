@@ -1,6 +1,7 @@
-#include "point.hpp"
 #include "box_compute.hpp"
 #include "circle.hpp"
+
+
 namespace geom {
 
 template <class SplineType>
@@ -31,7 +32,7 @@ ops::compute_box(const circle<Point> &c)
         vector_t ext_vec = cross (c.getPlaneNormal() ,
                                   decltype( c.getPlaneNormal()  )( make_vec(p)) );
 
-        if(tol::eq(len(ext_vec), 0))
+        if(tol::small(len(ext_vec)))
             continue;
 
         auto v = c.getRadius() * normalize(ext_vec);
@@ -68,8 +69,10 @@ ops::compute_box(const circle<Point> &c)
 //}}}
 
 //{{{  instantiation
-#include "bspline.hpp"
+
+#include "point.hpp"
 #include "periodic_bspline.hpp"
+
 
 namespace geom {
 #include "box_compute_inst.inl"

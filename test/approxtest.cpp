@@ -77,7 +77,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
     opts.end_conditions =  geom::not_a_knot;
     SECTION("not a knot") {
         auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
-                                                      std::vector<double>());
+                                                      std::vector<double>(6,0));
         INFO( "v:" <<  bs.eval(0.2) << ","  << bs.eval(0.3806)  << ","<< bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
         //1.31061,1.99999,2.05698,2.32315,2.57359,3.24986,2.90523
         REQUIRE(bs.eval(0) == Approx(0.0));
@@ -93,7 +93,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
     opts.end_conditions =  geom::vanishing_double_derivatives;
     SECTION("vanishing double derivatives") {
         auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
-                                                      std::vector<double>());
+                                                      std::vector<double>(6,0));
         INFO( "v:" <<  bs.eval(0.2) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
         // 0.802717,2.08463,2.36436,2.56361,3.24958,2.95042
         REQUIRE(bs.eval(0) == Approx(0.0));
@@ -110,7 +110,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
     opts.end_conditions =  geom::parabolic_blending;
     SECTION("parabolic_blending") {
         auto bs= geom::piecewise_cubic_hermite_interp(ps.begin(), ps.end(),opts,
-                                                      std::vector<double>());
+                                                      std::vector<double>(6,0));
         INFO( "v:" << bs.eval(0.2) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
 
         REQUIRE(bs.eval(0) == Approx(0.0));
@@ -130,7 +130,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
     SECTION("periodic") {
         opts.end_conditions=geom::periodic;
         auto bs= geom::piecewise_cubic_hermite_interp_periodic(
-            ps.begin(), ps.end(),opts, std::vector<double>());
+            ps.begin(), ps.end(),opts, std::vector<double>(9,0));
         INFO( "v:" << bs.eval(0) << "," << bs.eval(0.2) << "," << bs.eval(0.3806) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
         //1.43328,0.000132328,2.32469,2.40941,2.96996,3.23082,2.20675,0.218459
         REQUIRE(bs.eval(0) == Approx(0.0));
@@ -142,7 +142,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
         //REQUIRE(bs.eval(0.8957) == Approx(0));
         REQUIRE(bs.eval(0.9) == Approx(0.705953 ));
         REQUIRE(bs.eval(1.1) == Approx(0.699618));
-        REQUIRE( geom::ops::is_periodic(bs.spline()));
+        REQUIRE( geom::qry::is_periodic(bs.spline()));
         //INFO ("is periodic" << std::boolalpha << ":" << geom::ops::is_periodic(bs.spline()) << "\n\n");
         for( auto k : bs.knots() )
         {

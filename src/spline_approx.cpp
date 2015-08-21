@@ -29,6 +29,7 @@ ops::cubic_approx1d(Fn f, std::vector<double> t)
     size_t i  = 0;
     static const int p = 3;
     size_t n = t.size() - p - 1;
+	assert(n>0);
     std::vector<double> pts(n,0.0);
     // pg 173 lyche
     //(@file :file-name "./lee_quasi.pdf" :to "./lee_quasi.pdf" :display "intro to quasi interpolants")
@@ -42,7 +43,7 @@ ops::cubic_approx1d(Fn f, std::vector<double> t)
                         t[j + 3] - tol::param_tol/2 }; // ./media/cubic_approx0.png
 
         for(int i =  0; i < 5; ++i) {
-            auto const & b = rm.basis(t5[i]);
+            auto const & b = rm.basis(t5[i]).first;
             for(int k = 0; k < 4; ++k) {// ./media/cubic_approx.png
                 mat(i, k + (i > 1? 1 : 0)) = b[k];
             }
@@ -101,8 +102,7 @@ template <int p>
 static void build_knots_helper(const std::vector<double>& uniqts,
                                std::vector<double>& t)
 {
-    if(uniqts.size() < 2)
-        throw geom_exception(bad_knot_spacing_t);
+    assert(uniqts.size() >= 2);
 
     std::vector<double> taus;
     taus.reserve(2*p+2);
@@ -134,12 +134,14 @@ static void build_knots_helper(const std::vector<double>& uniqts,
     std::sort(taus.begin(), taus.end());
     std::merge(uniqts.begin(), uniqts.end(), taus.begin(),
                taus.end(), std::back_inserter(t));
+	return ;
 }
 
 template <int p, class KnotIter>
 static void build_knots(KnotIter b,
-                        KnotIter e,
-                        std::vector<double>& t, periodic_tag)
+                                  KnotIter e,
+                                  std::vector<double>& t,
+                                  periodic_tag)
 {
     size_t sz = std::distance(b, e);
     t.reserve(std::max(sz, size_t(2*p)));
@@ -148,7 +150,7 @@ static void build_knots(KnotIter b,
     std::unique_copy(b, e, std::back_inserter(uniqts),
                      tol::param_eq );
 
-    build_knots_helper<p>(uniqts, t);
+    return build_knots_helper<p>(uniqts, t);
 }
 
 template <int p, class KnotIter>
@@ -171,6 +173,8 @@ static void build_knots(KnotIter b,
 
     for(int i = 0; i < p;++i)
         t.push_back(e[-1]);
+
+	return ;
 }
 }
 
@@ -195,8 +199,8 @@ ops::foot_param(const SplineType &spl,
     namespace m = boost::math;
     auto fn = [&p, &spl]
         (double u) {
-        auto v =  spl.eval(u) - p;
-        auto vdash =  spl.eval_derivative(1, u);
+        auto v         =  spl.eval(u) - p;
+        auto vdash     =  spl.eval_derivative(1, u);
         auto vdashdash =  spl.eval_derivative(2, u);
         return m::make_tuple(dot(v, vdash),
                              dot(v, vdashdash ) + dot(vdash, vdash),
@@ -214,6 +218,7 @@ ops::foot_param(const SplineType &spl,
                         tapprox,
                         ptag());
 
+	
     // get a spline approximation of the derivative of distance
     auto splapprox = cubic_approx1d(dist_der_by_2, tapprox);
 

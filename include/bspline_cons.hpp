@@ -3,6 +3,7 @@
 
 #include "bspline.hpp"
 #include "type_utils.hpp"
+#include "geom_exception.hpp"
 namespace geom {
 namespace impl {
 
@@ -17,10 +18,13 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_,
     typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::knots_t knots_t;
 
-    return spl_t(
+    auto const &spl = spl_t(
         std::forward < cpts_t > (pts),
         std::forward < std::vector<double> > (ks),
         degree_);
+    if(!spl.check_invariants())
+        throw geom_exception(bspline_invariants_violated);
+    return spl;
 }
 
 template <class Point,class CptsT>
@@ -33,10 +37,13 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, std::false_typ
     typedef bspline < point_t > spl_t;
     typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::knots_t knots_t;
-    return spl_t(
+    auto const &spl =  spl_t(
         std::move(cpts_t(pts)),
         std::forward < knots_t > (ks),
         degree_);
+    if(!spl.check_invariants())
+        throw geom_exception(bspline_invariants_violated);
+    return spl;
 }
 }
 
@@ -70,10 +77,13 @@ make_bspline_arr(const Point *pts,
     typedef typename spl_t::cpts_t cpts_t;
     typedef typename spl_t::knots_t knots_t;
 
-    return spl_t(
+    auto const &spl =  spl_t(
         std::move(cpts_t(pts,ptsEnd)),
         std::move(knots_t(ks,ksEnd)),
         degree_);
+    if(!spl.check_invariants())
+        throw geom_exception(bspline_invariants_violated);
+    return spl;
 }
 
 
@@ -93,6 +103,9 @@ make_bspline( CptsT pts, KnotsT ks, int degree_)
         degree_,
         std::is_same < cpts_t, CptsT > ()
         );
+    if(!spl.check_invariants())
+        throw geom_exception(bspline_invariants_violated);
+    return spl;
 }
 
 

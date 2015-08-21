@@ -29,6 +29,8 @@ struct conic_arc {
                 p[i] = pointw_t(p_[i], 1.0);
                 p[i]*= weights[i];
             }
+
+        assert(invariants());
     }
 
     conic_arc(const pointw_t & p1,
@@ -38,12 +40,15 @@ struct conic_arc {
         p[0] = p1;
         p[1] = p2;
         p[2] = p3;
+        assert(invariants());
     }
 
     conic_arc(pointw_t p_[])
     {
         for(int i = 0;i < 3; ++i)
             p[i] = pointw_t(p_[i]);
+
+        assert(invariants());
     }
 
     double weight(int i) const { return p[i][dim]; }
@@ -80,6 +85,12 @@ struct conic_arc {
         r1 *= sqrt((1 + w) / 2)/r1[dim];
         return std::make_tuple( q1, s, r1);
     }
+    bool invariants() const
+    {
+        double alpha = angle_between(p[1] - p[0],
+                                     p[2] - p[1]);
+        return alpha <_in_> std::make_pair(-M_PI,M_PI);
+    }
     pointw_t p[3];
 };
 
@@ -97,14 +108,19 @@ make_rbspline_from_conic(const conic_arc<Point> &arc)
     auto w = arc.weight(1);
     typedef typename inc_dimension<Point>::type PointW;
     enum{ dim = point_dim < Point >::dimension };
+
     if(w < -1.0)
     {
-        auto car = reverse_curve(arc);
-        car.p[1][dim] *=- 1;
-        return make_rbspline_from_conic(car);
+        auto cra = reverse_curve(arc);
+        cra.p[1][dim] *=- 1;
+        return make_rbspline_from_conic(cra);
     }
+    assert(arc.invariants());
+
     double alpha = angle_between(arc.p[1] - arc.p[0],
                                  arc.p[2] - arc.p[1]);
+
+
     if(w >= 1.0 || w > 0 && alpha > M_PI / 3) {
         // single segment parabola or hyperbola
         double ks[] =  {0, 0, 0, 1, 1, 1};
@@ -158,19 +174,26 @@ template <class Point>
 conic_arc<Point>
 make_circular_arc(Point p[3])
 {
-    auto   m     = p[0] + p[2];
     double ang   = angle_between(p[0] - p[1], p[2] - p[1]);
+
+    if(std::isnan(ang) )
+        throw geom_exception(degenerate_circle);
+
+    if( tol::small(sin(ang)) )
+        throw geom_exception(degenerate_circle);
+
     double theta = (M_PI - ang);
     auto   w     = normalize( p[2] - p[0] );
     auto   v     = perp_in_plane( w, p);
 
     if(dot(p[1] - p[0], v) < 0 )
-        v = negate(v);
+        v.negate();
+
     vector3d_t tgts[] = { sin(theta) * v  + cos(theta) * w,
                          -sin(theta) * v  + cos(theta) * w };
     return make_conic_arc(p,tgts);
 }
 
- 
+
 }
 #endif // ASTI_CONIC_HPP

@@ -21,15 +21,14 @@ make_ruled_bspline_surface(
     auto s1(spl1);
     auto s2(spl2);
 
-    using namespace ops;
-    match_degrees(s1, s2);
-    match_knots(s1, s2);
+    ops::match_degrees(s1, s2);
+    ops::match_knots(s1, s2);
 
     typedef typename SplineType::point_t point_t;
     typename SplineType::cpts_t surf_cpts;
 
-    size_t stride = num_cpts(s1);
-    assert(stride == num_cpts(s2));
+    size_t stride = qry::num_cpts(s1);
+    assert(stride == qry::num_cpts(s2));
 
     surf_cpts.reserve(2 * stride);
     surf_cpts.assign(s1.control_points().begin(), s1.control_points().end());

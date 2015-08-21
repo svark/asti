@@ -2,11 +2,11 @@
 #define ASTI_BSPLINE_QUERIES
 #include "bspline_fwd.hpp"
 #include "tol.hpp"
-#include "geom_exception.hpp"
 #include "spline_traits.hpp"
-
+#include "point_dim.hpp"
+#include <limits>
 namespace geom {
-namespace ops {
+namespace qry {
 
 template <class SplineType>
 extern bool is_bezier(const SplineType& spl);
@@ -42,63 +42,60 @@ bool is_open(const  SplineType & spl)
 }
 
 template <class Point>
-double weight(const Point&p, rational_tag,
-              std::integral_constant<int,3> )
+double weight(const Point&p, rational_tag )
+{
+    return p[point_dim<Point>::dimension-1];
+}
+
+template <class Point>
+double weight(const Point&p, polynomial_tag )
 {
     return 1;
 }
 
 template <class Point>
-double weight(const Point&p, rational_tag,
-              std::integral_constant<int,2> )
+auto lift_dim(const Point& p1, polynomial_tag) -> RAWTYPE(higher_dim(p1))
 {
-    return 1;
-}
-
-inline double weight(const point4d_t&p, rational_tag,
-              std::integral_constant<int,3> spaceDim)
-{
-    return coord(p,spaceDim);
-}
-
-inline double weight(const point3d_t&p, rational_tag,
-              std::integral_constant<int,2> spaceDim)
-{
-    return coord(p,spaceDim);
+    typedef RAWTYPE(higher_dim(p1)) PointW ;
+	return PointW(p1);
 }
 
 template <class Point>
-double weight(const Point&p, polynomial_tag, std::integral_constant<int,2>)
+auto lift_dim(const Point& p1, rational_tag) -> RAWTYPE(higher_dim(p1))
 {
-    return 1;
+	typedef RAWTYPE(higher_dim(p1)) PointW ;
+    PointW p2(p1);
+    enum {dim = point_dim<PointW>::dimension };
+    std::swap(p2[dim],p2[dim-1]); // move the weight to the last coordinate
+    return p2;
 }
 
-template <class Point>
-double weight(const Point&p, polynomial_tag, std::integral_constant<int,3>)
-{
-    return 1;
-}
-template <class Point1,class Point2>
-void
-lift_dim(const Point1& p1, polynomial_tag,   Point2& p2)
-{
-	p2 = Point2(p1);
-}
 
-template <class Point1>
-void
-lift_dim(const Point1& p1, rational_tag,   Point1& p2)
-{
-	p2 = Point1(p1);
-}
+extern point3d_t
+auto_lift_dim3(const point3d_t& p1, polynomial_tag, polynomial_tag);
 
-template <int dim>
-void 
-lift_dim(const pt_t<dim>& p1, rational_tag, pt_t<dim+1>& p2)
-{
-	p2 = pt_t<dim+1>(pt_t<dim-1>(p1), 0.0);
-	p2[dim] = p1[dim-1];
-}
+extern point3d_t auto_lift_dim3(const point2d_t& p1, polynomial_tag, polynomial_tag);
+
+extern point4d_t
+auto_lift_dim3(const point2d_t& p1, polynomial_tag, rational_tag);
+
+extern point4d_t
+auto_lift_dim3(const point3d_t& p1, polynomial_tag, rational_tag);
+
+extern point4d_t
+auto_lift_dim3(const point3d_t& p1, rational_tag, rational_tag);
+
+extern point4d_t
+auto_lift_dim3(const point4d_t& p1, rational_tag, rational_tag);
+
+
+extern point3d_t
+auto_lift_dim3(const point4d_t& p1, rational_tag, polynomial_tag);
+
+
+extern point3d_t
+auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag);
+
 
 namespace detail {
 template <class Spl>
@@ -141,6 +138,14 @@ size_t num_cpts(const Crv& spl)
     return get_spline(spl).control_points().size();
 }
 
+template <class Crv>
+bool is_regular_at(const Crv&spl, double u)
+{
+    auto ex = spl.eval_derivative(1,u);
+    if(!ex) return false;
+    return tol::neq(len(*ex) , 0);
+}
+
 template <class SplineType>
 extern double curvature(const SplineType& spl, double u);
 
@@ -150,16 +155,14 @@ extern double torsion(const SplineType & spl, double u);
 template <class Fn, class SplineType>
 double checked_op(Fn f, const SplineType& spl, double u)
 {
-    try {
-        f(spl, u);
-    }catch(geom_exception e)
+    auto v = f(spl, u);
+    if(std::isnan(v))
     {
-        if(e.code() != knot_not_in_range_error_der)
-            throw;
-
-        return (f(spl, u - tol::param_tol) +
-                f(spl, u + tol::param_tol)) / 2;
+        auto bef = f(spl, u - tol::param_tol);
+        auto aft = f(spl, u + tol::param_tol);
+        return (bef+aft)/2.0;
     }
+    return v;
 }
 
 template <class SplineType>

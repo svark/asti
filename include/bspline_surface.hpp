@@ -47,18 +47,6 @@ public:
     typedef typename spl_t::cpts_t  cpts_t;
     typedef typename spl_t::vcpts_t vwcpts_t;
 
-    /*bspline_surface(std::tuple<
-                    cpts_t,size_t,
-                    knots_t,knots_t,int,int>&& o)
-        :cpts(std::forward<cpts_t>(o.get<0>())),
-         stride( o.get<1>()),
-         t_u(std::forward<knots_t>(o.get<2>())),
-         t_v(std::forward<knots_t>(o.get<3>())),
-         degu(o.get<4>()),
-         degv(o.get<5>())
-    {
-    }*/
-
     bspline_surface(cpts_t cpts_,
                     size_t stride_,
                     knots_t  t_u_,
@@ -100,8 +88,10 @@ public:
         return std::make_pair(t_v[degv], t_v[sizev()]);
     }
 
-    size_t sizev() const {return cpts.size() / stride;}
-    size_t sizeu() const {return stride;}
+    const knots_t& knotsu() const { return t_u;}
+    const knots_t& knotsv() const { return t_v;}
+
+    const cpts_t& control_points() const { return cpts;}
 
 private:
     double process_param(double u,  periodic_tag) const

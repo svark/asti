@@ -11,9 +11,10 @@
 #include <numeric>
 #include "geom_exception.hpp"
 #include "tol.hpp"
+#include "range.hpp"
 #include "match_case.hpp"
-namespace geom {
 
+namespace geom {
 
 // {{{ -- interpolation (hermite & global)
 template <int dim,class PointIter>
@@ -208,8 +209,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     using Eigen::MatrixXd;
     size_t n = std::distance(pb,pe);
 
-    if(!tol::eq(sqlen(pb[0]-pb[n-1]),0,1e-16))
-        throw geom_exception(interp_ends_dont_match_for_periodic);
+    assert(tol::small(sqlen(pb[0]-pb[n-1])));
 
     MatrixXd mat(n,n);
     mat.setZero();
@@ -235,6 +235,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
+
 }
 
 template <class PointIter,class KnotIter,class VecT>
@@ -261,6 +262,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
+
 }
 
 template <class PointIter,class KnotIter,class VecT>
@@ -298,6 +300,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
+
 }
 
 template <class PointIter,class KnotIter,class VecT>
@@ -368,6 +371,7 @@ eval_tangents_for_pchip( PointIter pb, PointIter pe,
     for(size_t i = 0; i < n; ++i)
         for(int j = 0; j < dim;++j)
             explicit_tgts.row(i).col(j) = rhs.row(i).col(j);
+
 }
 
 void interp_fail()
@@ -488,8 +492,7 @@ auto piecewise_cubic_hermite_interp_periodic
     eval_tangents_for_pchip(
         pb,pe,params.begin(),params.end(),tgts,
         std::integral_constant<end_conditions_t,periodic>());
-
-    return pchip_closed(pb,pe,params,tgts);
+	return pchip_closed(pb,pe,params,tgts) ;
 }
 
 template <class PointIter, class VecsT>
@@ -540,22 +543,57 @@ piecewise_cubic_hermite_interp_regular
 
 }
 
+template <class PointIter, class VecsT>
+void
+pchip_preconditions(
+    PointIter pb,//random access iter type
+    PointIter pe,
+    interpolation_options_t opts,
+    const VecsT & vecs
+    )
+{
+    static_assert(std::is_same<typename std::iterator_traits<PointIter>::iterator_category, std::random_access_iterator_tag>::value, "expecting a random access iterator for point data ");
+	typedef RAWTYPE(pb[0]) point_t;
+    static const int dim =  point_dim < point_t >::dimension;
+
+    if(vecs.size() != std::distance(pb,pe))
+        throw geom_exception(mismatched_array_sizes);
+
+    if(opts.end_conditions == periodic &&
+       tol::not_small(len(pb[0]- pe[-1])))
+        throw geom_exception(invalid_periodic_data);
+
+    point_t lastp;
+    bool first = true;
+    for(auto p : util::mk_range(pb,pe))
+    {
+        if(!first &&
+           tol::small(len(p - lastp)))
+            throw geom_exception(duplicate_point_data);
+        first = false;
+        lastp = p;
+	}
+}
 
 template <class PointIter, class VecsT>
 auto
 piecewise_cubic_hermite_interp
 (
-    PointIter pb,
+    PointIter pb,//random access iter type
     PointIter pe,
     interpolation_options_t opts,
     const VecsT & vecs
-    ) -> bspline< RAWTYPE(pb[0] ) >
+    ) -> bspline< RAWTYPE(pb[0] )>
 
 {
-    if(opts.end_conditions != periodic)
-        return piecewise_cubic_hermite_interp_regular(pb, pe, opts, vecs);
-    else
-        return piecewise_cubic_hermite_interp_periodic(pb, pe, opts, vecs).spline();
+    pchip_preconditions(pb,pe,opts,vecs);
+
+    if(opts.end_conditions != periodic) 
+       return piecewise_cubic_hermite_interp_regular(pb, pe, opts,
+                                                     vecs);
+	return piecewise_cubic_hermite_interp_periodic(pb, pe, opts,
+                                                    vecs).spline();
+
 }
 // }}}
 // }}}

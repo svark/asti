@@ -20,13 +20,13 @@ Point bspline<Point>::eval(double u) const
 
 //{{{ --(@* "evaluate derivative of the curve at the param @u")
 
-// throws a geom_exception if u is not in parameter range of this curve
 template <class Point>
 typename bspline<Point>::vector_t
 bspline<Point>::eval_derivative(int derOrder, double u) const
 {
     assert(derOrder >= 0);
-    return make_vec( rmat<Point>(cpts, t, deg).eval_derivative(derOrder, u) );
+    return make_vec(
+        rmat<Point>(cpts, t, deg).eval_derivative(derOrder, u));
 }
 
 template <class Point>
@@ -115,6 +115,39 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
     }
     m.spline_compute(f, nu, cache.get());
     return cache[0];
+}
+
+
+template <class Point>
+bool bspline<Point>::check_invariants() const
+{
+    if(deg <= 0)
+        return false;
+
+    if(t.size() != cpts.size()+deg+1) {
+        return false;
+    }
+
+    if(cpts.size() < 2) {
+        return false;
+    }
+
+    for(auto const &pt : cpts)
+    {
+        if(plen(pt) > 1 / tol::resabs)
+            return false;
+    }
+
+    std::vector<double> uniqts(t);
+    auto end = std::unique(uniqts.begin(),
+                           uniqts.end(),
+                           tol::param_eq);
+
+    if( std::distance(uniqts.begin(),end)<=1 ) {
+        return false;
+    }
+
+    return true;
 }
 //}}}
 }

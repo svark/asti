@@ -9,36 +9,36 @@
 #include "reparametrize.hpp"
 
 namespace geom {
-	
-//{{{ --(@* "merge knots keeping duplicates where possible")
+
+//{{{ --(@* "merge knots keeping duplicates within each list")
 std::vector<double>
-merge_knots(std::vector<double> t1, std::vector<double> t2)
+merge_knots(const std::vector<double> &t1,
+            const std::vector<double> &t2)
 {
-	auto first1 = t1.cbegin(); 
-	auto first2 = t2.cbegin();
+    auto first1 = t1.cbegin();
+    auto first2 = t2.cbegin();
 
-	auto last1 = t1.cend();
-	auto last2 = t2.cend();
-	std::vector<double> t;
-	t.reserve(t1.size() + t2.size() );
-    while( first1 != last1 && first2 != last2 )
-	{
-		if(tol::eq(*first1,*first2))
-		{
-			t.push_back(*first1);
-			first1++;
-			first2++;
-		}
-		else if(*first1 < *first2)
-		{
-			t.push_back(*first1++);
-		}else 
-			t.push_back(*first2++);
-	}
-	auto dest = std::copy(first1, last1, std::back_inserter(t));	// copy any tail
-	std::copy(first2, last2, dest);
-	return t;
-
+    auto last1 = t1.cend();
+    auto last2 = t2.cend();
+    std::vector<double> t;
+    t.reserve(t1.size() + t2.size() );
+    while(first1 != last1 && first2 != last2)
+    {
+        if(tol::eq(*first1,*first2))
+        {
+            t.push_back(*first1);
+            first1++;
+            first2++;
+        }
+        else if(*first1 < *first2)
+        {
+            t.push_back(*first1++);
+        }else
+            t.push_back(*first2++);
+    }
+    auto dest = std::copy(first1, last1, std::back_inserter(t));    // copy any tail
+    std::copy(first2, last2, dest);
+    return t;
 }
 //}}}
 
@@ -59,8 +59,8 @@ ops::insert_knots(const SplineType& crv,
     auto const & cpts = crv.control_points();
     typedef decltype(cpts) cpts_t;
     taus = merge_knots(t,new_knots);
-	if(taus.size() == t.size() )
-		return SplineType(crv);
+    if(taus.size() == t.size() )
+        return SplineType(crv);
 
     typedef RAWTYPE(cpts[0]) point_t;
     rmat<point_t> m(cpts, t, crv.degree());
@@ -87,9 +87,6 @@ insert_knot_impl( const SplineType &crv,
     auto p = crv.degree();
     auto & t = crv.knots();
     size_t nu = rmat_base_vd(t,p).locate_nu(u);
-    if( !( u <_in_> crv.param_range()) )
-        throw geom_exception(knot_not_in_range_error);
-
     typename SplineType::cpts_t newcpts;
     newcpts.reserve(cpts.size() + 1);
     std::copy(cpts.cbegin(), cpts.cbegin() + nu - p + 1,

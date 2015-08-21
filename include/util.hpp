@@ -1,7 +1,7 @@
 #ifndef ASTI_UTIL_HPP
 #define ASTI_UTIL_HPP
 //#include <boost/util.hpp>
-#include <list>
+//#include <list>
 #include <vector>
 #include <iterator>
 #include <functional>

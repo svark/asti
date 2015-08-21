@@ -43,24 +43,5 @@ make_bspline(CptsT && pts, KnotsT && ks, int deg,
     return MAKE_RBSPLINE;
 }
 
-/*template<class CptsIterT,
-  class KnotsIterT,
-  class PTag,
-  class RTag>
-  auto
-  make_bspline(CptsIterT  ptsf,
-  CptsIterT  ptsl,
-  KnotsIterT ksf,
-  KnotsIterT ksl,
-  int deg,
-  PTag, RTag) -> RAWTYPE( make_bspline(mkstdvec(ptsf, ptsl),
-  mkstdvec(ksf, ksl),
-  deg, PTag(), RTag()))
-  {
-  return make_bspline(mkstdvec(ptsf, ptsl),
-  mkstdvec(ksf, ksl),
-  deg, PTag(), RTag());
-  }*/
-
 }
 #endif // ASTI_BSPLINE_X_CONS

@@ -3,12 +3,13 @@
 #include "bspline_cons.hpp"
 #include "periodic_bspline.hpp"
 #include "type_utils.hpp"
+#include <utility>
 #include <numeric>
 #include "bspline_queries.hpp"
 namespace geom {
 
 template <class CptsT, class KnotsT>
-std::tuple<CptsT,KnotsT, int>
+::std::tuple<CptsT,KnotsT, int>
 wrap_spline_params( const CptsT& pts,
                     const KnotsT& ks,
                     int degree)
@@ -103,7 +104,7 @@ template <class Point>
 periodic_bspline<Point>
 make_periodic_bspline( bspline<Point>&& spl)
 {
-    assert(ops::is_periodic(spl));
+    assert(qry::is_periodic(spl));
     return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
 }
 

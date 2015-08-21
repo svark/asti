@@ -1,6 +1,5 @@
 //-*- mode:c++ -*-
 #include <cassert>
-#include "geom_exception.hpp"
 #include "tol.hpp"
 #include "rmat.hpp"
 #include <algorithm>
@@ -48,33 +47,11 @@ rmat_base<KnotIter>::der_n(size_t idx,
 
     cache[idx - nu + size] = 1;
     spline_compute(nu, u, derOrder, cache.get());
-    return cache[0];
-}
-// get the array of deg + 1 bspline basis functions at u
-template<class KnotIter>
-std::vector<double>
-rmat_base<KnotIter>::der_coeffs_par(int derOrder, double u) const
-{
-    mult_rmat basis_cache;
-    size_t nu = locate_nu(u);
-    if(derOrder > deg)
-        return basis_cache.getb();
-    assert(derOrder >= 0);
-    for(int j = 1;j < deg - derOrder; ++j) {
-        basis_cache *= rmat_explicit<KnotIter>(t + nu, j, u);
-    }
-    for(int j = deg - derOrder;j <= deg; ++j) {
-        basis_cache *= der_rmat_explicit<KnotIter>(t + nu, j, u);
-    }
-    return basis_cache.getb();
+	return cache[0];
 }
 
-template<class KnotIter>
-std::vector<double>
-rmat_base<KnotIter>::coeffs_par(double u) const
-{
-    return der_coeffs_par(0, u);
-}
+
+// get the array of deg + 1 bspline basis functions at u
 template <class KnotIter>
 std::tuple<std::vector<double>,size_t>
 rmat_base<KnotIter>::get_basis(double u, int derOrder) const
@@ -118,7 +95,7 @@ rmat_base<KnotIter>::insertion_matrix(KnotIter f, KnotIter l) const
 // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
 // low mem foot print
 template <class KnotIter>
-std::vector<double>
+std::pair<std::vector<double>,size_t>
 rmat_base<KnotIter>::basis(double u)
 {
     int p = degree();
@@ -142,7 +119,7 @@ rmat_base<KnotIter>::basis(double u)
         }
         b[p] *= (1 - lambda2);
     }
-    return b;
+    return std::make_pair(b,nu);
 }
 
 template<class KnotIter>
@@ -163,7 +140,7 @@ template<class KnotIter>
 size_t rmat_base<KnotIter>::end_mult() {
     double u =  back();
     size_t mult = 0;
-    for( auto v : util::mk_rrange(t, e) )
+    for(auto v : util::mk_rrange(t, e) )
     {
         if(tol::param_eq(u, v))
             ++mult;
@@ -174,7 +151,8 @@ size_t rmat_base<KnotIter>::end_mult() {
 }
 
 template<class KnotIter>
-size_t rmat_base<KnotIter>::mult(double u) {
+size_t
+rmat_base<KnotIter>::mult(double u) {
 
     if(tol::param_eq(u , back() ))
         return end_mult();
@@ -206,7 +184,8 @@ size_t rmat_base<KnotIter>::mult(double u) {
 
 // tries too hard..
 template <class KnotIter>
-size_t rmat_base<KnotIter>::locate_nu(double u,  size_t nu_guess) const
+size_t
+rmat_base<KnotIter>::locate_nu(double u,  size_t nu_guess) const
 {
     size_t size = std::distance(t, e);
 

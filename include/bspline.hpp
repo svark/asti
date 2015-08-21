@@ -6,9 +6,9 @@
 #include <utility>
 #include <vector>
 #include <memory>
-//#include <Eigen/Core>
 #include "point_dim.hpp"
 #include "type_utils.hpp"
+
 namespace geom {
 
 template <class Point>
@@ -31,8 +31,8 @@ struct bspline {
 
     point_t eval(double u) const;
 
-    template <class knot_iter>
-    point_t blossom_eval(knot_iter f) const;
+    template <class KnotIter>
+    point_t blossom_eval(KnotIter f) const;
 
     vector_t eval_derivative(int numDer,double u) const;
 
@@ -43,12 +43,15 @@ struct bspline {
 
     void swap( bspline & other ) ;
 
+    bool check_invariants() const;
+
     // accessors
     const knots_t&  knots()              const { return t;}
     const cpts_t &  control_points()     const {
         return cpts;
     }
     int             degree()             const { return deg; };
+
 
 protected:
 

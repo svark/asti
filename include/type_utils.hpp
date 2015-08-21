@@ -1,3 +1,4 @@
+//-*- mode:c++ -*-
 #ifndef ASTI_TYPE_UTILS
 #define ASTI_TYPE_UTILS
 #include <type_traits>

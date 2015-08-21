@@ -21,7 +21,7 @@ make_bspline_surface(
     const vector3d_t& dir
     )
 {
-	using namespace ops;
+	using namespace qry;
     typedef typename spline_traits<SplineType>::point_t point_t;
 	typedef typename std::conditional<is_rational_type<SplineType>::value,point4d_t, point3d_t>::type pointw_t;
 	typedef typename std::conditional<is_rational_type<SplineType>::value,vector4d_t, vector3d_t>::type vectorw_t;
@@ -35,22 +35,17 @@ make_bspline_surface(
     typedef typename extruded_surf_t::cpts_t cpts_t;
     size_t stride = curvU.control_points().size();
     cpts_t pts(stride*2);
-    
-	static const std::integral_constant<int,point_t::dimension> spaceDim;
 
-	typedef typename spline_traits<SplineType>::rtag rtag;
+	typename spline_traits<SplineType>::rtag rtagu;
 	for( auto pt : curvU.control_points() )
 	{
-		pointw_t p2;
-		lift_dim(pt,rtag(),p2);
+		pointw_t p2(auto_lift_dim3(pt,rtagu,rtagu));
 		pts.push_back(p2);
 	}
     for( auto pt : curvU.control_points() )
     {
-		pointw_t p2;
-		vectorw_t dir2(dir,1.0);
-		lift_dim(pt,rtag(),p2);
-        pts.push_back(p2+dir2);
+        pointw_t p2(auto_lift_dim3(pt,rtagu,rtagu));
+        pts.push_back(p2 + weight(p2,rtagu) * vectorw_t(dir));
     }
     const double ts[] = {0,0,1,1};
     std::vector<double> ksv(ts,ts+sizeof(ts)/sizeof(double));

@@ -20,9 +20,6 @@ SplineType ops::reparametrize(const SplineType& spl,
     double first_t,last_t ;
     std::tie(first_t,last_t)= spl.param_range();
 
-    if( fabs(last_t - first_t) < tol::param_tol)
-        throw geom_exception(bad_knot_spacing_t);
-
     const double scale = 1.0 / ( last_t - first_t);
     size_t i = 0;
     for(double u : t )

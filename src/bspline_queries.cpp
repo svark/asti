@@ -10,11 +10,12 @@ namespace geom {
 //{{{ -- check is periodic
 template <class SplineCurve>
 bool
-ops::is_periodic(const SplineCurve & crv)
+qry::is_periodic(const SplineCurve & crv)
 {
+	//TODO: do not evaluate derivatives
     auto pr = crv.param_range();
 
-    auto const & v1 = crv.eval_derivatives(crv.degree()-1, pr.first );
+    auto const & v1 = crv.eval_derivatives(crv.degree()-1, pr.first ); 
     auto const & v2 = crv.eval_derivatives(crv.degree()-1, pr.second );
     bool its_periodic = true;
     for(int i =0 ; i< crv.degree(); ++i){
@@ -30,7 +31,7 @@ ops::is_periodic(const SplineCurve & crv)
 //}}}
 //{{{ -- is bezier
 template <class SplineType>
-bool ops::is_bezier(const SplineType& spl)
+bool qry::is_bezier(const SplineType& spl)
 {
     auto &t = spl.knots();
     int sz = spl.degree() + 1;
@@ -48,11 +49,11 @@ bool ops::is_bezier(const SplineType& spl)
     return false;
 }
 //}}}
-//{{{ -- is regular
+//{{{ -- is clamped
 
 // determine if the first d + 1, and last d + 1 knots are equal
 template <class SplineCurve>
-bool ops::is_clamped(const SplineCurve & c)
+bool qry::is_clamped(const SplineCurve & c)
 {
     auto & ts = c.knots();
     int p = c.degree();
@@ -65,26 +66,83 @@ bool ops::is_clamped(const SplineCurve & c)
 //}}}
 //{{{ -- curvature and torsion of a spline curve
 template <class SplineType>
-double ops::curvature(const SplineType & spl, double u)
+double qry::curvature(const SplineType & spl, double u)
 {
-    auto const & ds = spl.eval_derivatives(2, u);
+	auto const & ds = spl.eval_derivatives(2, u); 
+	
     double t = len(ds[1]);
-    if(tol::eq(t, 0))
-        return std::numeric_limits<double>::infinity();
-    return len(cross(ds[1], ds[2])) / (t * t * t);
+    if(tol::small(t))
+		return std::numeric_limits<double>::quiet_NaN();
+    
+	return len(cross(ds[1], ds[2])) / (t * t * t);
 }
 
 template <class SplineType>
-double ops::torsion(const SplineType & spl, double u)
+double qry::torsion(const SplineType & spl, double u)
 {
-    auto const &ds = spl.eval_derivatives(3, u);
-    auto cp =  cross(ds[1], ds[2]);
+    auto const & ds = spl.eval_derivatives(3, u); 
+    auto cp  =  cross(ds[1], ds[2]);
     double w =  sqlen(cp);
-    if(tol::eq(w, 0, tol::sqresabs))
-        return std::numeric_limits<double>::infinity();
+    if(tol::small(w, tol::sqresabs))
+		return std::numeric_limits<double>::quiet_NaN();
     double t = dot(decltype(cp)(ds[3]), cp);
     return t / w;
 }
+
+//}}}
+//{{{ auto lift dim
+point3d_t qry::auto_lift_dim3(const point2d_t& p1, polynomial_tag, polynomial_tag)
+{
+    return point3d_t(p1);
+}
+
+point4d_t
+qry::auto_lift_dim3(const point2d_t& p1, polynomial_tag, rational_tag)
+{
+    point4d_t p4d(p1);
+    p4d[3] = 1.0;
+    return p4d;
+}
+
+point4d_t
+qry::auto_lift_dim3(const point3d_t& p1, polynomial_tag, rational_tag)
+{
+    return point4d_t(p1,1.0);
+}
+
+
+point4d_t
+qry::auto_lift_dim3(const point3d_t& p1, rational_tag, rational_tag)
+{
+    point4d_t p4d(p1);
+    std::swap(p4d[3],p4d[2]);
+    return p4d;
+}
+
+point3d_t
+qry::auto_lift_dim3(const point3d_t& p1, polynomial_tag, polynomial_tag)
+{
+    return p1;
+}
+
+point4d_t
+qry::auto_lift_dim3(const point4d_t& p1, rational_tag, rational_tag)
+{
+    return p1;
+}
+
+point3d_t
+qry::auto_lift_dim3(const point4d_t& p1, rational_tag, polynomial_tag)
+{
+    return scaled_copy(point3d_t(p1),1/p1[3]);
+}
+
+point3d_t
+qry::auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag)
+{
+    return scaled_copy(point3d_t(point2d_t(p1)),1/p1[2]);
+}
+
 
 //}}}
 }
@@ -93,7 +151,7 @@ double ops::torsion(const SplineType & spl, double u)
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")
-  eval:(setq methods (list "is_periodic" "is_bezier" "is_regular"
+  eval:(setq methods (list "is_periodic" "is_bezier" "is_clamped"
   "curvature" "torsion"
   ))
   eval:(setq spltypes (list "bspline<double>"
@@ -101,7 +159,7 @@ double ops::torsion(const SplineType & spl, double u)
   "bspline<point3d_t>"
   "bspline<point4d_t>"
   ))
-  eval:(instantiate-templates "bspline_queries" "ops" (list )
+  eval:(instantiate-templates "bspline_queries" "qry" (list )
   (product methods spltypes) )
   End:
   // dump all explicitly instantiated templates below

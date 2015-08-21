@@ -42,7 +42,7 @@ TEST_CASE("periodic_bspline_basic", "[periodic][2d][eval][derivative][blossom][b
     REQUIRE(bs.periodic_param(1.2) == Approx(0.2));
     REQUIRE(bs.periodic_param(-0.2) == Approx(0.8));
     REQUIRE(bs.periodic_param(-1.2) == Approx(0.8));
-    REQUIRE(geom::ops::is_periodic(bs.spline()));
+    REQUIRE(geom::qry::is_periodic(bs.spline()));
     REQUIRE(len(bs.eval_derivative(1, 0.9 - 1e-7) - bs.eval_derivative(1, 0.9)) <
             1e-7 * len(bs.eval_derivative(2, 0.9))
         );
