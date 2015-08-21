@@ -22,7 +22,7 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_,
         std::forward < cpts_t > (pts),
         std::forward < std::vector<double> > (ks),
         degree_);
-    if(!spl.check_invariants())
+    if(!check_invariants(spl))
         throw geom_exception(bspline_invariants_violated);
     return spl;
 }
@@ -41,7 +41,7 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_, std::false_typ
         std::move(cpts_t(pts)),
         std::forward < knots_t > (ks),
         degree_);
-    if(!spl.check_invariants())
+    if(!check_invariants(spl))
         throw geom_exception(bspline_invariants_violated);
     return spl;
 }
@@ -81,7 +81,7 @@ make_bspline_arr(const Point *pts,
         std::move(cpts_t(pts,ptsEnd)),
         std::move(knots_t(ks,ksEnd)),
         degree_);
-    if(!spl.check_invariants())
+    if(!check_invariants(spl))
         throw geom_exception(bspline_invariants_violated);
     return spl;
 }
@@ -103,9 +103,6 @@ make_bspline( CptsT pts, KnotsT ks, int degree_)
         degree_,
         std::is_same < cpts_t, CptsT > ()
         );
-    if(!spl.check_invariants())
-        throw geom_exception(bspline_invariants_violated);
-    return spl;
 }
 
 

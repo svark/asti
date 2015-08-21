@@ -75,5 +75,8 @@ bool operator==(const bspline<Point>& bs1, const bspline<Point>& bs2) {
     return bs1.control_points() == bs2.control_points();
 }
 
+template <class Point>
+bool check_invariants(const bspline<Point>& spl) {return spl.check_invariants(); }
+
 }
 #endif //BSPLINE_H

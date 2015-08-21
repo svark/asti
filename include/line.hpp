@@ -2,7 +2,7 @@
 #define ASTI_LINE_HPP
 
 #include <algorithm>
-#include "point_fwd.hpp"
+#include "point.hpp"
 #include "tol.hpp"
 namespace geom{
 

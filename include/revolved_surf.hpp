@@ -1,10 +1,11 @@
 #ifndef ASTI_REVOLVED_SURF
 #define ASTI_REVOLVED_SURF
 
+#include "point_fwd.hpp"
+#include "line.hpp"
 #include "spline_traits.hpp"
 #include "bspline_fwd.hpp"
 #include "bspline_surface.hpp"
-#include "point_fwd.hpp"
 #include "conic.hpp"
 namespace geom{
 

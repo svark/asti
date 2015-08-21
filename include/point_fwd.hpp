@@ -131,6 +131,8 @@ double sqlen(double v ) ;
 template <int dim>
 double len(const vec_t<dim>&v);
 double len(double v );
+
+
 //}}}
 //{{{  (@* "convert to eigen vec")
 Eigen::Matrix<double,1,1> eigen_vec(double ve);
@@ -157,6 +159,15 @@ extern std::integral_constant<int,3> W;
 
 template <class Point,int i>
 double coord(const Point&, std::integral_constant<int, i>);
+
+template <class PtVec>
+void set_quiet_NaN(PtVec& pv);
+
+inline void set_quiet_NaN(double &d);
+
+template <int dim>
+double plen(const pt_t<dim>& p);
+inline double plen(double p );
 
 //}}}
 }

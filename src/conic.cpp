@@ -1,5 +1,6 @@
 #include "point.hpp"
 #include "conic.hpp"
+#include "line.hpp"
 #include "geom_exception.hpp"
 
 namespace geom {

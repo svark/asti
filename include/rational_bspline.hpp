@@ -159,6 +159,8 @@ make_rbspline(SplineType&& spl)
     return rspl_t(std::forward<SplineType>(spl));
 }
 
+template <class Point,class PTag>
+bool check_invariants(const rational_bspline<Point,PTag> &rbs) { return check_invariants(rbs.spline());}
 
 }
 #endif // ASTI_RATIONAL_BSPLINE_HPP

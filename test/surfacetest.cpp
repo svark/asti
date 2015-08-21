@@ -1,7 +1,6 @@
 
 #include <vector>
 #include "catch.hpp"
-
 #include "extruded_surf.hpp"
 #include "revolved_surf.hpp"
 #include "circle.hpp"

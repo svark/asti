@@ -107,8 +107,8 @@ private:
     bspline<point_t> spl;
 };
 
-
-
+template <class Point>
+bool check_invariants(const periodic_bspline<Point> &spl) { return check_invariants(spl.spline());}
 
 }
 #endif

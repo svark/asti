@@ -80,18 +80,19 @@ public:
 
     std::pair<double, double> param_rangeu() const
     {
-        return std::make_pair(t_u[degu], t_u[sizeu()]);
+        return std::make_pair(t_u[degu], t_u[t_u.size() - degu - 1]);
     }
 
     std::pair<double, double> param_rangev() const
     {
-        return std::make_pair(t_v[degv], t_v[sizev()]);
+        return std::make_pair(t_v[degv], t_v[t_v.size() - degv - 1]);
     }
 
     const knots_t& knotsu() const { return t_u;}
     const knots_t& knotsv() const { return t_v;}
 
     const cpts_t& control_points() const { return cpts;}
+
 
 private:
     double process_param(double u,  periodic_tag) const

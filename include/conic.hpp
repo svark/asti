@@ -2,7 +2,7 @@
 #define ASTI_CONIC_HPP
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "line.hpp"
+//#include "line.hpp"
 #include "geom_exception.hpp"
 #include "type_traits"
 
@@ -10,6 +10,16 @@
 #include "rational_bspline_cons.hpp"
 
 namespace geom {
+
+template <class T> struct line;
+
+template <class Point>
+static line<Point>
+make_line_joining(const Point& p1,  const Point& p2);
+
+template <class Point,class Vec>
+static line<Point>
+make_line(const Point& p1, const Vec& dir);
 
 enum conic_type_t {parabola, hyperbola, ellipse} ;
 

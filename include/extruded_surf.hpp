@@ -1,6 +1,7 @@
 #ifndef ASTI_EXTRUDED_SURF
 #define ASTI_EXTRUDED_SURF
 
+#include "point_fwd.hpp"
 #include "bspline.hpp"
 #include "bspline_surface.hpp"
 #include "bspline_queries.hpp"
