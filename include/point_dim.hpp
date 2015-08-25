@@ -13,21 +13,18 @@ template <int dim>
 struct point_dim<pt_t < dim >>
 {
     enum {dimension = dim};
-    //    typedef Eigen::aligned_allocator<pt_t < dim > > alloc_t;
 };
 
 template <>
 struct point_dim<double>
 {
     enum {dimension = 1};
-    //    typedef std::allocator<double> alloc_t;
 };
 
 template <int dim>
 struct point_dim<vec_t < dim >>
 {
     enum {dimension = dim};
-    //typedef Eigen::aligned_allocator<vec_t < dim > > alloc_t;
 };
 
 
