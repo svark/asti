@@ -158,7 +158,7 @@ private:
         }
         return base;
     }
-
+private:
     cpts_t cpts;
     size_t stride;
     knots_t t_u;
