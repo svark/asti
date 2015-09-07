@@ -5,7 +5,7 @@
 //#include "line.hpp"
 #include "geom_exception.hpp"
 #include "type_traits"
-
+#include "point_dim.hpp"
 #include "tol.hpp"
 #include "rational_bspline_cons.hpp"
 
@@ -174,15 +174,15 @@ make_rbspline_from_conic(const conic_arc<Point> &arc)
 
 extern
 conic_arc<point3d_t>
-make_conic_arc(point3d_t p[3], vector3d_t v[2]);
+make_conic_arc(const point3d_t p[3], const vector3d_t v[2]);
 
 extern
 conic_arc<point2d_t>
-make_conic_arc(point2d_t p[3], vector2d_t v[2]);
+make_conic_arc(const point2d_t p[3], const vector2d_t v[2]);
 
 template <class Point>
 conic_arc<Point>
-make_circular_arc(Point p[3])
+make_circular_arc(const Point p[3])
 {
     double ang   = angle_between(p[0] - p[1], p[2] - p[1]);
 

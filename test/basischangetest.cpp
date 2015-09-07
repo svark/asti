@@ -52,7 +52,8 @@ TEST_CASE("change basis", "[bezier][monomial]"){
 
         legendre_form < double >  lf(legf, 0, 1.0);
         auto const &bzf      = to_bezier(lf);
-       // REQUIRE(bzf.eval(.1) == Approx(lf.eval(.1)));
+        REQUIRE(bzf.eval(.1) == Approx(lf.eval(.1)));
+        REQUIRE(bzf.eval(.9) == Approx(lf.eval(.9)));
         auto const &lf_dual  = to_legendre(bzf);
         auto const &cfs      = lf_dual.coeffs();
         REQUIRE(cfs.size()  == legf.size());
@@ -67,7 +68,10 @@ TEST_CASE("change basis", "[bezier][monomial]"){
             c[i] = i + 1;
 
         bezier_form < double > bf(c, 1, 2.0);
-        auto const & bf_dual = to_bezier (to_legendre(bf));
+        auto const & lf = to_legendre(bf);
+        auto const & bf_dual = to_bezier(lf);
+        REQUIRE(bf.eval(1.1) == Approx(lf.eval(1.1)));
+        REQUIRE(bf.eval(1.9) == Approx(lf.eval(1.9)));
         auto const &  cfs = bf_dual.control_points();
         REQUIRE(cfs.size() == c.size());
         for(size_t i = 0;i < cfs.size(); ++i)

@@ -22,7 +22,8 @@ namespace std {
 #if (_MSC_VER <= 1700)
 inline double fmin(double a, double b ) { return a < b? a: b;}
 inline double fmax(double a, double b ) { return b < a? a: b;}
-inline bool isnan(double a)  { return ::_isnan(a) != 0 ;  }
+inline bool   isnan(double a)           { return ::_isnan(a) != 0 ;  }
+inline double fma(double x, double y, double a) {return x*y+a;}
 #endif
 #endif // _MSC_VER
 }

@@ -9,25 +9,28 @@
 #include "conic.hpp"
 namespace geom{
 
-template <class T> struct line;
-template <class SplineCurve>
+namespace impl {
+template <class SplineCurve,class PTag, class MakeFn>
 auto make_revolved_bspline_surf(
     const SplineCurve & spl,
     const line<point3d_t> &axis,
-    double theta) -> bspline_surface<point3d_t,
-                                     bspline_surface_traits<
-                                         rational_tag,
-                                         typename spline_traits<SplineCurve>::ptag,
-                                         regular_tag, revolved_surf> > 
+    double theta, PTag tag, MakeFn mk_conic_fn )
+    -> bspline_surface<point3d_t,
+                       bspline_surface_traits<
+                           rational_tag,
+                           typename spline_traits<SplineCurve>::ptag,
+                           PTag, revolved_surf> >
+
 {
     typedef bspline_surface<point3d_t,
                             bspline_surface_traits<
                                 rational_tag,
                                 typename spline_traits<SplineCurve>::ptag,
-                                regular_tag, revolved_surf> >
+                                PTag, revolved_surf> >
         surf_t;
     auto const &cpts = spl.control_points();
     auto  stride = cpts.size();
+    assert(stride != 0);
     double ct2 = cos(theta/2);
     double st2 = sin(theta/2);
     double ct = cos(theta);
@@ -45,23 +48,24 @@ auto make_revolved_bspline_surf(
         bool isdir  = tol::eq(w,0);
         auto p3d    = point3d_t(pt);
         auto onaxis = point3d_t(0.0);
-        if(!isdir) { //not points at infinity
-            p3d = auto_lift_dim3(pt,rtagu,polynomial_tag());
+        if(!isdir) { //not a point at infinity
 			onaxis = closest_point_on_line(axis,p3d);
         }
 
         auto radial_dir     = p3d - onaxis;
 		auto ydir           = cross(radial_dir,axis.direction());
-		auto tangential_dir = tol::not_small(len(ydir))? normalize(ydir) : vector3d_t(0.0);
+        bool ydir_notsmall  = tol::not_small(len(ydir));
+		auto tangential_dir = ydir_notsmall? normalize(ydir)  : vector3d_t(0.0);
         auto mid            = onaxis + ct2*radial_dir + st2*tangential_dir;
         auto end            = onaxis + ct*radial_dir  + st*tangential_dir;
 
-        point3d_t vs[] = {p3d,mid,end};
+        const point3d_t vs[] = {p3d, mid, end};
 
-        auto const & arc =
-            make_rbspline_from_conic(make_circular_arc(vs));
+        auto const & arc = mk_conic_fn(vs);
+
         if(!t_v.size())
             t_v = arc.knots();
+
         int ncpts = num_cpts(arc);
         if(!pts)
             pts.reset(new arr_t(ncpts*stride));
@@ -69,7 +73,9 @@ auto make_revolved_bspline_surf(
         for(int j = 0; j < ncpts; ++j)
         {
             double wm = weight(arc.control_points()[j], rational_tag());
-            (*pts)[i+j*stride] = point4d_t(point3d_t(arc.control_points()[j]), wm*w);
+            (*pts)[i+j*stride] = point4d_t(point3d_t(
+                                               arc.control_points()[j]),
+                                           wm*w);
         }
 		++i;
     }
@@ -81,68 +87,45 @@ auto make_revolved_bspline_surf(
 				  spl.degree(), 2
         );
 }
-/*
+
+}
 template <class SplineCurve>
-bspline_surface<typename SplineCurve::point_t,
-                bspline_surface_traits<
-                    rational_tag,
-                    typename spline_traits<SplineCurve>::ptag,
-                    periodic_tag, revolved_surf> >
-make_revolved_bspline_surf(
+auto make_revolved_bspline_surf(
     const SplineCurve & spl,
-    const line<point3d_t> &axis
-    )
+    const line<point3d_t> &axis,
+    double theta) -> bspline_surface<point3d_t,
+                                     bspline_surface_traits<
+                                         rational_tag,
+                                         typename spline_traits<SplineCurve>::ptag,
+                                         regular_tag, revolved_surf> >
 {
-    static_assert(point_dim<typename SplineCurve::point_t>::dimension==3,
-                  "expecting a 3 dimensional spline curve");
-
-    typedef typename SplineCurve::point_t pt_t;
-    typedef bspline_surface<pt_t,
-                            bspline_surface_traits<
-                                rational_tag,
-                                typename spline_traits<SplineCurve>::ptag,
-                                periodic_tag, revolved_surf> >
-        surf_t;
-
-    typedef typename spline_traits<SplineCurve>::rtag rtag;
-
-    auto const &cpts = spl.control_points();
-    std::vector<double> t_v;
-
-    std::unique_ptr<std::vector<point4d_t>> pts;
-    int i = 0;
-    for(auto pt : cpts)
-    {
-        auto const &center = closest_point_on_line(line, point3d_t(pt));
-        auto const & splv  =
-            make_rbspline_from_circle(
-                circle<decltype(center)>( center, point3d_t(pt),
-                                          line.direction() ));
-        if(!t_v.size())
-            t_v = splv.knots();
-
-        int ncpts = num_cpts(splv);
-
-        if(!pts)
-            pts.reset(new std::vector<point4d_t>[ncpts*stride]);
-
-        int j = 0;
-        for(auto cptv : splv.control_points())
-        {
-            double wu = weight(pt,rtag, std::integral_constant<int,3>());
-            pts[i+j*stride] = cptv;
-            pts[i+j*stride]*= wu;
-            ++j;
-        }
-        ++i;
-    }
-
-    return surf_t(std::move(*pts),
-                  cpts.size(),
-                  spl.knots(),
-                  t_v
-        );
-        } */
+    auto make_fn = [] (const point3d_t* ps) {
+        return make_rbspline_from_conic(make_circular_arc(ps));
+    };
+    return impl::make_revolved_bspline_surf(spl,axis,theta,
+                                            regular_tag(),
+                                            make_fn);
 }
 
+template <class SplineCurve>
+auto make_revolved_bspline_surf(
+    const SplineCurve & spl,
+    const line<point3d_t> &axis)
+    -> bspline_surface<point3d_t,
+                       bspline_surface_traits<
+                           rational_tag,
+                           typename spline_traits<SplineCurve>::ptag,
+                           periodic_tag, revolved_surf> >
+{
+    auto make_fn = [] (const point3d_t* ps) {
+        return make_rbspline_from_circle(make_circle(ps[0],ps[1],ps[2]));
+    };
+    return impl::make_revolved_bspline_surf(spl,
+                                            axis,M_PI/*this is rather
+                                                      * arbitrary*/,
+                                            periodic_tag(),
+                                            make_fn);
+}
+
+}
 #endif // ASTI_REVOLVED_SURF

@@ -7,8 +7,8 @@ namespace geom {
 
 template <class Point>
 conic_arc < Point >
-make_conic_arc_non_parallel(Point p[3],
-                            decltype(Point() -  Point()) v[2])
+make_conic_arc_non_parallel(const Point p[3],
+                            const decltype(Point() -  Point()) v[2])
 {
     auto cps = closest_points(make_line(p[0], v[0]),
                               make_line(p[2], v[1]));
@@ -41,7 +41,7 @@ make_conic_arc_non_parallel(Point p[3],
 
 template <class Point>
 conic_arc < Point >
-make_conic_arc_parallel(Point p[3],
+make_conic_arc_parallel(const Point p[3],
                         const decltype(Point() - Point())& v)
 {
     auto s = p[1]; // shoulder point
@@ -72,7 +72,7 @@ make_conic_arc_parallel(Point p[3],
 }
 
 geom_error_code_t
-conic_arc_preconditions(point3d_t p[], vector3d_t v[])
+conic_arc_preconditions(const point3d_t p[], const vector3d_t v[])
 {
     if(tol::small(len(v[0])) || tol::small(len(v[1])))
 		return tangent_vectors_too_small;
@@ -93,7 +93,7 @@ conic_arc_preconditions(point3d_t p[], vector3d_t v[])
 
 
 conic_arc<point3d_t>
-make_conic_arc(point3d_t p[3], vector3d_t v[2])
+make_conic_arc(const point3d_t p[3], const vector3d_t v[2])
 {
     typedef conic_arc< point3d_t >::pointw_t pointw_t;
 
@@ -110,7 +110,7 @@ make_conic_arc(point3d_t p[3], vector3d_t v[2])
 }
 
 conic_arc<point2d_t>
-make_conic_arc(point2d_t p[3], vector2d_t v[2])
+make_conic_arc(const point2d_t p[3], const vector2d_t v[2])
 {
     typedef conic_arc< point3d_t >::pointw_t pointw_t;
 

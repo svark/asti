@@ -167,7 +167,7 @@ make_circle(const Point& p1,
 
 template <class Point>
 static rational_bspline< Point, regular_tag >
-to_rational(const circle<Point>& circ)
+make_rbspline_from_circle(const circle<Point>& circ)
 {
     auto start_pt =  circ.getStart();
     auto center =  circ.getCenter();

@@ -395,6 +395,12 @@ PointVec axpy(double a, const PointVec& x, const PointVec& y)
     return PointVec(a * x.cget() + y.cget());
 }
 
+
+inline double axpy(double a, const double& x, const double& y)
+{
+    return std::fma(a, x, y);
+}
+
 // ________________________________________________________________
 
 template <int dim>

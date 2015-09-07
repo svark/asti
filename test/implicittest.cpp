@@ -22,7 +22,7 @@ TEST_CASE("implicit2d",  "[bspline][approximate][implicitization]") {
 
     SECTION("Circle") {
         auto circ = geom::make_circle(make_pt(1,0), make_pt(sqrt2,sqrt2),make_pt(0,1));
-        auto const & bsc = to_rational(circ);
+        auto const & bsc = make_rbspline_from_circle(circ);
         auto icf = geom::implicitize(bsc, 2);
         REQUIRE( tol::eq(icf[0]->eval(circ.eval(M_PI/2.0)), 0));
         REQUIRE( tol::eq(icf[0]->eval(circ.eval(M_PI/3.0)), 0));

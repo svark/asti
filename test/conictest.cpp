@@ -79,7 +79,7 @@ TEST_CASE("circle", "[circle][2d]"){
     REQUIRE( c.getRadius() == Approx(ac.getRadius()));
     REQUIRE( len (c.getPlaneNormal()  + ac.getPlaneNormal() ) == Approx(0));
 
-    auto const & rbsc = geom::to_rational( c );
+    auto const & rbsc = geom::make_rbspline_from_circle( c );
     REQUIRE(rbsc.eval(0 ) == make_pt(0, 1));
     REQUIRE(rbsc.eval(2*M_PI/3.0 ) == make_pt(-0.866025404,-0.5));
     REQUIRE(rbsc.eval(2*M_PI/6.0) == make_pt(-0.866025404,0.5));

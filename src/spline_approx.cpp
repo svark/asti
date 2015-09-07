@@ -218,7 +218,6 @@ ops::foot_param(const SplineType &spl,
                         tapprox,
                         ptag());
 
-	
     // get a spline approximation of the derivative of distance
     auto splapprox = cubic_approx1d(dist_der_by_2, tapprox);
 
@@ -226,8 +225,8 @@ ops::foot_param(const SplineType &spl,
     auto rootQ = find_next_rootc(splapprox, t.front(), tol::param_tol);
 
     double mindist = dist(t.front());
-    double minu = t.front();
-    double min = minu;
+    double minu    = t.front();
+    double min     = minu;
 
     for(;rootQ.second;) {
         const size_t digits_ = 2 *std::numeric_limits<double>::digits/3;

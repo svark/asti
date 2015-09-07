@@ -12,17 +12,19 @@ struct legendre_form
                   double e_ = 1.0)
         :a(std::move(a_)), s(s_), e(e_){}
 
-    Point eval(double u) {
+    Point eval(double u) const{
         assert(a.size());
         Point v(0.0);
-        double p0 = 1, p1 = u;
+        double p0 = 1;
         u =  (u - s) / (e - s);
+        u = 2 * u - 1;
+        double p1 = u;
         v += p0 *a[0];
-        v += p1 *a[1];
+        v += p1 *a[1]*sqrt(3.0);
         for(size_t i = 2;i < a.size(); ++i)
         {
-            auto pnu = (2 * i - 1) * u *  p1 -  (i - 1)*  p0;
-            v += pnu * a[i]/i;
+            auto pnu = ( (2 * i - 1) * u *  p1 -  (i - 1)*  p0 ) / i;
+            v += pnu * a[i] * sqrt(2*i+1.0);
             p0 =  p1;
             p1 =  pnu;
         }
