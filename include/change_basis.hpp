@@ -137,7 +137,7 @@ to_bezier(const monomial_form < Point > & mf )
                 }
                 mjk /= njcns[j];
                 mjk *= f * double(jsign);
-                legf[j] += mjk * b[k];
+                legf[j] += scaled_copy( b[k] , mjk );
             }
         }
         double s,e;
@@ -180,7 +180,7 @@ to_bezier(const monomial_form < Point > & mf )
                 }
                 mjk *= (ksign * f);
                 mjk /= ncjs[j];
-                cpts[j] +=  (mjk * lf.coeffs(k));
+                cpts[j] +=  scaled_copy( lf.coeffs(k),mjk );
             }
         }
         return make_bezier_form(std::move(cpts),

@@ -99,14 +99,30 @@ auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag);
 
 namespace detail {
 template <class Spl>
-auto get_spline(const Spl& s, std::true_type)
+auto get_spline(const Spl& s, std::true_type, std::true_type)
+//rational periodic
+    -> decltype(s.spline().spline())
+{
+    return s.spline().spline();
+}
+
+template <class Spl>
+auto get_spline(const Spl& s, std::false_type, std::true_type)
+// not rational , periodic
     -> decltype(s.spline())
 {
     return s.spline();
 }
-
 template <class Spl>
-const Spl& get_spline(const Spl& s, std::false_type)
+auto get_spline(const Spl& s, std::true_type, std::false_type)
+//rational, regular
+    -> decltype(s.spline())
+{
+    return s.spline();
+}
+template <class Spl>
+//regular bspline
+const Spl& get_spline(const Spl& s, std::false_type, std::false_type)
 {
     return s;
 }
@@ -117,13 +133,19 @@ auto get_spline(const Spl& s) -> decltype(
     detail::get_spline(s,
                        std::integral_constant<
                        bool,
-                       is_rational_type<Spl>::value
-                       || is_periodic_type<Spl>::value >()) )
+                       is_rational_type<Spl>::value>(),
+                       std::integral_constant<
+                       bool,
+                       is_periodic_type<Spl>::value>()))
+
 {
-    return detail::get_spline(
-        s,std::integral_constant<
-        bool,is_rational_type<Spl>::value
-        || is_periodic_type<Spl>::value >());
+    return detail::get_spline(s,
+                       std::integral_constant<
+                       bool,
+                       is_rational_type<Spl>::value>(),
+                       std::integral_constant<
+                       bool,
+                              is_periodic_type<Spl>::value>());
 }
 
 template <class Crv>

@@ -24,13 +24,14 @@ protected:
 };
 
 
-std::vector<std::unique_ptr < implicitCurveFormBase> >
-implicitize(const rational_bspline<point2d_t, regular_tag>& spl, int qdeg);
+template <class PTag>
+extern std::vector<std::unique_ptr < implicitCurveFormBase> >
+implicitize(const rational_bspline<point2d_t, PTag>& spl, int qdeg);
 
-std::vector<std::unique_ptr < implicitCurveFormBase> >
+extern std::vector<std::unique_ptr < implicitCurveFormBase> >
 implicitize(const bspline<point2d_t>& spl, int qdeg);
 
-std::unique_ptr < implicitCurveFormBase >
+extern std::unique_ptr < implicitCurveFormBase >
 implicitize(const std::function<point3d_t(double )>&, int qdeg, int sdeg);
 
 }

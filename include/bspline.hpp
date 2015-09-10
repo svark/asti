@@ -29,6 +29,14 @@ struct bspline {
     bspline(const bspline& other);
     bspline(bspline&& other);
 
+    template <class ModifierFn>
+    bspline(bspline&& other, ModifierFn mod_fn)
+    {
+        bspline(std::forward<bspline>(other)).swap(*this);
+        mod_fn(cpts.begin(),cpts.end(),t.begin(),t.end());
+        check_invariants();
+    }
+
     point_t eval(double u) const;
 
     template <class KnotIter>

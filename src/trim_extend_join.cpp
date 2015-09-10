@@ -21,15 +21,16 @@ ops::join_starts(const SplineType& spl1,
     SplineType spl1_clamped (clamp_start(spl1));
     SplineType spl2_clamped (clamp_start(spl2));
 
-    // let the two splines have the same start parameters
-    reparametrize_start(spl1_clamped, 0).swap(spl1_clamped);
-    reparametrize_start(spl2_clamped, 0).swap(spl2_clamped);
-
     match_degrees(spl1_clamped, spl2_clamped);
 
     int p = spl1_clamped.degree();
     if(join_cont >= p )
         throw geom_exception(continuity_condition_too_tight);
+
+        // let the two splines have the same start parameters
+    reparametrize_start(spl1_clamped, 0).swap(spl1_clamped);
+    reparametrize_start(spl2_clamped, 0).swap(spl2_clamped);
+
 
     typename SplineType::knots_t ks(p + 1);
 

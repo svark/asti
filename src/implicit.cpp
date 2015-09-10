@@ -10,6 +10,8 @@
 #include "implicit.hpp"
 #include "any_curve.hpp"
 #include "split_into_bezier_patches.hpp"
+#include "rmat.hpp"
+#include "rational_bspline_cons.hpp"
 // find a basis q_k of M implicit polynomials
 // expand q_k(p(t))  in terms of \alpha_k(t)
 // coefficients of \alpha_k(t) will form matrix D
@@ -212,19 +214,27 @@ implicitize( const homogc < point3d_t >& hg, int qdeg, int sdeg)
 
 //}}}
 //{{{  (@* "implicitize 2d rational bspline")
+template <class PTag>
 std::vector<std::unique_ptr < implicitCurveFormBase> >
-implicitize(const rational_bspline<point2d_t>& spl, int qdeg)
+implicitize(const rational_bspline<point2d_t,PTag>& spl, int qdeg)
 {
     const int sdeg     = spl.degree();
 
-    auto const & patches = ops::split_into_bezier_patches(spl);
+    auto const & patches = ops::split_into_bezier_patches(qry::get_spline(spl));
     std::vector<  std::unique_ptr<implicitCurveFormBase> > imps;
     for( auto const &s:  patches ) {
-        homogc < point3d_t > hg(ops::reparametrize(s.spline(),0,1));
+        homogc < point3d_t > hg(ops::reparametrize(s,0,1));
         imps.emplace_back(implicitize(hg,qdeg,sdeg) );
     }
     return imps;
 }
+
+template std::vector<std::unique_ptr < implicitCurveFormBase> >
+implicitize(const rational_bspline<point2d_t,regular_tag>& spl, int qdeg);
+
+template std::vector<std::unique_ptr < implicitCurveFormBase> >
+implicitize(const rational_bspline<point2d_t,periodic_tag>& spl, int qdeg);
+
 
 std::unique_ptr<implicitCurveFormBase>
 implicitize( const std::function<point3d_t(double)>& f, int qdeg,int sdeg)

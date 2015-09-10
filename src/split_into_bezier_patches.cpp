@@ -106,22 +106,12 @@ ops::last_bezier_patch(
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")
-  eval:(setq methods (list "split_into_bezier_patches"
+  eval:(setq methods (list "split_into_bezier_patches"  "first_bezier_patch" "last_bezier_patch"
   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"
   "bspline<point3d_t>"
   "bspline<point4d_t>"
-  "periodic_bspline<double>"
-  "periodic_bspline<point2d_t>"
-  "periodic_bspline<point3d_t>"
-  "periodic_bspline<point4d_t>"
-  "rational_bspline < point2d_t,regular_tag>"
-  "rational_bspline < point3d_t,regular_tag>"
-  "rational_bspline < double, regular_tag>"
-  "rational_bspline < point2d_t,periodic_tag>"
-  "rational_bspline < point3d_t,periodic_tag>"
-  "rational_bspline < double,periodic_tag>"
   ))
   eval:(instantiate-templates "split_into_bezier_patches" "ops" (list )
   (product methods spltypes ))

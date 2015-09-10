@@ -84,6 +84,17 @@ public:
     {
     }
 
+    rational_bspline(rational_bspline&& other)
+        : spl(std::forward<spl_t>(other.spl))
+    {
+    }
+
+    template <class ModifierFn>
+    rational_bspline(rational_bspline&& other, ModifierFn  mod_fn)
+        : spl(std::forward<spl_t>(other.spl), mod_fn)
+    {
+    }
+
     template <class knot_iter>
     point_t blossom_eval(knot_iter f) const;
 

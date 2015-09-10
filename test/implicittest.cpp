@@ -5,6 +5,7 @@
 #include "bspline.hpp"
 #include "point.hpp"
 #include "circle.hpp"
+#include "rational_bspline.hpp"
 #define _USE_MATH_DEFINES
 #include <math.h>
 TEST_CASE("implicit2d",  "[bspline][approximate][implicitization]") {
@@ -22,7 +23,7 @@ TEST_CASE("implicit2d",  "[bspline][approximate][implicitization]") {
 
     SECTION("Circle") {
         auto circ = geom::make_circle(make_pt(1,0), make_pt(sqrt2,sqrt2),make_pt(0,1));
-        auto const & bsc = make_rbspline_from_circle(circ);
+        auto const & bsc = geom::make_rbspline_from_circle(circ);
         auto icf = geom::implicitize(bsc, 2);
         REQUIRE( tol::eq(icf[0]->eval(circ.eval(M_PI/2.0)), 0));
         REQUIRE( tol::eq(icf[0]->eval(circ.eval(M_PI/3.0)), 0));

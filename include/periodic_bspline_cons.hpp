@@ -9,19 +9,20 @@
 namespace geom {
 
 template <class CptsT, class KnotsT>
-::std::tuple<CptsT,KnotsT, int>
+std::tuple<CptsT,std::vector<double>, int>
 wrap_spline_params( const CptsT& pts,
                     const KnotsT& ks,
                     int degree)
 {
     assert(degree >= 1);
-    assert(pts.size() && ks.size() == pts.size()+1);
+    assert(pts.size() && ks.size() <= pts.size()+1);
     CptsT cpts;
     cpts.reserve(pts.size() + degree);
     // within the range, t_\mu, t_{\mu+1} the spline evaluation
     // depends on cpt_\mu-d..\cpt_\mu
-    cpts.assign(pts.cend() - degree, pts.cend());
-    std::copy(pts.cbegin(), pts.cend(),std::back_inserter(cpts));
+    size_t sz = ks.size() - 1;
+    cpts.assign(pts.cbegin() + sz - degree, pts.cbegin() + sz);
+    std::copy(pts.cbegin(), pts.cbegin() + sz,std::back_inserter(cpts));
 
 
     // within the range, t_\mu, t_{\mu+1} the spline evaluation
@@ -34,9 +35,9 @@ wrap_spline_params( const CptsT& pts,
     // accessible, so d-1 extra knots are prefixed here at \mu =
     // ks.size()-2, we need to ensure that t_{\mu+d} is accessible,
     // so d-1 extra knots are appended here as well.
-    KnotsT t;
+    std::vector<double> t;
     t.reserve( ks.size() + 2*degree );
-    KnotsT startDiffs(degree+1), endDiffs(degree+1);
+    std::vector<double> startDiffs(degree+1), endDiffs(degree+1);
 
     // get the adjacent diffs between ks_0,ks_1,...
     std::adjacent_difference(ks.cbegin(), ks.cbegin() + degree + 1,

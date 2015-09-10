@@ -54,6 +54,12 @@ struct periodic_bspline
     {
     }
 
+    template <class ModifierFn>
+    periodic_bspline(periodic_bspline&& other, ModifierFn mod_fn)
+        :spl(std::forward<bspline<point_t> >(other.spl),mod_fn)
+    {
+    }
+
     periodic_bspline(const periodic_bspline& other)
         :spl(other.spl)
     {
@@ -108,7 +114,9 @@ private:
 };
 
 template <class Point>
-bool check_invariants(const periodic_bspline<Point> &spl) { return check_invariants(spl.spline());}
+bool check_invariants(const periodic_bspline<Point> &spl) {
+    return check_invariants(spl.spline());
+}
 
 }
 #endif

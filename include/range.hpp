@@ -1,5 +1,6 @@
 #ifndef ASTI_RANGE_HPP
 #define ASTI_RANGE_HPP
+#include <iterator>
 namespace util
 {
 
@@ -30,6 +31,23 @@ struct range
     operator[](int i) {return b[i];}
     IterT begin() const { return b; }
     IterT end() const { return e; }
+
+    IterT cbegin() const { return b; }
+    IterT cend() const { return e; }
+
+    std::reverse_iterator<IterT> rbegin() const {
+        return std::reverse_iterator<IterT>(e);
+    }
+    std::reverse_iterator<IterT> rend() const {
+        return std::reverse_iterator<IterT>(b);
+    }
+
+    typename std::iterator_traits < IterT >::value_type
+    front() const { return b[0] ; }
+
+    typename std::iterator_traits < IterT >::value_type
+    back() const { return e[-1] ; }
+
     size_t size() const { return std::distance(b, e);}
 private:
     IterT b, e;

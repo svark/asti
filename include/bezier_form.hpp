@@ -3,6 +3,8 @@
 #include <vector>
 #include "point_fwd.hpp"
 #include "bspline.hpp"
+#include "bspline_queries.hpp"
+
 namespace geom {
 
 // though the name says "bezier form" it is actually a bspline,  the key
@@ -25,6 +27,12 @@ struct bezier_form : public bspline < Point >
 
     bezier_form(base_t && b):base_t(std::forward < base_t > (b))
     {
+        check_invariants();
+    }
+    void check_invariants()
+    {
+        base_t::check_invariants();
+        assert(qry::is_bezier(*this));
     }
 };
 
