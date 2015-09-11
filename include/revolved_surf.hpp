@@ -7,6 +7,7 @@
 #include "bspline_fwd.hpp"
 #include "bspline_surface.hpp"
 #include "conic.hpp"
+#include "circle.hpp"
 namespace geom{
 
 namespace impl {

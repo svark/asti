@@ -5,6 +5,7 @@
 #include <math.h>
 #include "bspline_fwd.hpp"
 #include "spline_traits.hpp"
+#include "tol.hpp"
 /*
 
  */
