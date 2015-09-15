@@ -1,5 +1,8 @@
 #ifndef ASTI_LEGENDRE_FORM
 #define ASTI_LEGENDRE_FORM
+#include "type_utils.hpp"
+#include "point_fwd.hpp"
+
 namespace geom {
 
 template <class Point>
