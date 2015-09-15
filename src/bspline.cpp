@@ -121,14 +121,14 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
 template <class Point>
 bool bspline<Point>::check_invariants() const
 {
-    if(deg <= 0)
+    if(deg < 0)
         return false;
 
     if(t.size() != cpts.size()+deg+1) {
         return false;
     }
 
-    if(cpts.size() < 2) {
+    if(cpts.size() < 1) {
         return false;
     }
 

@@ -128,6 +128,22 @@ closest_point_on_line(const line<Point> &l,const Point& p)
     return p1;
 }
 
+
+template <class Point>
+double
+distance_from_point_to_line(const line<Point> &l,const Point& p)
+{
+	return len( closest_point_on_line(l,p) - p );
+}
+
+template <class Point>
+double
+distance_from_point_to_line_seg(const line_seg<Point> &ls,const Point& p)
+{
+	return std::min( std::min( distance_from_point_to_line(ls.getLine(), p), 
+		len(p - ls.start() ) ), len(p - ls.end() ));
+}
+
 extern point2d_t
 intersect_lines(const line<point2d_t>& l1,
                 const line<point2d_t>& l2);

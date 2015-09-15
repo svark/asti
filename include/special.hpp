@@ -1,6 +1,8 @@
 #ifndef ASTI_SPECIAL_HPP
 #define ASTI_SPECIAL_HPP
 #include <cfloat>
+#include "tol.hpp"
+#include <limits>
 
 namespace util {
 #ifdef _MSC_VER
@@ -15,6 +17,45 @@ inline double fprev(double a ) { return std::nextafter(a,a-1) ;}
 inline double fnext(double a ) { return std::nextafter(a,a+1) ;}
 inline double fprev(double a ) { return std::nextafter(a,a-1) ;}
 #endif
+
+inline
+double npow(double b, int e)
+{
+    double result = 1;
+    while(e > 0){
+        if((e & 1) == 1){
+            result *= b;
+        }
+        b*= b;
+        e = e>>1;
+    }
+    return result;
+}
+
+inline
+double nroot(double x, long n)
+{
+    if(tol::small(x) )
+        return 0.0;
+
+    if(tol::small(x - 1))
+        return 1;
+
+    if( x < 0 )
+        return std::numeric_limits<double>::quiet_NaN();
+
+    double result = x > 1 ? x/2 : 2*x;
+    long n1 = n - 1;
+    double delta = 0;
+    do
+    {
+        result += delta;
+        delta =  (x / npow(result,n1) - result);
+    }while( tol::small(delta));
+
+    return result;
+}
+
 }
 
 namespace std {
@@ -27,5 +68,6 @@ inline double fma(double x, double y, double a) {return x*y+a;}
 #endif
 #endif // _MSC_VER
 }
+
 
 #endif // ASTI_SPECIAL_HPP

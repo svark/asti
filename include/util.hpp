@@ -1,7 +1,5 @@
 #ifndef ASTI_UTIL_HPP
 #define ASTI_UTIL_HPP
-//#include <boost/util.hpp>
-//#include <list>
 #include <vector>
 #include <iterator>
 #include <functional>
@@ -92,12 +90,7 @@ std::vector<decltype(Fn()(A()))> fmap(Fn f, const std::vector<A, AllocT >& as) {
 
 using std::next;
 }
-#ifndef _MSC_VER
-namespace stdext{
-template<class ArrayT>
-ArrayT * make_checked_array_iterator(ArrayT * arr, int size) { return arr;}
-}
-#endif
+
 
 static const std::integral_constant<util::infix1,util::boundary_of> _on_;
 static const std::integral_constant<util::infix1,util::inside>      _in_;

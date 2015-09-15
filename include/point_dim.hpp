@@ -40,5 +40,6 @@ struct dec_dimension
     typedef decltype(lower_dim(std::declval<PointVec>())) type;
 };
 
+#define ENABLE_IF_DIM_IS_2(PointU) typename std::enable_if<point_dim < PointU >::dimension == 2, int>::type = 0
 }
 #endif // ASTI_POINT_DIM

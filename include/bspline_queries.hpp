@@ -199,6 +199,13 @@ double torsion_approx(const SplineType & spl, double u)
     return checked_op( & torsion<SplineType>, spl, u);
 }
 
+template <class SplineType>
+std::pair<double,double>
+param_range(const SplineType&spl)
+{
+    return spl.param_range();
+}
+
 }}
 
 #endif

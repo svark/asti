@@ -1,15 +1,13 @@
 #ifndef ASTI_CIRCLE_HPP
 #define ASTI_CIRCLE_HPP
 #include "point_dim.hpp"
-#include <type_traits>
 #include <math.h>
 #include "bspline_fwd.hpp"
 #include "spline_traits.hpp"
 #include "tol.hpp"
-/*
+#include "type_utils.hpp"
 
- */
-#include <algorithm>
+
 namespace geom{
 template <class Point>
 struct circle
@@ -18,18 +16,10 @@ struct circle
     typedef Point point_t;
     typedef decltype(make_vec(point_t())) vector_t;
 
-
-    template <class PointU>
-    struct allow_if_dim_2
-    {
-        typename std::enable_if< dim == 2 && point_dim < PointU > ::dimension ==2,
-                                 PointU const & >::type type;
-    };
-
     template <class PointU>
     circle(const PointU& center_,
            const PointU& point_,
-           RAWTYPE(make_vec(PointU())) const & ydir_)
+           VECTOR_TYPE(PointU) const & ydir_)
         :center(center_), start_pt(point_), ydir(ydir_)
     {
         auto x = start_pt - center;
@@ -41,11 +31,11 @@ struct circle
 
     template <class PointU>
     circle(const PointU& center_, const PointU & point_,
-           typename std::enable_if<point_dim < PointU >::dimension == 2, int>::type = 0)
+           ENABLE_IF_DIM_IS_2(PointU))
         :center(center_), start_pt(point_)
     {
         auto x = start_pt - center;
-        ydir = normalize( make_vec( - x[1], x[0]) ) * len(x);
+        ydir   = normalize( make_vec( - x[1], x[0]) ) * len(x);
     }
 
 

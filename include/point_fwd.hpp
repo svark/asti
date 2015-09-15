@@ -1,5 +1,5 @@
-#ifndef ASTI_POINT_DIM_HPP
-#define ASTI_POINT_DIM_HPP
+#ifndef ASTI_POINT_FWD_HPP
+#define ASTI_POINT_FWD_HPP
 #include <Eigen/Core>
 #include "type_utils.hpp"
 #include <vector>
@@ -168,6 +168,8 @@ inline void set_quiet_NaN(double &d);
 template <int dim>
 double plen(const pt_t<dim>& p);
 inline double plen(double p );
+
+#define VECTOR_TYPE(PointU) RAWTYPE(make_vec(PointU()))
 
 //}}}
 }
