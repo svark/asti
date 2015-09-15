@@ -1,6 +1,7 @@
 #ifndef ASTI_INTEGRATE1D_HPP
 #define ASTI_INTEGRATE1D_HPP
 #include <type_traits>
+#include <stdlib.h>
 /*
   gl[n_, x_] := Solve[LegendreP[n, x] == 0];
   gldash[n_, a] := D[LegendreP[n, x], x] /. x -> a;
