@@ -8,7 +8,10 @@ namespace geom
 template <class Point>
 class polyline : public bspline<Point>
 {
-    static
+using 
+    geom::bspline<Point>::cpts_t;
+
+static
     std::vector<double> compute_knots(const cpts_t &pts)
     {
         size_t num_pts = pts.size();
