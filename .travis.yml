@@ -24,4 +24,4 @@ script:
 cache:
   directories:
   - $HOME/.biicode
-
+sudo: false
