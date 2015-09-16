@@ -5,6 +5,8 @@ This is cagd library with the following functionality implemented so far
 - subdivide curve.
 - split splines to bezier segments.
 - extend splines.
+- trim splines
+- join splines
 - interpolate points to form splines (both periodic and regular) using pchip.
 - raise degree.
 - insert knots.
