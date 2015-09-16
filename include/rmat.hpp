@@ -78,33 +78,37 @@ struct rmat_base {
     size_t
     locate_nu(double u, size_t nu_guess) const;
 
-    template <class T>
-    void spline_compute(size_t nu, double u,
-                        int derOrder, T cache) const;
+    template <class PointIter>
+    bool eval(size_t nu, double u,
+              int derOrder, PointIter cache) const;
 
     //leaner implementation of get_basis
     std::pair<std::vector<double>,size_t> basis(double u);
 
     template <class KnotIterU, class PointIter>
-    void spline_compute(KnotIterU us, size_t nu, //location of us[0] in
-                                  //knot seq t
-                        PointIter cache) const;
+    void blossom_eval(KnotIterU us,
+                      size_t nu, //location of us[0] in
+                      //knot seq t
+                      PointIter cache) const;
+
+	template <class PointIter>
+	bool der_eval(size_t nu, int derOrder, PointIter cache) const;
 
 protected:
     KnotIter t,e;
     int deg;
 };
 
+
 template <class KnotIter>
 template <class PointIter>
-void
-rmat_base<KnotIter>::spline_compute(size_t nu,
-                                    double u,
-                                    int derOrder,
-                                    PointIter cache) const
+bool
+rmat_base<KnotIter>::der_eval(size_t nu,
+                              int derOrder,
+                              PointIter cache) const
 {
-    assert(t[nu] <= u || u < t[deg] );
     int size = deg;
+
     auto t_ =  t + nu;
     size_t fac = 1;
 
@@ -116,16 +120,36 @@ rmat_base<KnotIter>::spline_compute(size_t nu,
         fac *= sz;
         for(int j = 1; j <= sz; ++j) {
             double d = t_[j] - t_[j - sz];
-            if(d < tol::param_tol)
-            {
+            if(tol::small(d, tol::param_tol)) {
                 set_quiet_NaN(cache[0]);
-                return;
+                return false;
             }
 
             double lambda =  1 / d;
             cache[j - 1] = dlerp(lambda, cache[j - 1], cache[j]);
         }
     }
+    for(int i = 0 ; i <= size - derOrder; ++i)
+    {
+        cache[i] *= double(fac);
+    }
+    return true;
+}
+
+template <class KnotIter>
+template <class PointIter>
+bool
+rmat_base<KnotIter>::eval(size_t nu,
+                          double u,
+                          int derOrder,
+                          PointIter cache) const
+{
+    assert(t[nu] <= u || u < t[deg] );
+    int size = deg;
+    auto t_ =  t + nu;
+
+    if(!der_eval(nu,derOrder,cache))
+        return false;
 
     for(int sz = size - derOrder; sz > 0; --sz) {
         for(int j = 1; j <= sz; ++j) {
@@ -134,15 +158,15 @@ rmat_base<KnotIter>::spline_compute(size_t nu,
             cache[j - 1] = lerp(lambda, cache[j - 1], cache[j] );
         }
     }
-    cache[0] *= double(fac);
+    return true;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template <class KnotIter>
 template <class KnotIterU, class PointIter>
 void
-rmat_base<KnotIter>::spline_compute(
-    KnotIterU us,
-    size_t nu, //location of us[0] in knot seq t
+rmat_base<KnotIter>::blossom_eval( 
+    KnotIterU us,  // increasing array of d knots
+    size_t nu,     // location of us[0] in knot seq t
     PointIter cache) const
 {
     assert(t[nu] <= *us || *us < t[deg] );
@@ -151,8 +175,8 @@ rmat_base<KnotIter>::spline_compute(
     assert(nu >= size_t(size));
     for(int sz = size; sz > 0; --sz) {
         for(int j = 1; j <= sz; ++j) {
-            double r = t_[j] - t_[j - sz];
-            double lambda =  sdiv(us[sz-1]  - t_[j - sz], r);
+            double d = t_[j] - t_[j - sz];
+            double lambda =  sdiv(us[sz-1]  - t_[j - sz], d);
             cache[j - 1] = lerp(lambda, cache[j - 1], cache[j] );
         }
     }
@@ -207,7 +231,7 @@ struct rmat : public rmat_base_vd {
             for(int j = 0; j < size + 1; ++j)
                 cache[j] = control_pt(j + nu - size);
 
-            spline_compute(nu,* us, derOrder, cache.get());
+            eval(nu,* us, derOrder, cache.get());
 
             *out =  cache[0];
         }
@@ -228,7 +252,7 @@ struct rmat : public rmat_base_vd {
             for(int j = 0; j < size + 1; ++j)
                 cache[j] = control_pt(j + nu - size);
 
-            spline_compute(nu, u, i, cache.get());
+            rmat_base_vd::eval(nu, u, i, cache.get());
 
             *out = cache[0];
         }

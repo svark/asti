@@ -46,7 +46,7 @@ rmat_base<KnotIter>::der_n(size_t idx,
 #endif
 
     cache[idx - nu + size] = 1;
-    spline_compute(nu, u, derOrder, cache.get());
+    eval(nu, u, derOrder, cache.get());
 	return cache[0];
 }
 
@@ -232,7 +232,7 @@ rmat<Point>::eval_derivative(int derOrder, double u) const
     for(int j = 0; j < size + 1; ++j)
         cache[j] = control_pt(j + nu - size);
 
-    spline_compute(nu, u, derOrder, cache.get());
+    rmat_base_vd::eval(nu, u, derOrder, cache.get());
 
     return cache[0];
 }
@@ -255,7 +255,7 @@ rmat<Point>::insert_knots(const std::vector<double>& taus)
         for(int j = 0; j < size + 1; ++j)
             cache[j] = control_pt(j + nu - size);
 
-        spline_compute(taus.cbegin() + i, nu, cache.get());
+        blossom_eval(taus.cbegin() + i, nu, cache.get());
 
         newcontrol_pts.push_back(cache[0]);
     }

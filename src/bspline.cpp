@@ -113,7 +113,7 @@ Point bspline<Point>::blossom_eval(KnotIter f) const {
     for(int j = 0;j < p + 1; ++j) {
         cache[j] = cpts[nu - p + j];
     }
-    m.spline_compute(f, nu, cache.get());
+    m.blossom_eval(f, nu, cache.get());
     return cache[0];
 }
 

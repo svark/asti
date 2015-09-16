@@ -8,6 +8,7 @@
 #include <memory>
 #include "point_dim.hpp"
 #include "type_utils.hpp"
+#include "tol.hpp"
 
 namespace geom {
 
@@ -71,16 +72,22 @@ protected:
 template <class Point>
 bool operator==(const bspline<Point>& bs1, const bspline<Point>& bs2) {
 
-    bs1.swap(
-        reparametrize(extract_regular_curve(bs1), 0, 1).deoptimize());
-    bs2.swap(
-        reparametrize(extract_regular_curve(bs2), 0, 1).deoptimize());
+ 	if(bs1.degree() != bs2.degree())
+        return false;
+    
+	if(!std::equal(bs1.knots().cbegin(),bs1.knots().cend(),
+   	            	bs2.knots().cbegin() , tol::param_eq) )
+        return false;
 
-    if(!match_degrees(bs1, bs2))
+	auto cmp_pts = [](const Point& p1, const Point& p2) 
+	{ 
+	    return tol::small(sqlen(p1-p2), tol::sqresabs); 
+	};
+
+    if(!std::equal(bs1.control_points().cbegin(),bs1.control_points().cend(),
+   	               bs2.control_points().cbegin() , cmp_pts ))
         return false;
-    if(!match_knots(bs1, bs2))
-        return false;
-    return bs1.control_points() == bs2.control_points();
+	return true;
 }
 
 template <class Point>

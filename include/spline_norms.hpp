@@ -33,11 +33,11 @@ template <class SplineType>
 double two_norm_squared(const SplineType &spl, polynomial_tag)
 {
     int         n       = spl.degree() - 2;
-    auto       &ncis    = util::ncks(n);
-    auto       &_2ncis = util::ncks(2*n);
-    auto const &crvs    =
+    auto const  &ncis   = util::ncks(n);
+    auto const  &_2ncis = util::ncks(2*n);
+    auto const  &crvs   =
         ops::split_into_bezier_patches(
-            hodograph(qry::get_spline(spl),2));
+            qry::hodograph(qry::get_spline(spl),2));
 
     double _2norm = 0.0;
     for(auto c : crvs)
