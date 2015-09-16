@@ -63,7 +63,7 @@ double two_norm_squared(const SplineType &spl, polynomial_tag)
 template <class SplineType>
 double two_norm_squared(const SplineType &spl)
 {
-    return impl::two_norm_squared(spl, spline_traits<SplineType>::rtag());
+    return impl::two_norm_squared(spl, typename spline_traits<SplineType>::rtag());
 }
 
 }
