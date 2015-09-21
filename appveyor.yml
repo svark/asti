@@ -8,18 +8,15 @@ install:
 
     $FileExists = Test-Path $ChkFile
 
-    if ($FileExists -eq $True) { Write-Host "Yippee, bii-win exists"}
-
-    else {
+    if ($FileExists -eq $True) {
+       Write-Host "Yippee, bii-win exists"
+    }else {
+         echo "downloading biicode ..."
          wget http://www.biicode.com/downloads/latest/win -OutFile $ChkFile
     }
 
-    echo "Installing biicode"
-
-    C:\Projects\libs\bii-win.exe /VERYSILENT
-
-    ls "C:\Program Files (x86)\BiiCode\bii"
-
+- cmd: echo Installing biicode..
+- cmd: C:\Projects\libs\bii-win.exe /VERYSILENT
 - cmd: set PATH=%PATH%;"C:\Program Files (x86)\BiiCode\bii"
 - cmd: set project_name=xasti
 - cmd: bii -v
