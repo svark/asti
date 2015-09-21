@@ -18,9 +18,9 @@ install:
 
     C:\Projects\libs\bii-win.exe /VERYSILENT
 
-    ls C:\Program Files (x86)\BiiCode\bii
+    ls C:\Progra~2\BiiCode\bii
 
-- cmd: set PATH=%PATH%;C:\Program Files (x86)\BiiCode\bii
+- cmd: set PATH=%PATH%;C:\Progra~2\BiiCode\bii
 - cmd: set project_name=xasti
 - cmd: bii -v
 - ps: >-
