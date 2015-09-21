@@ -17,7 +17,7 @@ install:
 
 - cmd: echo Installing biicode..
 - cmd: C:\Projects\libs\bii-win.exe /VERYSILENT
-- cmd: set PATH=%PATH%;"C:\Program Files (x86)\BiiCode\bii"
+- cmd: set PATH=%PATH%;C:\Progra~2\BiiCode\bii\
 - cmd: set project_name=xasti
 - cmd: bii -v
 - ps: >-
@@ -30,16 +30,16 @@ install:
 
 cache:
   - C:\Projects\libs\bii-win.zip
-  - C:\Projects\libs\boost_1_57_0.zip
+  - c:\users\appveyor\.biicode\tmp\boost\1.57.0\boost_1_57_0.zip
 before_build:
 - cmd: cd \
 - cmd: bii init %project_name%
 - cmd: cd %project_name%
 - cmd: bii new svark/asti
 # copy files and folders
-- cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\svark\asti\ /s
+- cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\svark\asti\ /S /Q
 - cmd: bii find --update
-#- cmd: xcopy C:\Projects\libs\boost_1_57_0.zip c:\users\appveyor\.biicode\tmp\boost\1.57.0\
+- cmd: xcopy C:\Projects\libs\boost_1_57_0.zip c:\users\appveyor\.biicode\tmp\boost\1.57.0\
 - cmd: bii cpp:configure -G "Visual Studio 12"
 build_script:
 - cmd: bii cpp:build
