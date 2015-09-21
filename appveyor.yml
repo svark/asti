@@ -1,38 +1,39 @@
 version: 1.0.{build}
 install:
-- cmd: if not exist C:\Projects\libs mkdir c:\Projects\libs
+- cmd: if not exist C:\Projects\libs (mkdir c:\Projects\libs)
 - echo %CD%
-- ps >-
-       $ChkFile = "C:\Projects\libs\cmake.zip"
-       $FileExists = Test-Path $ChkFile
-       If ($FileExists -eq $True) { Write-Host "Yippee, cmake exists"}
-       Else {
-            wget https://s3.amazonaws.com/biibinaries/thirdparty/cmake-3.0.2-win32-x86.zip -OutFile $ChkFile
-       }
-       echo "Unzipping cmake..."
-       7z x C:\Projects\libs\cmake.zip -o"C:\Program Files (x86)\" -y > nul
-- cmd: set PATH=%PATH:CMake 2.8\bin=%;C:\Program Files (x86)\cmake-3.0.2-win32-x86\bin
 - cmd: cmake --version
-- ps >-
+- ps: >-
     $ChkFile = "C:\Projects\libs\bii-win.exe"
+
     $FileExists = Test-Path $ChkFile
-    If ($FileExists -eq $True) { Write-Host "Yippee, bii-win exists"}
-    Else { wget http://www.biicode.com/downloads/latest/win -OutFile $ChkFile }
+
+    if ($FileExists -eq $True) { Write-Host "Yippee, bii-win exists"}
+
+    else {
+         wget http://www.biicode.com/downloads/latest/win -OutFile $ChkFile
+    }
+
     echo "Installing biicode"
+
     $ChkFile /VERYSILENT
+
 - cmd: set PATH=%PATH%;C:\Program Files (x86)\BiiCode\bii
 - cmd: set project_name=xasti
 - cmd: bii -v
-- ps >-
+- ps: >-
    $ChkFile = "C:\Projects\libs\boost_1_57_0.zip"
+
    if (!(Test-Path $ChkFile)) {
           echo "Downloading Boost 1.57.0 ..."
           wget "http://iweb.dl.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.zip" -OutFile $ChkFile
    }
+
    mkdir %USERPROFILE%\.biicode\tmp\boost\1.57.0
+
    Copy-Item $ChkFile %USERPROFILE%\.biicode\tmp\boost\1.57.0\
+
 cache:
-  - C:\Projects\libs\cmake.zip
   - C:\Projects\libs\bii-win.zip
   - C:\Projects\libs\boost.zip
 before_build:
