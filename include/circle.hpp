@@ -14,7 +14,7 @@ struct circle
 {
     enum {dim = point_dim<Point>::dimension};
     typedef Point point_t;
-    typedef decltype(make_vec(point_t())) vector_t;
+    typedef VECTOR_TYPE(point_t) vector_t;
 
     template <class PointU>
     circle(const PointU& center_,

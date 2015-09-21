@@ -193,7 +193,7 @@ struct rmat_base_vd: rmat_base < std::vector<double>::const_iterator >
 template<class Point>
 struct rmat : public rmat_base_vd {
     typedef Point point_t;
-    typedef decltype(mk_stdvec(point_t())) cpts_t;
+	typedef ARRAY_TYPE(point_t) cpts_t;
 
     rmat(const cpts_t& cpts_,const knots_t& t,int deg)
         : rmat_base_vd(t, deg), cpts(cpts_)

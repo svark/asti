@@ -19,8 +19,8 @@ struct bspline {
     typedef decltype(make_vec(point_t()))  vector_t;
     enum {dimension = point_dim<point_t>::dimension};
 
-    typedef decltype(mk_stdvec(point_t()))  cpts_t;
-    typedef decltype(mk_stdvec(vector_t())) vcpts_t;
+	typedef ARRAY_TYPE(point_t)  cpts_t;
+    typedef ARRAY_TYPE(vector_t) vcpts_t;
 
     typedef std::vector<double> knots_t;
 

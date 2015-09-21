@@ -10,7 +10,7 @@ template <class Point>
 struct line
 {
     typedef Point point_t;
-    typedef decltype(make_vec(Point())) vector_t;
+    typedef VECTOR_TYPE(Point) vector_t;
 
     line(const point_t& p1,
          const vector_t& v)

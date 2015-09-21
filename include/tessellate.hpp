@@ -28,7 +28,7 @@ tessellate(const SplineCurve& crv, double epsilon)
     delta = width/num_segs;
 
     typedef typename spline_traits<SplineCurve>::point_t Point;
-    decltype(mk_stdvec(Point())) crvpts(num_segs+1);
+	ARRAY_TYPE(Point) crvpts(num_segs+1);
 #pragma loop(hint_parallel(8))
     for(long i = 0 ; i <= num_segs;++i)
     {

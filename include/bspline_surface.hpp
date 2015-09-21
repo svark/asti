@@ -36,7 +36,7 @@ public:
     typedef typename get_traits_type_from_tags<ptagu, rtag, Point>::type spl_traits;
 
     typedef Point point_t;
-    typedef RAWTYPE(make_vec(point_t())) vec_t;
+    typedef VECTOR_TYPE(point_t) vec_t;
 
     typedef typename spl_traits::spline_type spl_t;
 

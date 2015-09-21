@@ -169,8 +169,10 @@ template <int dim>
 double plen(const pt_t<dim>& p);
 inline double plen(double p );
 
-#define VECTOR_TYPE(PointU) RAWTYPE(make_vec(PointU()))
 
 //}}}
 }
+
+#define VECTOR_TYPE(PointU) RAWTYPE(geom::make_vec(PointU()))
+#define ARRAY_TYPE(PointU) RAWTYPE(geom::mk_stdvec(PointU()))
 #endif

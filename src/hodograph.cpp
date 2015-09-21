@@ -14,7 +14,7 @@ bspline<Point> qry::hodograph(const bspline<Point>& spl,int num_der)
     int d = spl.degree();
 	auto const &ts = spl.knots();
 
-	RAWTYPE(mk_stdvec(Point())) hodo_cpts(cpts.size());
+	ARRAY_TYPE(Point) hodo_cpts(cpts.size());
 
     rmat<Point>  mat(cpts, ts, d);
 	auto hodo_cpts_iter = hodo_cpts.begin();

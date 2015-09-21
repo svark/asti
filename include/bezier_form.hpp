@@ -7,14 +7,12 @@
 
 namespace geom {
 
-// though the name says "bezier form" it is actually a bspline,  the key
-// difference being that outside the iterval of definition the values
-// returned by eval function are zero.
+// though the name says "bezier form" it is actually a bspline
 template <class Point>
 struct bezier_form : public bspline < Point >
 {
     typedef bspline<Point> base_t;
-    bezier_form(RAWTYPE(mk_stdvec(Point(0.0))) c,
+	bezier_form(ARRAY_TYPE(Point) c,
                 double a = 0,  double b =  1.0):
         base_t(std::move(c),
                std::vector<double>(2 * c.size()),
@@ -29,7 +27,8 @@ struct bezier_form : public bspline < Point >
     {
         check_invariants();
     }
-    void check_invariants()
+    
+	void check_invariants()
     {
         base_t::check_invariants();
         assert(qry::is_bezier(*this));
