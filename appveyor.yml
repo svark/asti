@@ -29,7 +29,7 @@ install:
    }
 
 cache:
-  - C:\Projects\libs\bii-win.zip
+  - C:\Projects\libs\bii-win.exe
   - c:\users\appveyor\.biicode\tmp\boost\1.57.0\boost_1_57_0.zip
 before_build:
 - cmd: cd \
