@@ -30,7 +30,7 @@ install:
 
 cache:
   - C:\Projects\libs\bii-win.zip
-  - C:\Projects\libs\boost.zip
+  - C:\Projects\libs\boost_1_57_0.zip
 before_build:
 - cmd: cd \
 - cmd: bii init %project_name%
@@ -39,7 +39,7 @@ before_build:
 # copy files and folders
 - cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\svark\asti\ /s
 - cmd: bii find --update
-- cmd: xcopy C:\Projects\libs\boost_1_57_0.zip c:\users\appveyor\.biicode\tmp\boost\1.57.0\
+#- cmd: xcopy C:\Projects\libs\boost_1_57_0.zip c:\users\appveyor\.biicode\tmp\boost\1.57.0\
 - cmd: bii cpp:configure -G "Visual Studio 12"
 build_script:
 - cmd: bii cpp:build
