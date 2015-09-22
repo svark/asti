@@ -20,9 +20,8 @@ tessellate(const SplineCurve& crv, double epsilon)
 
 	double twonrm =  two_norm_squared(crv);
 
-    double delta =
-        util::nroot( 24.0 * epsilon * epsilon * width
-                     / twonrm, 5 );
+    double delta =  util::nroot( 24.0 * epsilon * epsilon * width
+                    / twonrm, 5 );
 
     long num_segs = long (ceil(width/delta) );
     delta = width/num_segs;
