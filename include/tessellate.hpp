@@ -18,7 +18,7 @@ tessellate(const SplineCurve& crv, double epsilon)
     width -= qry::param_range(crv).first;
     assert(width > 0 );
 
-	double twonrm =  two_norm_squared(crv);
+    double twonrm =  two_norm_squared(crv);
 
     double delta =  util::nroot( 24.0 * epsilon * epsilon * width
                     / twonrm, 5 );
