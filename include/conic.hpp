@@ -87,13 +87,13 @@ struct conic_arc {
     {
         // returns Q1, S, R1
         auto w = p[1][dim];
-        auto q1 = lerp(0.5, p[0], p[1]);
-        auto r1 = lerp(0.5, p[2], p[1]);
-        auto s = lerp(0.5, q1, r1);
+		RAWTYPE(p[0]) q1 = lerp(0.5, p[0], p[1]);
+        RAWTYPE(p[0]) r1 = lerp(0.5, p[2], p[1]);
+        RAWTYPE(p[0]) s = lerp(0.5, q1, r1);
         s *= 1/s[dim];
         q1 *= sqrt((1 + w) / 2)/q1[dim];
         r1 *= sqrt((1 + w) / 2)/r1[dim];
-        return std::make_tuple( q1, s, r1);
+		return std::forward_as_tuple( q1, s, r1);
     }
     bool invariants() const
     {
@@ -199,8 +199,8 @@ make_circular_arc(const Point p[3])
     if(dot(p[1] - p[0], v) < 0 )
         v.negate();
 
-    vector3d_t tgts[] = { sin(theta) * v  + cos(theta) * w,
-                         -sin(theta) * v  + cos(theta) * w };
+	VECTOR_TYPE(Point) tgts[] = { sin(theta) * v  + cos(theta) * w,
+                                 -sin(theta) * v  + cos(theta) * w };
     return make_conic_arc(p,tgts);
 }
 

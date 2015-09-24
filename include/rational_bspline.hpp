@@ -29,8 +29,8 @@ auto rational_derivatives(const VecsT & vecs)
         for(int j = i - 1;j >= 1; --j)
             bbasis[j] = bbasis[j] + bbasis[j - 1];
         bbasis[i] = 1;
-        auto vec =  vecs[i];
-        auto vd(lower_dim(vec));
+        auto const &vec =  vecs[i];
+        decltype(lower_dim(vec)) vd = lower_dim(vec);
         auto w = vec[dim];
         ws.push_back(w);
         for(int j = 1; j <= i; ++j)  {
