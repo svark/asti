@@ -75,9 +75,9 @@ TEST_CASE("circle", "[circle][2d]"){
     REQUIRE(c.eval(2 * M_PI) ==  make_pt(0, 1));
 
     auto ac = geom::make_circle( geom::make_pt(0,1.0), geom::make_pt(1,0), geom::make_pt(-1,0));
-    REQUIRE( c.getCenter() == ac.getCenter());
-    REQUIRE( c.getRadius() == Approx(ac.getRadius()));
-    REQUIRE( len (c.getPlaneNormal()  + ac.getPlaneNormal() ) == Approx(0));
+    REQUIRE( c.center() == ac.center());
+    REQUIRE( c.radius() == Approx(ac.radius()));
+    REQUIRE( len (c.plane_normal()  + ac.plane_normal() ) == Approx(0));
 
     auto const & rbsc = geom::make_rbspline_from_circle( c );
     REQUIRE(rbsc.eval(0 ) == make_pt(0, 1));

@@ -385,8 +385,7 @@ pchip_open(PointIter pb, PointIter pe,
            const ParamsT& params, const VecsT& tgts)
     -> bspline<RAWTYPE(pb[0])>
 {
-    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
-    typedef RAWTYPE(pb[0]) point_t;
+
     size_t n = std::distance(pb,pe);
     RAWTYPE(mk_stdvec(pb[0])) cpts(2*n);
     std::vector<double> knots( 2* n + 4);
@@ -419,37 +418,27 @@ pchip_closed(PointIter pb, PointIter pe,
              const VecsT& tgts
     ) -> periodic_bspline<RAWTYPE(pb[0]) >
 {
-    static const int dim = point_dim<RAWTYPE(pb[0])>::dimension;
-    typedef RAWTYPE(pb[0]) point_t;
     size_t n = std::distance(pb,pe);
     RAWTYPE(mk_stdvec(pb[0])) cpts(2*n);
-    std::vector<double> knots( 2* n + 4);
-//pg 180,188 hoschek
-    cpts[0] = pb[0] - 1.0/3 * tgts[0] *  E(params,n-2) ;
+    std::vector<double> knots(2*n + 4);
+//pg 180,188 hoschek, sisl s1379
 
-    cpts[1] = pb[0] + 1.0/3 * tgts[0] *  E(params, 0) ;
+    knots[0] = knots[1] = params[0] - E(params, n-2);
 
-    knots[0] = knots[1] = params[0] -  E(params,n-2);
-    knots[2] = knots[3] = params[0];
-
-    for( size_t i = 1; i < n - 1 ; ++i) {
-        cpts[2*i] = pb[i] - 1.0/3 * tgts[i] *  E(params,(i-1)) ;
-
-        cpts[2*i+1] = pb[i] + 1.0/3 * tgts[i] *  E(params,i) ;
-
-        knots[2*i+2] = knots[2*i+3] = params[i];
+    for(size_t i = 0; i < n; ++i) {
+        knots[2*i + 2]  = knots[2*i + 3] = params[i];
     }
 
-    cpts[2*n-2] = pb[n-1] - 1.0/3 * tgts[n-1] * E(params,n-2);
-    cpts[2*n-1] = pb[n-1] + 1.0/3 * tgts[n-1] * E(params, 0 );
+    knots[2*n + 2]  = knots[2*n + 3] = params[n-1] + E(params,0);
 
-    auto cp = cpts[0] - pb[n-1] + 1.0/3 * tgts[n-1] * E(params,0);
-    assert(tol::eq(sqlen(cp),0));
-
-    knots[2*n] = knots[2*n+1] = params[n-1];
-    knots[2*n+2] = knots[2*n+3] = params[n-1] + E(params,0);
-    assert( pb[n-1] == pb[0]);
-    return  make_periodic_bspline( make_bspline( std::move(cpts), std::move(knots ), 3) );
+    for(size_t i = 0; i < n; ++i) {
+        cpts[2*i]   = pb[i] -  tgts[i] * (E(knots, 2*i + 1, 2) / 3.0);
+        cpts[2*i+1] = pb[i] +  tgts[i] * (E(knots, 2*i + 2, 2) / 3.0);
+    }
+    assert(tol::pt_eq(pb[n-1], pb[0]));
+	assert(tol::pt_eq(tgts[n-1], tgts[0]) );
+    return  make_periodic_bspline(std::move(cpts),
+                                  std::move(knots ), 3) ;
 }
 
 
@@ -492,7 +481,7 @@ auto piecewise_cubic_hermite_interp_periodic
     eval_tangents_for_pchip(
         pb,pe,params.begin(),params.end(),tgts,
         std::integral_constant<end_conditions_t,periodic>());
-	return pchip_closed(pb,pe,params,tgts) ;
+    return pchip_closed(pb,pe,params,tgts) ;
 }
 
 template <class PointIter, class VecsT>
@@ -588,7 +577,7 @@ piecewise_cubic_hermite_interp
 {
     pchip_preconditions(pb,pe,opts,vecs);
 
-    if(opts.end_conditions != periodic) 
+    if(opts.end_conditions != periodic)
        return piecewise_cubic_hermite_interp_regular(pb, pe, opts,
                                                      vecs);
 	return piecewise_cubic_hermite_interp_periodic(pb, pe, opts,

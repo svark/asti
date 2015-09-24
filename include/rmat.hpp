@@ -26,15 +26,16 @@ struct rmat_base {
     double front() const {  return  t[0]; } ;
     double back() const { return   e[-1] ;};
 
-    size_t start_mult() ;
-    size_t end_mult();
-    size_t mult(double u);
+    int start_mult() ;
+    int end_mult();
+    int mult(double u);
 
     void swap(rmat_base&o)
     {
-        std::swap(t,o.t);
-        std::swap(e,o.e);
-        std::swap(deg,o.deg);
+        using std::swap;
+        swap(t,o.t);
+        swap(e,o.e);
+        swap(deg,o.deg);
     }
     // degree of the basis polynomials
     int

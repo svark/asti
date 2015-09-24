@@ -1,5 +1,6 @@
 #pragma once
 #include "bspline.hpp"
+#include <vector>
 namespace geom {
 namespace ops {
 
