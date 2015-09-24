@@ -166,7 +166,7 @@ bool bspline<Point>::check_invariants() const
 */
 
 namespace geom {
-template <class Point> struct bspline;
+template <class Point> class bspline;
 #include "bspline_inst.inl"
 }
 //}}}

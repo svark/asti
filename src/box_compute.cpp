@@ -29,15 +29,16 @@ ops::compute_box(const circle<Point> &c)
         Point p(0.0);
         p[i] = 1.0;
 
-        vector_t ext_vec = cross (c.getPlaneNormal() ,
-                                  decltype( c.getPlaneNormal()  )( make_vec(p)) );
+        typedef decltype( c.plane_normal()  ) normal_t;
+        vector_t ext_vec = cross (c.plane_normal() ,
+                                  normal_t( make_vec(p)) );
 
         if(tol::small(len(ext_vec)))
             continue;
 
-        auto v = c.getRadius() * normalize(ext_vec);
-        b0 += (c.getCenter() + v);
-        b0 += (c.getCenter() - v);
+        auto v = c.radius() * normalize(ext_vec);
+        b0 += (c.center() + v);
+        b0 += (c.center() - v);
     }
     return b0;
 }

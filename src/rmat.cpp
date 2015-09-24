@@ -123,9 +123,9 @@ rmat_base<KnotIter>::basis(double u)
 }
 
 template<class KnotIter>
-size_t rmat_base<KnotIter>::start_mult() {
+int rmat_base<KnotIter>::start_mult() {
     double u = front();
-    size_t mult = 0;
+    int mult = 0;
     for(auto v : util::mk_range(t, e))
     {
         if(tol::param_eq(u, v))
@@ -137,9 +137,9 @@ size_t rmat_base<KnotIter>::start_mult() {
 }
 
 template<class KnotIter>
-size_t rmat_base<KnotIter>::end_mult() {
+int rmat_base<KnotIter>::end_mult() {
     double u =  back();
-    size_t mult = 0;
+    int mult = 0;
     for(auto v : util::mk_rrange(t, e) )
     {
         if(tol::param_eq(u, v))
@@ -151,7 +151,7 @@ size_t rmat_base<KnotIter>::end_mult() {
 }
 
 template<class KnotIter>
-size_t
+int
 rmat_base<KnotIter>::mult(double u) {
 
     if(tol::param_eq(u , back() ))
@@ -171,7 +171,7 @@ rmat_base<KnotIter>::mult(double u) {
     if(!tol::param_eq(u,t[nu]))
         return 0;
 
-    size_t mult = 0;
+    int mult = 0;
     for( auto v : util::mk_rrange(t+nu-deg, t+nu+1) )
     {
         if(tol::param_eq(u, v))

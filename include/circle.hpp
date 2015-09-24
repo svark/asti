@@ -1,7 +1,7 @@
 #ifndef ASTI_CIRCLE_HPP
 #define ASTI_CIRCLE_HPP
 #include "point_dim.hpp"
-#include <math.h>
+#include <math.h> //sin and cos
 #include "bspline_fwd.hpp"
 #include "spline_traits.hpp"
 #include "tol.hpp"
@@ -10,8 +10,9 @@
 
 namespace geom{
 template <class Point>
-struct circle
+class circle
 {
+public:
     enum {dim = point_dim<Point>::dimension};
     typedef Point point_t;
     typedef VECTOR_TYPE(point_t) vector_t;
@@ -20,37 +21,36 @@ struct circle
     circle(const PointU& center_,
            const PointU& point_,
            VECTOR_TYPE(PointU) const & ydir_)
-        :center(center_), start_pt(point_), ydir(ydir_)
+        :origin(center_), px(point_), y(ydir_)
     {
-        auto x = start_pt - center;
+        auto x = px - origin;
         assert(tol::not_small(len(x)));
-        ydir -= x*dot((start_pt-center),ydir)/len(x);
-        ydir = normalize(ydir) * len(x);
+        y -= x*dot(x,y)/len(x);
+        y = normalize(y) * len(x);
+        assert(check_invariants());
     }
 
 
     template <class PointU>
     circle(const PointU& center_, const PointU & point_,
            ENABLE_IF_DIM_IS_2(PointU))
-        :center(center_), start_pt(point_)
+        :origin(center_), px(point_)
     {
-        auto x = start_pt - center;
-        ydir   = normalize( make_vec( - x[1], x[0]) ) * len(x);
+        auto x = px - origin;
+        assert(tol::not_small(len(x)));
+        y   = normalize( make_vec( - x[1], x[0]) ) * len(x);
     }
 
 
-    //  (@file :file-name "media/circle2.png" :to "./media/circle2.png" :display "eval at param")
     point_t eval(double u) const
     {
-        auto x = (start_pt - center);
-        auto y = ydir;
-        return center + x * cos(u) + y * sin(u);
+        auto x = (px - origin);
+        return center() + x * cos(u) + y * sin(u);
     }
 
     vector_t tangent(double u) const
     {
-        auto x = (start_pt - center);
-        auto y = ydir;
+        auto x = (px - origin);
         return  - x * sin(u) + y * cos(u);
     }
 
@@ -59,37 +59,36 @@ struct circle
         return eval(u) - center;
     }
     // accessors
-    point_t  getCenter() const
-    {
-        return center;
-    }
-
-    point_t getStart() const
-    {
-        return start_pt;
-    }
 
     decltype(cross(vector_t(),vector_t()))
-    getPlaneNormal() const
+    plane_normal() const
     {
-        auto const &x = (start_pt - center);
-        auto const &y = ydir;
+        auto const &x = (px - origin);
         return  normalize( cross(x,y) );
     }
 
-    vector_t getYDir() const
+    vector_t ydir() const
     {
-        return ydir;
+        return y;
     }
 
-    double getRadius() const
+    double radius() const
     {
-        return len(start_pt - center);
+        return len(px - center());
+    }
+
+    point_t start() const { return px; }
+
+    point_t center() const { return origin; }
+
+    bool check_invariants() {
+        if(tol::pt_eq(px,origin)) return false;
+        return tol::small(dot(px - origin , y)) ;
     }
 private:
-    point_t  center;
-    point_t  start_pt;
-    vector_t ydir;
+    point_t  origin;
+    point_t  px;
+    vector_t y;//cached y direction
 };
 
 

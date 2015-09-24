@@ -140,6 +140,7 @@ struct tag_switcher
           typedef typename spline_traits<SplineCurve>::point_t pref_t;
 
          return SplineCurve(
+			 BSplineType(
              std::move(nc),
               [&deg](cref_t pb,
                      cref_t pe,
@@ -154,7 +155,7 @@ struct tag_switcher
                      auto const &b = *q;
                      *p = *q = lerp(0.5,a,b);
                  }
-              });
+              }) );
       };
       typedef typename spline_traits<SplineCurve>::ptag ptag;
       return tag_switcher::eval(tweak_ends_reg,tweak_ends_per,

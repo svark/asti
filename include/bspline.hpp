@@ -13,13 +13,13 @@
 namespace geom {
 
 template <class Point>
-struct bspline {
-
+class bspline {
+public:
     typedef Point   point_t;
-    typedef decltype(make_vec(point_t()))  vector_t;
+    typedef VECTOR_TYPE(Point)  vector_t;
     enum {dimension = point_dim<point_t>::dimension};
 
-	typedef ARRAY_TYPE(point_t)  cpts_t;
+    typedef ARRAY_TYPE(point_t)  cpts_t;
     typedef ARRAY_TYPE(vector_t) vcpts_t;
 
     typedef std::vector<double> knots_t;
@@ -72,22 +72,17 @@ protected:
 template <class Point>
 bool operator==(const bspline<Point>& bs1, const bspline<Point>& bs2) {
 
- 	if(bs1.degree() != bs2.degree())
-        return false;
-    
-	if(!std::equal(bs1.knots().cbegin(),bs1.knots().cend(),
-   	            	bs2.knots().cbegin() , tol::param_eq) )
+    if(bs1.degree() != bs2.degree())
         return false;
 
-	auto cmp_pts = [](const Point& p1, const Point& p2) 
-	{ 
-	    return tol::small(sqlen(p1-p2), tol::sqresabs); 
-	};
+    if(!std::equal(bs1.knots().cbegin(),bs1.knots().cend(),
+                    bs2.knots().cbegin() , tol::param_eq) )
+        return false;
 
     if(!std::equal(bs1.control_points().cbegin(),bs1.control_points().cend(),
-   	               bs2.control_points().cbegin() , cmp_pts ))
+                   bs2.control_points().cbegin() , tol::pt_eq<Point> ))
         return false;
-	return true;
+    return true;
 }
 
 template <class Point>

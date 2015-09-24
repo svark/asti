@@ -138,7 +138,7 @@ find_param(point2d_t const & p,
         auto const &mf = ops::to_monomial(bp);
         auto q =  find_param(p, mf);
         if(q.second && q.first <= mf.end_param()) {
-            if(tol::eq(len(c.eval(q.first) - p),0))
+            if(tol::small(len(c.eval(q.first) - p)))
                 return q;
         }
     }

@@ -54,7 +54,7 @@ rational_bspline<Point,PTag>::blossom_eval(KnotIter us) const
 #include "skip_idx_iter.hpp"
 #include "bspline.hpp"
 #include "periodic_bspline.hpp"
-template <class Point,class PTag> struct rational_bspline;
+template <class Point,class PTag> class rational_bspline;
 /*
   Local Variables:
   eval:(load-file "./scripts/temp.el")

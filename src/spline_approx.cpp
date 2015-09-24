@@ -1,6 +1,6 @@
 //-*- mode:c++ -*-
+#include "spline_approx.hpp"
 #include <vector>
-
 #include <boost/math/tools/roots.hpp>
 #include <boost/math/tools/tuple.hpp>
 
@@ -11,7 +11,6 @@
 #include "rmat.hpp"
 #include "geom_exception.hpp"
 #include <random>
-#include "spline_approx.hpp"
 #include "bspline_cons.hpp"
 #include "spline_traits.hpp"
 #include "point.hpp"
@@ -199,12 +198,14 @@ ops::foot_param(const SplineType &spl,
     namespace m = boost::math;
     auto fn = [&p, &spl]
         (double u) {
-        auto v         =  spl.eval(u) - p;
-        auto vdash     =  spl.eval_derivative(1, u);
-        auto vdashdash =  spl.eval_derivative(2, u);
+        auto vdashes     =  spl.eval_derivatives(3, u);
+
+        auto const& v = make_pt(vdashes[0]) - p;  auto const&vdashdash = vdashes[2];
+        auto const& vdash = vdashes[1];  auto const&vdashdashdash = vdashes[3];
+
         return m::make_tuple(dot(v, vdash),
                              dot(v, vdashdash ) + dot(vdash, vdash),
-                             3*dot(vdash, vdashdash)
+                             dot(v, vdashdashdash) + 3*dot(vdash, vdashdash)
             );
     };
 
@@ -228,8 +229,9 @@ ops::foot_param(const SplineType &spl,
     double minu    = t.front();
     double min     = minu;
 
+    const size_t digits_ = 2 *std::numeric_limits<double>::digits/3;
+
     for(;rootQ.second;) {
-        const size_t digits_ = 2 *std::numeric_limits<double>::digits/3;
 
         double guess = rootQ.first;
 

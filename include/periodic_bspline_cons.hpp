@@ -10,8 +10,8 @@ namespace geom {
 
 template <class CptsT, class KnotsT>
 std::tuple<CptsT,std::vector<double>, int>
-wrap_spline_params( const CptsT& pts,
-                    const KnotsT& ks,
+wrap_spline_params( CptsT pts,
+                    KnotsT ks,
                     int degree)
 {
     assert(degree >= 1);
@@ -22,14 +22,16 @@ wrap_spline_params( const CptsT& pts,
     // depends on cpt_\mu-d..\cpt_\mu
     size_t sz = ks.size() - 1;
     cpts.assign(pts.cbegin() + sz - degree, pts.cbegin() + sz);
-    std::copy(pts.cbegin(), pts.cbegin() + sz,std::back_inserter(cpts));
+
+    auto b = std::make_move_iterator(pts.begin());
+    cpts.insert(cpts.end(), b, b + sz);
 
 
     // within the range, t_\mu, t_{\mu+1} the spline evaluation
     // depends on t_{\mu-d+1}.....t_\mu,t_{\mu+1},....t_{\mu+d}
     // (check the R_d matrix)
 
-    // ./media/rmatrix.png
+    // ../src/media/rmatrix.png
 
     // at \mu = 0, we need to ensure that t_{\mu-d+1} and
     // accessible, so d-1 extra knots are prefixed here at \mu =
@@ -52,7 +54,7 @@ wrap_spline_params( const CptsT& pts,
     endDiffs[0] = ks.front();   //change the start of backwardly
     //oriented end diffs to ks_0
 
-    //  ./media/periodic.png
+    //  ../src/media/periodic.png
 
     std::vector<double> back_plus(startDiffs.size()),
         front_minus(endDiffs.size());
@@ -75,18 +77,26 @@ wrap_spline_params( const CptsT& pts,
     return std::make_tuple(std::move(cpts),std::move(t),degree);
 }
 
+template <class Point>
+periodic_bspline<Point>
+make_periodic_bspline( bspline<Point>&& spl)
+{
+    return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
+}
+
 template <class CptsT, class KnotsT>
 auto
 make_periodic_bspline_wrap(
-    const CptsT& pts,
-    const KnotsT& ks,
+    CptsT pts,
+    KnotsT ks,
     int degree_)
     ->periodic_bspline <RAWTYPE(pts[0]) >
 {
 
-    typedef RAWTYPE(pts[0]) point_t;
-    return periodic_bspline < point_t >( std::move( make_bspline
-                                                    (wrap_spline_params(pts, ks, degree_)) ));
+    return make_periodic_bspline(
+        make_bspline
+        (wrap_spline_params(std::move(pts),
+                            std::move(ks), degree_)) );
 }
 
 template <class CptsT, class KnotsT>
@@ -95,19 +105,12 @@ make_periodic_bspline (CptsT  pts,
                        KnotsT ks, int degree_)
     ->periodic_bspline <RAWTYPE(pts[0]) >
 {
-    typedef RAWTYPE(pts[0]) point_t;
-    return periodic_bspline < point_t >( std::move( make_bspline (std::forward < CptsT > (pts),
-                                                                  std::forward < KnotsT > (ks),
-                                                                  degree_) ));
+    return make_periodic_bspline(
+        make_bspline (std::forward < CptsT > (pts),
+                      std::forward < KnotsT > (ks),
+                      degree_) );
 }
 
-template <class Point>
-periodic_bspline<Point>
-make_periodic_bspline( bspline<Point>&& spl)
-{
-    assert(qry::is_periodic(spl));
-    return periodic_bspline<Point>(std::forward<bspline<Point>>(spl));
-}
 
 }
 #endif // ASTI_PERIODIC_BSPLINE_CONS

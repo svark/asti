@@ -2,6 +2,8 @@
 #include "skip_idx_iter.hpp"
 #include "raise_degree.hpp"
 #include "bspline_x_cons.hpp"
+#include <algorithm>
+#include "smat.hpp"
 
 namespace geom {
 
@@ -11,20 +13,29 @@ namespace geom {
 namespace impl
 {
 template <class SplineType>
-SplineType raise_degree_helper(const SplineType& spl, polynomial_tag)
+SplineType raise_degree_helper(const SplineType& spl, polynomial_tag, regular_tag)
 {
     typedef typename SplineType::knots_t knots_t;
     //typedef typename SplineType::point_t Point;
     typedef typename SplineType::vector_t vector_t;
 
     knots_t  new_knots;
-    new_knots.reserve(spl.knots().size());
-    auto b = spl.knots().cbegin();
-    auto e = spl.knots().cend();
+    new_knots.reserve(2*spl.knots().size());
 
-    for(auto f = b; f != e; ++f) {
+
+    auto comp = [](double u, double v)
+        {
+            return  u < v - tol::param_tol/2;
+        };
+	auto s = clamp_end(clamp_start(spl));
+    auto b = s.knots().cbegin();
+    auto e = s.knots().cend();
+
+    for(auto f = b; f != e;) {
+        auto l = std::upper_bound(f,e,*f, comp);
+        std::copy(f,l, std::back_inserter(new_knots));
         new_knots.push_back(*f);
-        new_knots.push_back(*f);
+        f = l;
     }
 
     size_t num_new_knots = new_knots.size();
@@ -39,30 +50,63 @@ SplineType raise_degree_helper(const SplineType& spl, polynomial_tag)
         for(int j = 0; j < p; ++j) {
             skip_ith_iter<decltype(new_knots.cbegin())>
                 iter( j, new_knots.cbegin() + (i + 1));
-            cv += make_vec(spl.blossom_eval(iter)) ;
+			std::vector<double> tmp(p-1);
+			std::copy_n(iter, p-1,tmp.begin() );
+			cv += make_vec(spl.blossom_eval(tmp.cbegin())) ;
         }
         cv *= (1.0/p);
         new_cpts.push_back(make_pt(cv));
     }
-	typedef spline_traits<SplineType> spl_traits;
+    typedef spline_traits<SplineType> spl_traits;
     return make_bspline(std::move(new_cpts),
-	                     std::move(new_knots), p, 
-						 typename spl_traits::ptag(),
-						 typename spl_traits::rtag()
-					  );
+                        std::move(new_knots), p,
+                        typename spl_traits::ptag(),
+                        typename spl_traits::rtag()
+                      );
 
 }
 
 template <class SplineType>
-SplineType raise_degree_helper(const SplineType& spl, rational_tag)
+SplineType raise_degree_helper(const SplineType& spl, polynomial_tag, periodic_tag)
 {
-    return make_rbspline( raise_degree_helper(spl.spline(), polynomial_tag()) );
+    int p = spl.degree();
+    std::vector<double> sknots,eknots;
+    sknots.reserve(p + 2); eknots.reserve(p + 2);
+    auto const &tsb =  spl.knots().begin();
+    sknots.assign(tsb, tsb + p + 1);
+    sknots.push_back(tsb[p]);
+
+    auto const &tse =  spl.knots().end() - p - 1 ;
+    eknots.push_back(tse[0]);
+    eknots.insert(eknots.end(),tse, tse + p + 1);
+
+    auto bs = clamp_start(spl);
+    clamp_end(bs).swap(bs);
+    raise_degree_helper(bs, polynomial_tag(), regular_tag()).swap(bs);
+    rebase_at_start(bs,sknots.begin()).swap(bs);
+
+    rebase_at_end(bs, eknots.begin()).swap(bs);
+    return bs;
+}
+
+template <class SplineType>
+SplineType raise_degree_helper(const SplineType& spl, rational_tag, regular_tag)
+{
+    return make_rbspline( raise_degree_helper(spl.spline(), polynomial_tag(), regular_tag()) );
+}
+
+template <class SplineType>
+SplineType raise_degree_helper(const SplineType& spl, rational_tag, periodic_tag)
+{
+    return make_rbspline( raise_degree_helper(spl.spline(), polynomial_tag(), periodic_tag()) );
 }
 }
 template <class SplineType>
 SplineType ops::raise_degree(const SplineType& spl)
 {
-    return impl::raise_degree_helper(spl, typename spline_traits<SplineType>::rtag());
+    return impl::raise_degree_helper(spl, typename spline_traits<SplineType>::rtag(),
+                                     typename spline_traits<SplineType>::ptag()
+        );
 }
 
 //}}}

@@ -5,6 +5,7 @@
 #include "constant_iterator.hpp"
 #include "bspline_queries.hpp"
 #include <limits>
+#include "periodic_bspline_cons.hpp"
 #include "point.hpp"
 namespace geom {
 //{{{ -- check is periodic
@@ -12,20 +13,8 @@ template <class SplineCurve>
 bool
 qry::is_periodic(const SplineCurve & crv)
 {
-	//TODO: do not evaluate derivatives
-    auto pr = crv.param_range();
-
-    auto const & v1 = crv.eval_derivatives(crv.degree()-1, pr.first ); 
-    auto const & v2 = crv.eval_derivatives(crv.degree()-1, pr.second );
-    bool its_periodic = true;
-    for(int i =0 ; i< crv.degree(); ++i){
-        if( !tol::eq(len(v1[i]-v2[i]), 0) )
-        {
-            its_periodic = false;
-            break;
-        }
-    }
-    return its_periodic;
+    auto const &c = get_spline(crv);
+    return check_invariants(make_periodic_bspline(c.control_points(), c.knots(), c.degree()));
 }
 
 //}}}
@@ -68,19 +57,19 @@ bool qry::is_clamped(const SplineCurve & c)
 template <class SplineType>
 double qry::curvature(const SplineType & spl, double u)
 {
-	auto const & ds = spl.eval_derivatives(2, u); 
-	
+	auto const & ds = spl.eval_derivatives(2, u);
+
     double t = len(ds[1]);
     if(tol::small(t))
 		return std::numeric_limits<double>::quiet_NaN();
-    
+
 	return len(cross(ds[1], ds[2])) / (t * t * t);
 }
 
 template <class SplineType>
 double qry::torsion(const SplineType & spl, double u)
 {
-    auto const & ds = spl.eval_derivatives(3, u); 
+    auto const & ds = spl.eval_derivatives(3, u);
     auto cp  =  cross(ds[1], ds[2]);
     double w =  sqlen(cp);
     if(tol::small(w, tol::sqresabs))

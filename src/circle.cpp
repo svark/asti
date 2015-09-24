@@ -3,7 +3,8 @@
 #include "geom_exception.hpp"
 #include "rational_bspline_cons.hpp"
 #include "smat.hpp"
-// using geom::method convention to enable the script below to
+
+// use geom::method convention to enable the elisp script below to
 // instantiate
 
 using geom::circle;
@@ -15,10 +16,10 @@ double
 geom::foot_param(const circle<Point> &c,
            const Point& p)
 {
-    auto x = normalize(c.getStart() - c.getCenter());
-    auto y = normalize(c.getYDir());
+    auto x = normalize(c.start() - c.center());
+    auto y = normalize(c.ydir());
 
-    auto v = (p - c.getCenter());
+    auto v = (p - c.center());
 
     if(tol::small(dot(v,y)) && tol::small(dot(v,x)))
         throw geom_exception(point_at_axis_error);
@@ -76,16 +77,18 @@ geom::make_circle(const Point& p1,
     return circle<point_t>(cp, pts[0], decltype(v1)(cross(nnormal, xdir)));
 }
 
+//  ../src/media/circle2.png
 template <class Point>
 rational_bspline< Point, regular_tag >
 geom::make_rbspline_from_circle(const circle<Point>& circ)
 {
-    auto start_pt =  circ.getStart();
-    auto center =  circ.getCenter();
+    auto start_pt  =  circ.start();
+    auto center    =  circ.center();
     auto const & x = (start_pt - center);
-    decltype(x)  y = cross(circ.getPlaneNormal(), decltype(circ.getPlaneNormal())(x) );
+    typedef decltype(circ.plane_normal()) normal_t;
+    decltype(x)  y = cross(circ.plane_normal(), normal_t(x) );
 
-    double radius =  circ.getRadius();
+    double radius =  circ.radius();
 
     auto a = start_pt + 2 * y * radius  * cos( M_PI/6.0);
     auto c = start_pt - 2 * y * radius  * cos( M_PI/6.0);
@@ -99,8 +102,8 @@ geom::make_rbspline_from_circle(const circle<Point>& circ)
     Point cpts[] = {p, a   ,q    ,b    ,r   ,c, p};
     double ts[]  = {0, 0, 0, 2*M_PI/3,2*M_PI/3,4*M_PI/3,4*M_PI/3, 2*M_PI,2*M_PI,2*M_PI};
     auto spl = make_bspline(
-        interleave( mk_stdvec(cpts,cpts+ sizeof(cpts)/sizeof(Point)),
-                    std::vector<double>( weights , weights + sizeof(weights)/sizeof(double) ) ),
+        interleave( mk_stdvec(cpts, cpts + sizeof(cpts)/sizeof(Point)),
+                    mk_stdvec(weights , weights + sizeof(weights)/sizeof(double) ) ),
         std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
         2 );
     double st[] = {-2*M_PI/3,0,0};
@@ -127,4 +130,3 @@ using geom::point3d_t;
 */
 
 #include "circle_inst.inl"
-

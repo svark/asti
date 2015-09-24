@@ -45,7 +45,7 @@ auto rational_derivatives(const VecsT & vecs)
 }
 
 template <class Point, class PTag = regular_tag>
-struct rational_bspline
+class rational_bspline
 {
 public:
     // underlying spline type is one dimension higher

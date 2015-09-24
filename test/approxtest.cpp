@@ -133,6 +133,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
             ps.begin(), ps.end(),opts, std::vector<double>(9,0));
         INFO( "v:" << bs.eval(0) << "," << bs.eval(0.2) << "," << bs.eval(0.3806) << "," << bs.eval(0.4) << "," << bs.eval(0.5) << "," <<bs.eval(0.6) << "," << bs.eval(0.9) << "," << bs.eval(1.1) << "\n" );
         //1.43328,0.000132328,2.32469,2.40941,2.96996,3.23082,2.20675,0.218459
+		//0,-0.000295009,2.32469,2.40941,2.96996,3.23082,0.044106,0.000910625
         REQUIRE(bs.eval(0) == Approx(0.0));
         REQUIRE(bs.eval(0.2) == Approx(1.87719));
         REQUIRE(bs.eval(0.3806) == Approx(2.76392));
@@ -140,7 +141,7 @@ TEST_CASE("cubic hermite interp", "[bspline][interpolation][approximation]")
         REQUIRE(bs.eval(0.5) == Approx(3.2487 ));
         REQUIRE(bs.eval(0.6) == Approx(2.90866));
         //REQUIRE(bs.eval(0.8957) == Approx(0));
-        REQUIRE(bs.eval(0.9) == Approx(0.705953 ));
+        REQUIRE(bs.eval(0.9) == Approx( 0.705953 ));
         REQUIRE(bs.eval(1.1) == Approx(0.699618));
         REQUIRE( geom::qry::is_periodic(bs.spline()));
         //INFO ("is periodic" << std::boolalpha << ":" << geom::ops::is_periodic(bs.spline()) << "\n\n");

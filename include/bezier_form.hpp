@@ -9,8 +9,9 @@ namespace geom {
 
 // though the name says "bezier form" it is actually a bspline
 template <class Point>
-struct bezier_form : public bspline < Point >
+class bezier_form : public bspline < Point >
 {
+public:
     typedef bspline<Point> base_t;
 	bezier_form(ARRAY_TYPE(Point) c,
                 double a = 0,  double b =  1.0):

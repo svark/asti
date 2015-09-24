@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 #include "util.hpp"
-
 namespace geom
 {
 
@@ -24,10 +23,11 @@ double periodic_param(const std::pair<double, double>& range,
 
 
 template <class Point>
-struct periodic_bspline
+class periodic_bspline
 {
+public:
     typedef Point   point_t;
-    typedef decltype(Point() - Point())  vector_t;
+    typedef VECTOR_TYPE(Point)  vector_t;
     enum {dimension = point_dim<point_t>::dimension};
     typedef typename bspline<Point>::cpts_t cpts_t;
     typedef typename bspline<Point>::knots_t knots_t;
@@ -37,32 +37,38 @@ struct periodic_bspline
     periodic_bspline(cpts_t pts, knots_t ks, int degree_)
         :spl(std::move(pts),std::move(ks),degree_)
     {
+        assert( check_invariants() );
     }
 
     periodic_bspline(bspline<point_t>&& other)
         :spl(std::forward<bspline<point_t>>(other))
     {
+        assert( check_invariants() );
     }
 
     periodic_bspline(const bspline<point_t>& other)
         :spl(other)
     {
+        assert( check_invariants() );
     }
 
     periodic_bspline(periodic_bspline&& other)
         :spl(std::forward<bspline<point_t> >(other.spl))
     {
+        assert( check_invariants() );
     }
 
     template <class ModifierFn>
     periodic_bspline(periodic_bspline&& other, ModifierFn mod_fn)
         :spl(std::forward<bspline<point_t> >(other.spl),mod_fn)
     {
+        assert( check_invariants() );
     }
 
     periodic_bspline(const periodic_bspline& other)
         :spl(other.spl)
     {
+        assert( check_invariants() );
     }
 
     double periodic_param(double u) const
@@ -88,11 +94,13 @@ struct periodic_bspline
         return spl.blossom_eval(modfs.cbegin());
     }
 
-    auto eval_derivative(int derOrder,double u) const -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivative(derOrder,u))
+    auto eval_derivative(int derOrder,double u) const
+        -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivative(derOrder,u))
     {
         return spl.eval_derivative(derOrder,periodic_param(u));
     }
-    auto eval_derivatives(int derOrder,double u) const -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivatives(derOrder,u))
+    auto eval_derivatives(int derOrder,double u) const
+        -> RAWTYPE(std::declval<bspline<point_t>>().eval_derivatives(derOrder,u))
     {
         return spl.eval_derivatives(derOrder,periodic_param(u));
     }
@@ -106,17 +114,16 @@ struct periodic_bspline
     }
 
     // accessors
-    const knots_t & knots() const { return spl.knots(); }
-    const cpts_t &  control_points() const { return spl.control_points(); }
-    int degree() const { return spl.degree(); };
+    const knots_t& knots()             const { return spl.knots(); }
+    const cpts_t&  control_points()    const { return spl.control_points(); }
+    int            degree()            const { return spl.degree(); };
+    bool           check_invariants()  const;
 private:
     bspline<point_t> spl;
 };
 
 template <class Point>
-bool check_invariants(const periodic_bspline<Point> &spl) {
-    return check_invariants(spl.spline());
-}
+bool check_invariants(const periodic_bspline<Point>&pc) { return pc.check_invariants(); }
 
 }
 #endif
