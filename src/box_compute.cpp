@@ -86,7 +86,7 @@ ops::compute_box_tight(const SplineType &spl) {
             dimCpts.push_back(coord(cp, dim));
         }
 
-        bspline<double> bs(
+        auto bs(
             make_bspline(std::move(dimCpts), std::vector<double>(spl.knots()), d,
                          ptag(), rtag()));
 
