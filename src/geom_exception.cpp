@@ -26,17 +26,17 @@ init_dict()
     add(tangent_vectors_too_small,"tangent at the start or end are too small in magnitude");
 
     add(degenerate_or_small_conic,"points defining the conic would form a degenerate or too small a conic");
-	add(bspline_invariants_violated, "bspline invariants have been violated, this could one of the following"
-		"\n 1) degree non negative\n"
-		" 2) unique knots must be atleast 2\n"
-		" 3)control points should be atleast as many as degree\n"
-		" 4)num_cpts + degree + 1 == num_knots\n" );
+    add(bspline_invariants_violated, "bspline invariants have been violated, this could one of the following"
+        "\n 1) degree non negative\n"
+        " 2) unique knots must be atleast 2\n"
+        " 3)control points should be atleast as many as degree\n"
+        " 4)num_cpts + degree + 1 == num_knots\n" );
 
-	add( mismatched_array_sizes, "spline interpolation expectes that number of tangents provided matches number of points,\n"
-                   "note: tangents may be zero in which case they will be ignored" );
-	add( invalid_periodic_data ,"end point must match start point for periodic spline interpolation");
-	add( duplicate_point_data ,"points to interpolate may not have consecutive duplicates");
-	add( degenerate_circle ,"circle generated would be degenerate or small");
+    add( mismatched_array_sizes, "spline interpolation expectes that number of tangents provided matches number of points,\n"
+         "note: tangents may be zero in which case they will be ignored" );
+    add( invalid_periodic_data ,"end point must match start point for periodic spline interpolation");
+    add( duplicate_point_data ,"points to interpolate may not have consecutive duplicates");
+    add( degenerate_circle ,"circle generated would be degenerate or small");
     return dict_;
 }
 

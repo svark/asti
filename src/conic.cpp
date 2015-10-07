@@ -23,11 +23,9 @@ make_conic_arc_non_parallel(const Point p[3],
 
     assert(tol::small(len(q - cpsq.second)));
 
-    double a = len(q - p[0])/len(q - p[2]);
-
-    double u = a/(1+a);
-
-    auto p1 = cps.first;
+    double a  = len(q - p[0])/len(q - p[2]);
+    double u  = a/(1+a);
+    auto   p1 = cps.first;
 
     double w = ( (1 - u) * (1 - u) *
                  dot(s - p[0], p1 - s)
@@ -52,7 +50,7 @@ make_conic_arc_parallel(const Point p[3],
     auto const &  q = cpsq.first;
 
     if(tol::not_small(len(q - cpsq.second)))
-		throw geom_exception(degenerate_or_small_conic);
+        throw geom_exception(degenerate_or_small_conic);
 
     assert(tol::small(len(cpsq.first - cpsq.second)));
 
@@ -75,7 +73,7 @@ geom_error_code_t
 conic_arc_preconditions(const point3d_t p[], const vector3d_t v[])
 {
     if(tol::small(len(v[0])) || tol::small(len(v[1])))
-		return tangent_vectors_too_small;
+        return tangent_vectors_too_small;
 
     auto nrml = cross(p[1] - p[0], p[2] - p[1]);
 
@@ -102,7 +100,7 @@ make_conic_arc(const point3d_t p[3], const vector3d_t v[2])
         throw geom_error_code_t(err);
 
     if(tol::eq(fabs(dot(v[0], v[1])),
-                len(v[0]) * len(v[1])))
+               len(v[0]) * len(v[1])))
     { // tangents are parallel
         return make_conic_arc_parallel(p, v[0]);
     }

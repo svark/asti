@@ -24,7 +24,8 @@ make_line(const Point& p1, const Vec& dir);
 enum conic_type_t {parabola, hyperbola, ellipse} ;
 
 template <class Point>
-struct conic_arc {
+class conic_arc {
+public:
     typedef Point point_t;
     enum{ dim = point_dim <Point >::dimension };
     typedef typename inc_dimension<Point>::type pointw_t;
@@ -87,13 +88,13 @@ struct conic_arc {
     {
         // returns Q1, S, R1
         auto w = p[1][dim];
-		RAWTYPE(p[0]) q1 = lerp(0.5, p[0], p[1]);
+        RAWTYPE(p[0]) q1 = lerp(0.5, p[0], p[1]);
         RAWTYPE(p[0]) r1 = lerp(0.5, p[2], p[1]);
         RAWTYPE(p[0]) s = lerp(0.5, q1, r1);
         s *= 1/s[dim];
         q1 *= sqrt((1 + w) / 2)/q1[dim];
         r1 *= sqrt((1 + w) / 2)/r1[dim];
-		return std::forward_as_tuple( q1, s, r1);
+        return std::forward_as_tuple( q1, s, r1);
     }
     bool invariants() const
     {
@@ -199,8 +200,8 @@ make_circular_arc(const Point p[3])
     if(dot(p[1] - p[0], v) < 0 )
         v.negate();
 
-	VECTOR_TYPE(Point) tgts[] = { sin(theta) * v  + cos(theta) * w,
-                                 -sin(theta) * v  + cos(theta) * w };
+    VECTOR_TYPE(Point) tgts[] = { sin(theta) * v  + cos(theta) * w,
+                                  -sin(theta) * v  + cos(theta) * w };
     return make_conic_arc(p,tgts);
 }
 

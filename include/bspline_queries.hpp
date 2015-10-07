@@ -57,13 +57,13 @@ template <class Point>
 auto lift_dim(const Point& p1, polynomial_tag) -> RAWTYPE(higher_dim(p1))
 {
     typedef RAWTYPE(higher_dim(p1)) PointW ;
-	return PointW(p1);
+    return PointW(p1);
 }
 
 template <class Point>
 auto lift_dim(const Point& p1, rational_tag) -> RAWTYPE(higher_dim(p1))
 {
-	typedef RAWTYPE(higher_dim(p1)) PointW ;
+    typedef RAWTYPE(higher_dim(p1)) PointW ;
     PointW p2(p1);
     enum {dim = point_dim<PointW>::dimension };
     std::swap(p2[dim],p2[dim-1]); // move the weight to the last coordinate
@@ -140,11 +140,11 @@ auto get_spline(const Spl& s) -> decltype(
 
 {
     return detail::get_spline(s,
-                       std::integral_constant<
-                       bool,
-                       is_rational_type<Spl>::value>(),
-                       std::integral_constant<
-                       bool,
+                              std::integral_constant<
+                              bool,
+                              is_rational_type<Spl>::value>(),
+                              std::integral_constant<
+                              bool,
                               is_periodic_type<Spl>::value>());
 }
 

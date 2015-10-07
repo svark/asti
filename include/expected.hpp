@@ -22,7 +22,7 @@ make_unexpected(geom_error_code_t e)
 template <class U>
 class expected
 {
-	typename std::aligned_union<sizeof(U), U, geom_error_code_t>::type  storage;
+    typename std::aligned_union<sizeof(U), U, geom_error_code_t>::type  storage;
     bool valid_;
 public:
     typedef U value_type;
@@ -32,67 +32,67 @@ public:
         valid_ = true;
     }
 
-	expected(U &&t)
+    expected(U &&t)
     {
         new (&storage) U(std::forward<U>(t));
         valid_ = true;
     }
 
-	expected(const expected& o)
-	{
-		if(!!o)	 {
-			new (&storage) U(*o);
-			valid_ = true;
-		}
-		else {
-			new (&storage) geom_error_code_t(o.code());
-			valid_ = false;
-		}
-		
-	}
-	expected(expected&& o)
-	{
-		valid_ = o.valid();
-		if(!!o)	
-			new (&storage) U(std::move(*o));
-		else
-			new (&storage) geom_error_code_t(o.code());
-	}
-	expected & operator=(expected& other)
-	{
-		if(valid())
-		{
-			(**this).~U();
-		}
-		valid_ = o.valid();
-		if(!!o)	
-			new (&storage) U(*o);
-		else
-			new (&storage) geom_error_code_t(o.code());
-		return *this;
-	}
+    expected(const expected& o)
+    {
+        if(!!o)  {
+            new (&storage) U(*o);
+            valid_ = true;
+        }
+        else {
+            new (&storage) geom_error_code_t(o.code());
+            valid_ = false;
+        }
+
+    }
+    expected(expected&& o)
+    {
+        valid_ = o.valid();
+        if(!!o)
+            new (&storage) U(std::move(*o));
+        else
+            new (&storage) geom_error_code_t(o.code());
+    }
+    expected & operator=(expected& other)
+    {
+        if(valid())
+        {
+            (**this).~U();
+        }
+        valid_ = o.valid();
+        if(!!o)
+            new (&storage) U(*o);
+        else
+            new (&storage) geom_error_code_t(o.code());
+        return *this;
+    }
     expected(const unexpected& unex)
     {
         new (&storage) geom_error_code_t(unex.e);
         valid_ = false;
     }
 
-    U& operator*()  { 
-		assert(valid_); 
-		return  *reinterpret_cast<U*>(&storage);   
-	}
+    U& operator*()  {
+        assert(valid_);
+        return  *reinterpret_cast<U*>(&storage);
+    }
 
     const U& operator*() const {
-		assert(valid_); return *reinterpret_cast<const U*>(&storage); 
-	}
+        assert(valid_); return *reinterpret_cast<const U*>(&storage);
+    }
 
     operator bool() const { return valid_; }
-	void valid() const { return valid_; }
+    void valid() const { return valid_; }
 
-	geom_error_code_t code() const { 
-		assert(!valid_); 
-		return *reinterpret_cast<const geom_error_code_t* >(&storage);
-	}
+    geom_error_code_t code() const {
+        assert(!valid_);
+        return *reinterpret_cast<const geom_error_code_t* >(&storage);
+    }
     ~expected()
     {
         if(valid_)
@@ -117,23 +117,23 @@ public:
     void operator*() const {    }
     operator bool() const { return valid(); }
     bool valid() const { return e_==0; }
-	geom_error_code_t code() const { assert(!valid()); return e_;}
+    geom_error_code_t code() const { assert(!valid()); return e_;}
 };
 
-#define ASTI_EXPECT_RET(ex,expr) \
-    if(!!ex) {\
-        return expr;\
-    }\
+#define ASTI_EXPECT_RET(ex,expr)                \
+    if(!!ex) {                                  \
+        return expr;                            \
+    }                                           \
     return util::make_unexpected(ex.code());
 
-#define ASTI_EXPECT_DO(ex,expr) \
-    if(!!ex) {\
-        expr;\
-    }\
+#define ASTI_EXPECT_DO(ex,expr)                 \
+    if(!!ex) {                                  \
+        expr;                                   \
+    }                                           \
     return util::make_unexpected(ex.code());
 
-#define ASTI_CHECK(ex) \
-	if(!ex) return util::make_unexpected(ex.code());
+#define ASTI_CHECK(ex)                                  \
+    if(!ex) return util::make_unexpected(ex.code());
 
 static const expected<void> exvoid;
 

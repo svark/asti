@@ -11,4 +11,5 @@
 #include "rotate_base_knot.hpp"
 #include "reparametrize.hpp"
 #include "subdivide_curve.hpp"
+#include "modify_bspline.hpp"
 #endif //_BSPLINE_OPS_H

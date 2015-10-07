@@ -57,13 +57,13 @@ bool qry::is_clamped(const SplineCurve & c)
 template <class SplineType>
 double qry::curvature(const SplineType & spl, double u)
 {
-	auto const & ds = spl.eval_derivatives(2, u);
+    auto const & ds = spl.eval_derivatives(2, u);
 
     double t = len(ds[1]);
     if(tol::small(t))
-		return std::numeric_limits<double>::quiet_NaN();
+        return std::numeric_limits<double>::quiet_NaN();
 
-	return len(cross(ds[1], ds[2])) / (t * t * t);
+    return len(cross(ds[1], ds[2])) / (t * t * t);
 }
 
 template <class SplineType>
@@ -73,7 +73,7 @@ double qry::torsion(const SplineType & spl, double u)
     auto cp  =  cross(ds[1], ds[2]);
     double w =  sqlen(cp);
     if(tol::small(w, tol::sqresabs))
-		return std::numeric_limits<double>::quiet_NaN();
+        return std::numeric_limits<double>::quiet_NaN();
     double t = dot(decltype(cp)(ds[3]), cp);
     return t / w;
 }

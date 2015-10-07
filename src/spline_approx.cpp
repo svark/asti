@@ -28,7 +28,7 @@ ops::cubic_approx1d(Fn f, std::vector<double> t)
     size_t i  = 0;
     static const int p = 3;
     size_t n = t.size() - p - 1;
-	assert(n>0);
+    assert(n>0);
     std::vector<double> pts(n,0.0);
     // pg 173 lyche
     //(@file :file-name "./lee_quasi.pdf" :to "./lee_quasi.pdf" :display "intro to quasi interpolants")
@@ -133,14 +133,14 @@ static void build_knots_helper(const std::vector<double>& uniqts,
     std::sort(taus.begin(), taus.end());
     std::merge(uniqts.begin(), uniqts.end(), taus.begin(),
                taus.end(), std::back_inserter(t));
-	return ;
+    return ;
 }
 
 template <int p, class KnotIter>
 static void build_knots(KnotIter b,
-                                  KnotIter e,
-                                  std::vector<double>& t,
-                                  periodic_tag)
+                        KnotIter e,
+                        std::vector<double>& t,
+                        periodic_tag)
 {
     size_t sz = std::distance(b, e);
     t.reserve(std::max(sz, size_t(2*p)));
@@ -173,7 +173,7 @@ static void build_knots(KnotIter b,
     for(int i = 0; i < p;++i)
         t.push_back(e[-1]);
 
-	return ;
+    return ;
 }
 }
 

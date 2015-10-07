@@ -8,8 +8,8 @@
 namespace geom {
 
 //{{{ --(@* "raise the degree by 1")
-// see:(@file :file-name "media/raise_degree.png" :to "./media/raise_degree.png" :display "raise_degree")
-
+// media/raise_degree.png
+// media/raise_degree_1.png
 namespace impl
 {
 template <class SplineType>
@@ -27,7 +27,7 @@ SplineType raise_degree_helper(const SplineType& spl, polynomial_tag, regular_ta
         {
             return  u < v - tol::param_tol/2;
         };
-	auto s = clamp_end(clamp_start(spl));
+    auto s = clamp_end(clamp_start(spl));
     auto b = s.knots().cbegin();
     auto e = s.knots().cend();
 
@@ -50,9 +50,9 @@ SplineType raise_degree_helper(const SplineType& spl, polynomial_tag, regular_ta
         for(int j = 0; j < p; ++j) {
             skip_ith_iter<decltype(new_knots.cbegin())>
                 iter( j, new_knots.cbegin() + (i + 1));
-			std::vector<double> tmp(p-1);
-			std::copy_n(iter, p-1,tmp.begin() );
-			cv += make_vec(spl.blossom_eval(tmp.cbegin())) ;
+            std::vector<double> tmp(p-1);
+            std::copy_n(iter, p-1,tmp.begin() );
+            cv += make_vec(spl.blossom_eval(tmp.cbegin())) ;
         }
         cv *= (1.0/p);
         new_cpts.push_back(make_pt(cv));
@@ -62,7 +62,7 @@ SplineType raise_degree_helper(const SplineType& spl, polynomial_tag, regular_ta
                         std::move(new_knots), p,
                         typename spl_traits::ptag(),
                         typename spl_traits::rtag()
-                      );
+        );
 
 }
 

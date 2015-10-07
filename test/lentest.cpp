@@ -37,7 +37,7 @@ TEST_CASE( "circle_arc_length", "[circle][arclength]" ) {
             ps[i][j] =  pts[i][j];
         }
     }
-    auto const &rspl3d = 
+    auto const &rspl3d =
         ( geom::make_rbspline_from_conic(geom::make_circular_arc(ps)));
 
     SECTION("arc length test") {

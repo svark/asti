@@ -21,13 +21,13 @@ tessellate(const SplineCurve& crv, double epsilon)
     double twonrm =  two_norm_squared(crv);
 
     double delta =  util::nroot( 24.0 * epsilon * epsilon * width
-                    / twonrm, 5 );
+                                 / twonrm, 5 );
 
     long num_segs = long (ceil(width/delta) );
     delta = width/num_segs;
 
     typedef typename spline_traits<SplineCurve>::point_t Point;
-	ARRAY_TYPE(Point) crvpts(num_segs+1);
+    ARRAY_TYPE(Point) crvpts(num_segs+1);
 #pragma loop(hint_parallel(8))
     for(long i = 0 ; i <= num_segs;++i)
     {

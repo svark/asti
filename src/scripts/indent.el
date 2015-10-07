@@ -1,7 +1,8 @@
 ; emacs --batch foo.c -l indent -f save-buffer >& log
-; for /f "usebackq" %i in (`dir /s /b *.hpp *.cpp`) do emacs --batch %i -l %projroot%src\scripts\indent.el -f
-save-buffer
+; for /f "usebackq" %i in (`dir /s /b *.hpp *.cpp`) do emacs --batch %i -l %projroot%src\scripts\indent.el -f save-buffer
+
 (require 'cc-mode)
+
 (c-add-style "my-style"
              '("stroustrup"
                (indent-tabs-mode . nil)        ; use spaces rather than tabs
@@ -18,3 +19,11 @@ save-buffer
 (indent-region (point-min) (point-max) nil)
 (untabify (point-min) (point-max) nil)
 (delete-trailing-whitespace)
+
+(beginning-of-buffer)
+(replace-regexp "\\(;\\|,\\)\\([^ \t\n\r]\\)"  "\\1 \\2" nil (point-min) (point-max)) ; spaces after , and :
+(beginning-of-buffer)
+(replace-regexp "\\([^\+\-]\\)\\(\\+\\|-\\)\\([^ >=\\+\\-\t\n\r]\\)"  "\\1\\2 \\3") ; spaces after +,-
+(beginning-of-buffer)
+
+(replace-regexp "\\([^ \+\-\t\n\r]\\)\\(\\+\\|-\\)\\([^\\+\\->]\\)"  "\\1 \\2\\3") ; spaces before +,-

@@ -17,7 +17,7 @@ TEST_CASE("surfaces","[bspline][surface]")
     using namespace geom::qry;
     const double sqrt2 = M_SQRT1_2;
     auto circ1        = geom::make_circle(make_pt(1,0,0),
-                                         make_pt(sqrt2,sqrt2,0),make_pt(0,1,0));
+                                          make_pt(sqrt2,sqrt2,0),make_pt(0,1,0));
 
     auto const & bsc1 = geom::make_rbspline_from_circle(circ1);
 
@@ -43,4 +43,3 @@ TEST_CASE("surfaces","[bspline][surface]")
 
     return;
 }
-

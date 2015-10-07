@@ -13,7 +13,7 @@ auto interleave(const PointContT & ps,
     -> RAWTYPE(mk_stdvec(higher_dim(ps[0])))
 {
     typedef typename inc_dimension < RAWTYPE(ps[0]) >::type pointw_t;
-	ARRAY_TYPE(pointw_t) pws;
+    ARRAY_TYPE(pointw_t) pws;
     pws.reserve(ps.size());
     auto witer = std::begin(ws);
     enum {dim = point_dim<pointw_t>::dimension };

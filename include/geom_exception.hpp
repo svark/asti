@@ -19,11 +19,11 @@ enum geom_error_code_t
     knots_incompatible_for_merging = 11,
     tangent_vectors_too_small = 12,
     degenerate_or_small_conic = 13,
-	bspline_invariants_violated = 14,
-	mismatched_array_sizes = 15,
-	invalid_periodic_data = 16,
-	duplicate_point_data = 17,
-	degenerate_circle = 18
+    bspline_invariants_violated = 14,
+    mismatched_array_sizes = 15,
+    invalid_periodic_data = 16,
+    duplicate_point_data = 17,
+    degenerate_circle = 18
 };
 
 extern  std::map<geom_error_code_t, std::string> init_dict();

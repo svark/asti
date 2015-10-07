@@ -33,11 +33,11 @@ TEST_CASE( "bspline_eval_test", "[bspline][2d][eval][derivative][blossom]" ) {
         INFO( "blossom val:" << bs.blossom_eval((const double*)kb) );
         REQUIRE( bs.blossom_eval((const double*)kb) == make_pt(0.69,0.57));
 
-		// blossoms are linear in each parameter
-		double kb1[]={.2,.2,.1};
-		double kb2[]={.2,.2,.3};
-		auto lp = lerp( 2.0/3, bs.blossom_eval((const double*)kb1),
-			bs.blossom_eval((const double*)kb2 ) );
+        // blossoms are linear in each parameter
+        double kb1[]={.2,.2,.1};
+        double kb2[]={.2,.2,.3};
+        auto lp = lerp( 2.0/3, bs.blossom_eval((const double*)kb1),
+                        bs.blossom_eval((const double*)kb2 ) );
         REQUIRE( lp == make_pt(0.69,0.57));
     }
     //taylor series for a polynomial is finite..

@@ -14,7 +14,7 @@ template <class SplineType>
 void
 tess_is_close(const SplineType& bs, const double tess_tol)
 {
-	using geom::qry::num_cpts;
+    using geom::qry::num_cpts;
     geom::polyline<geom::point2d_t> const &pl = geom::tessellate(bs, tess_tol);
     auto s = bs.param_range().first ;
     auto w = bs.param_range().second - s;
@@ -48,25 +48,25 @@ TEST_CASE("tessellate bspline",  "[bspline][linear][approximation]") {
     ks[0] = ks[1] = ks[2] = 0.0;
     ks[3] = 0.5; ks[4] = 0.8;
     ks[5] = ks[6] = ks[7] = 1.0;
-	geom::bspline<geom::point2d_t> bs((pts),
+    geom::bspline<geom::point2d_t> bs((pts),
                                       (ks),2);
 
-	const double tess_tol = .2;
+    const double tess_tol = .2;
 
-	SECTION("bspline")
-	{
+    SECTION("bspline")
+    {
         tess_is_close(bs, tess_tol);
-	}
-	SECTION("rational_bspline")
-	{
+    }
+    SECTION("rational_bspline")
+    {
         geom::polyline<geom::point2d_t> const &pl = geom::tessellate(bs, tess_tol);
-		std::vector<double> weights(5,1.0);
-		auto const &rbs = geom::make_rbspline(std::move(pts), std::move(weights), std::move(ks),  2);
+        std::vector<double> weights(5,1.0);
+        auto const &rbs = geom::make_rbspline(std::move(pts), std::move(weights), std::move(ks),  2);
 
-		geom::polyline<geom::point2d_t> const &pl2 = geom::tessellate(rbs, tess_tol);
-		REQUIRE(pl2 == pl);
+        geom::polyline<geom::point2d_t> const &pl2 = geom::tessellate(rbs, tess_tol);
+        REQUIRE(pl2 == pl);
 
-	}
+    }
     SECTION("circle")
     {
         geom::point2d_t p1 = make_pt(-1,-1),p2 = make_pt(0,1),p3 = make_pt(1,0);

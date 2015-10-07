@@ -11,7 +11,7 @@ class polyline : public bspline<Point>
 
     typedef typename bspline<Point>::cpts_t cpts_t;
 
-static
+    static
     std::vector<double> compute_knots(const cpts_t &pts)
     {
         size_t num_pts = pts.size();

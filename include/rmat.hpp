@@ -24,9 +24,9 @@ struct rmat_base {
     locate(double u) const;
 
     double front() const {  return  t[0]; } ;
-    double back() const { return   e[-1] ;};
+    double back() const { return   e[-1]; };
 
-    int start_mult() ;
+    int start_mult();
     int end_mult();
     int mult(double u);
 
@@ -62,7 +62,7 @@ struct rmat_base {
     // int such that u\in [t_\mu, t_\mu + 1) and p is the degree
     //also  returned is the index in the knot array -> \mu.
     std::tuple<std::vector<double>, size_t>
-    get_basis(double u,int derOrder = 0) const;
+    get_basis(double u, int derOrder = 0) const;
 
     // knot insertion matrix of size:(l - f) * (e - t)
     Eigen::MatrixXd
@@ -84,7 +84,7 @@ struct rmat_base {
               int derOrder, PointIter cache) const;
 
     //leaner implementation of get_basis
-    std::pair<std::vector<double>,size_t> basis(double u);
+    std::pair<std::vector<double>, size_t> basis(double u);
 
     template <class KnotIterU, class PointIter>
     void blossom_eval(KnotIterU us,
@@ -92,11 +92,11 @@ struct rmat_base {
                       //knot seq t
                       PointIter cache) const;
 
-	template <class PointIter>
-	bool der_eval(size_t nu, int derOrder, PointIter cache) const;
+    template <class PointIter>
+    bool der_eval(size_t nu, int derOrder, PointIter cache) const;
 
 protected:
-    KnotIter t,e;
+    KnotIter t, e;
     int deg;
 };
 
@@ -114,9 +114,10 @@ rmat_base<KnotIter>::der_eval(size_t nu,
     size_t fac = 1;
 
     typedef RAWTYPE(cache[0]) point_t;
-    if(derOrder > size )
+    if(derOrder > size ) {
         cache[0] = point_t(0.0);
-	else
+        return true;
+    }
     for(int sz = size; sz > size - derOrder; --sz) {
         fac *= sz;
         for(int j = 1; j <= sz; ++j) {
@@ -149,7 +150,7 @@ rmat_base<KnotIter>::eval(size_t nu,
     int size = deg;
     auto t_ =  t + nu;
 
-    if(!der_eval(nu,derOrder,cache))
+    if(!der_eval(nu, derOrder, cache))
         return false;
 
     for(int sz = size - derOrder; sz > 0; --sz) {
@@ -165,7 +166,7 @@ rmat_base<KnotIter>::eval(size_t nu,
 template <class KnotIter>
 template <class KnotIterU, class PointIter>
 void
-rmat_base<KnotIter>::blossom_eval( 
+rmat_base<KnotIter>::blossom_eval(
     KnotIterU us,  // increasing array of d knots
     size_t nu,     // location of us[0] in knot seq t
     PointIter cache) const
@@ -177,7 +178,7 @@ rmat_base<KnotIter>::blossom_eval(
     for(int sz = size; sz > 0; --sz) {
         for(int j = 1; j <= sz; ++j) {
             double d = t_[j] - t_[j - sz];
-            double lambda =  sdiv(us[sz-1]  - t_[j - sz], d);
+            double lambda =  sdiv(us[sz - 1]  - t_[j - sz], d);
             cache[j - 1] = lerp(lambda, cache[j - 1], cache[j] );
         }
     }
@@ -194,28 +195,28 @@ struct rmat_base_vd: rmat_base < std::vector<double>::const_iterator >
 template<class Point>
 struct rmat : public rmat_base_vd {
     typedef Point point_t;
-	typedef ARRAY_TYPE(point_t) cpts_t;
+    typedef ARRAY_TYPE(point_t) cpts_t;
 
-    rmat(const cpts_t& cpts_,const knots_t& t,int deg)
+    rmat(const cpts_t& cpts_, const knots_t& t, int deg)
         : rmat_base_vd(t, deg), cpts(cpts_)
     {
     }
 
     point_t
     eval(double u) const {
-        return eval_derivative(0,u);
+        return eval_derivative(0, u);
     }
 
     point_t
     eval_derivative(int derOrder, double u) const;
 
-    template <class ParamIter,class PointIter>
+    template <class ParamIter, class PointIter>
     void
     eval(ParamIter f, ParamIter l, PointIter out) const {
-        return eval_derivatives(0,f,l, out);
+        return eval_derivatives(0, f, l, out);
     }
 
-    template <class ParamIter,class PointOutIter>
+    template <class ParamIter, class PointOutIter>
     void
     eval_derivatives(int derOrder,
                      ParamIter us, ParamIter end,
@@ -225,14 +226,14 @@ struct rmat : public rmat_base_vd {
         std::unique_ptr<point_t[]> cache(new point_t[size+1]);
 
         size_t nu = -1;
-        for( ;us != end; ++us,++out) {
+        for( ; us != end; ++us, ++out) {
 
-            nu = locate_nu( * us,nu);
+            nu = locate_nu(*us, nu);
 
             for(int j = 0; j < size + 1; ++j)
                 cache[j] = control_pt(j + nu - size);
 
-            eval(nu,* us, derOrder, cache.get());
+            eval(nu, * us, derOrder, cache.get());
 
             *out =  cache[0];
         }
@@ -248,7 +249,7 @@ struct rmat : public rmat_base_vd {
         std::unique_ptr<point_t[]> cache(new point_t[size+1]);
         size_t nu = locate_nu(u);
 
-        for(int i =  0; i <= derOrder;++i,++out) {
+        for(int i =  0; i <= derOrder; ++i, ++out) {
 
             for(int j = 0; j < size + 1; ++j)
                 cache[j] = control_pt(j + nu - size);

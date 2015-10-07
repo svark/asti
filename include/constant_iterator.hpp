@@ -90,6 +90,6 @@ struct _Is_checked_helper<util::constant_iterator<T> >
 {   // mark constant_iterator as checked
 };
 }
-#endif 
+#endif
 
 #endif //CONSTANT_ITER_HPP

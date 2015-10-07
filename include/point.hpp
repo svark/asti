@@ -109,6 +109,54 @@ double coord(const Point& p, std::integral_constant<int, i> )
     return p[i];
 }
 
+inline
+double coord(const double& p, std::integral_constant<int, 0> )
+{
+    return p;
+}
+
+template <class Point>
+double coord(const Point& p, int  i )
+{
+    assert(i < Point::dimension);
+    return p[i];
+}
+
+inline double coord(const double& p, int  i)
+{
+    assert(i ==0);
+    return p;
+}
+
+
+//////
+template <class Point,int i>
+double& coord_nonconst( Point& p, std::integral_constant<int, i> )
+{
+    static_assert(Point::dimension > i,
+                  "coordinate index must be less than point dimension" );
+    return p[i];
+}
+
+inline
+double& coord_nonconst( double& p, std::integral_constant<int, 0> )
+{
+    return p;
+}
+
+template <class Point>
+double& coord_nonconst( Point& p, int  i )
+{
+    assert(i < Point::dimension);
+    return p[i];
+}
+
+inline double& coord_nonconst( double& p, int  i)
+{
+    assert(i ==0);
+    return p;
+}
+
 template <int dim>
 bool isnan(const pt_t<dim>& pt)
 {
@@ -328,18 +376,18 @@ double plen(const pt_t< dim >& pt)
 }
 inline double plen(double p)
 {
-	return p;
+    return p;
 }
 
 template <class PtVec>
 void set_quiet_NaN(PtVec& v)
 {
-	v = PtVec::quiet_NaN();
+    v = PtVec::quiet_NaN();
 }
 
 inline void set_quiet_NaN(double& v)
 {
-	v = std::numeric_limits<double>::quiet_NaN();
+    v = std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -619,7 +667,7 @@ mk_stdvec(const double *vb, const double *ve)
 template <class VecT>
 inline VecT normalize(const VecT& vec)
 {
-	double nrm = vec.v.norm();
+    double nrm = vec.v.norm();
     if(tol::small(nrm))
         return VecT::quiet_NaN();
     VecT v( vec );

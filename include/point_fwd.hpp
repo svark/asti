@@ -159,6 +159,26 @@ extern std::integral_constant<int,3> W;
 
 template <class Point,int i>
 double coord(const Point&, std::integral_constant<int, i>);
+inline
+double coord(const double& p, std::integral_constant<int, 0> );
+
+template <class Point>
+double coord(const Point& p, int  i );
+
+inline
+double coord(const double& p, int  i);
+
+template <class Point,int i>
+double& coord_nonconst(Point&, std::integral_constant<int, i>);
+inline
+double& coord_nonconst(double& p, std::integral_constant<int, 0> );
+
+template <class Point>
+double& coord_nonconst(Point& p, int  i );
+
+inline
+double& coord_nonconst(double& p, int  i);
+
 
 template <class PtVec>
 void set_quiet_NaN(PtVec& pv);

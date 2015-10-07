@@ -76,7 +76,7 @@ bool operator==(const bspline<Point>& bs1, const bspline<Point>& bs2) {
         return false;
 
     if(!std::equal(bs1.knots().cbegin(),bs1.knots().cend(),
-                    bs2.knots().cbegin() , tol::param_eq) )
+                   bs2.knots().cbegin() , tol::param_eq) )
         return false;
 
     if(!std::equal(bs1.control_points().cbegin(),bs1.control_points().cend(),

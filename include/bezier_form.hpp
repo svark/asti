@@ -13,7 +13,7 @@ class bezier_form : public bspline < Point >
 {
 public:
     typedef bspline<Point> base_t;
-	bezier_form(ARRAY_TYPE(Point) c,
+    bezier_form(ARRAY_TYPE(Point) c,
                 double a = 0,  double b =  1.0):
         base_t(std::move(c),
                std::vector<double>(2 * c.size()),
@@ -28,8 +28,8 @@ public:
     {
         check_invariants();
     }
-    
-	void check_invariants()
+
+    void check_invariants()
     {
         base_t::check_invariants();
         assert(qry::is_bezier(*this));

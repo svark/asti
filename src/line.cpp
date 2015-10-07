@@ -6,7 +6,7 @@ namespace geom {
 
 point2d_t
 intersect_lines(const line < point2d_t >& l1,
-				const line < point2d_t >& l2)
+                const line < point2d_t >& l2)
 {
     auto d1 = l1.direction();
     auto d2 = l2.direction();

@@ -155,17 +155,17 @@ template <class SplineCurve, class FnType>
 SplineCurve transform_at(const SplineCurve & crv,
                          double a, double b,
                          FnType f /*std::function<void(PointIter&)>*/
-                        )
+    )
 {
     auto const & t = crv.knots();
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
     size_t nu = r.locate_nu(a);
-    
+
     typedef typename SplineCurve::cpts_t cpts_t;
     typedef typename SplineCurve::knots_t knots_t;
- 
+
     cpts_t newcpts(cpts);
     // get control points wrt bernstein basis
     smat(a, b, t, deg).seval(newcpts.begin());

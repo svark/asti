@@ -26,7 +26,7 @@ double two_norm_squared(const SplineType &spl, rational_tag)
                            c.param_range().first,
                            c.param_range().second );
     }
-	return _2norm;
+    return _2norm;
 }
 
 template <class SplineType>

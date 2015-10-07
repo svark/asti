@@ -14,7 +14,7 @@ using geom::rational_bspline;
 template <class Point>
 double
 geom::foot_param(const circle<Point> &c,
-           const Point& p)
+                 const Point& p)
 {
     auto x = normalize(c.start() - c.center());
     auto y = normalize(c.ydir());

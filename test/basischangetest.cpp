@@ -62,8 +62,8 @@ TEST_CASE("change basis", "[bezier][monomial]"){
             REQUIRE(cfs[i] == Approx(legf[i]));
         }
     }
-	SECTION("bezier to legendre") {
-       std::vector<double> c(5);
+    SECTION("bezier to legendre") {
+        std::vector<double> c(5);
         for(int i = 0;i < 5; ++i)
             c[i] = i + 1;
 

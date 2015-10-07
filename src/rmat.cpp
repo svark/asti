@@ -47,7 +47,7 @@ rmat_base<KnotIter>::der_n(size_t idx,
 
     cache[idx - nu + size] = 1;
     eval(nu, u, derOrder, cache.get());
-	return cache[0];
+    return cache[0];
 }
 
 
