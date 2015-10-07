@@ -86,9 +86,9 @@ ops::compute_box_tight(const SplineType &spl) {
             dimCpts.push_back(coord(cp, dim));
         }
 
-        auto &bs =
+        bspline<double> bs(
             make_bspline(std::move(dimCpts), std::vector<double>(spl.knots()), d,
-                         ptag(), rtag());
+                         ptag(), rtag()));
 
         coord_nonconst(b.lo, dim) = impl::find_bound(0, bs);
         coord_nonconst(b.hi, dim) = impl::find_bound(1, bs);
