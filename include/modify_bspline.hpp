@@ -12,7 +12,7 @@ template <class SplineType, class Fn>
 SplineType&
 modify_bspline(SplineType& spl, Fn f)
 {
-    SplineType(spl,f).swap(spl);
+    SplineType(std::move(spl),f).swap(spl);
     return spl;
 }
 

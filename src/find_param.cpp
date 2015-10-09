@@ -5,6 +5,7 @@
 #include "tol.hpp"
 #include <numeric>
 #include "insert_knot.hpp"
+#include "bspline_queries.hpp"
 
 namespace geom {
 
@@ -27,9 +28,6 @@ find_next_rootc(geom::bspline<double>& spl,
     {
         auto const &t = spl.knots();
         auto const &c = spl.control_points();
-        auto tcap = [&t, p](size_t i) -> double {
-            return std::accumulate( &t[i+1], &t[i + 1] + p, 0.0 )/p;
-        };
 
         size_t n = c.size();
         while(k < n && ( c[k-1]*c[k] > 0 ))
@@ -39,7 +37,7 @@ find_next_rootc(geom::bspline<double>& spl,
             break;
 
         double root =
-            tcap(k) - (c[k]/p) * (t[k+p] - t[k] )/(c[k] - c[k-1] );
+            qry::greville(spl,k) - (c[k]/p) * (t[k+p] - t[k] )/(c[k] - c[k-1] );
 
         if( fabs(spl.eval(root)) < tol)
             return std::make_pair(root, true);

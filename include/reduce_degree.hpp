@@ -12,21 +12,13 @@
 #include "trim_extend_join.hpp"
 #include "bspline_x_cons.hpp"
 #include "range.hpp"
+#include "util.hpp"
 #include <iterator>
+#include "modify_bspline.hpp"
 namespace geom {
 namespace ops {
 
 
-struct tag_switcher
-{
-
-    template <class Fn1, class Fn2>
-    static auto eval(Fn1 f1_, Fn2 f2_, periodic_tag) ->decltype(f2_())  { return f2_();}
-
-    template <class Fn1, class Fn2>
-    static auto eval(Fn1 f1_, Fn2 f2_, regular_tag)  ->decltype(f1_())  { return f1_();}
-
-};
 
 // get a bezier spline of degee `deg' that is the closest L_2
 // approximation of the given curve `crv'.  Here we use the nice
@@ -87,24 +79,23 @@ reduce_degree(const SplineCurve& crv, int deg)
     auto tweak_ends_reg = [&nc,&crv](  )
         {
             return SplineCurve(
-                SplineCurve(std::move(nc)),
+                modify_bspline(nc,
                 [&crv](cref_t pb, cref_t pe, kref_t, kref_t){
                     if(pb != pe) {
                         *pb     = crv.eval(crv.param_range().first);
                         *(--pe) =  crv.eval(crv.param_range().second);
                     }
-                });
+                }) );
         };
 
     auto tweak_ends_per = [&nc,&deg,&crv](  )
         {
-            typedef  RAWTYPE(nc) BSplineType;
-            BSplineType( std::move(nc), [&crv](cref_t pb, cref_t pe, kref_t, kref_t){
+            modify_bspline(nc, [&crv](cref_t pb, cref_t pe, kref_t, kref_t) {
                     if(pb != pe) {
                         *pb     = crv.eval(crv.param_range().first);
                         *(--pe) =  crv.eval(crv.param_range().second);
                     }
-                }).swap(nc);
+                });
 
             size_t sz = nc.knots().size();
             auto const &ks = nc.knots();
@@ -136,13 +127,9 @@ reduce_degree(const SplineCurve& crv, int deg)
             rebase_at_start(nc, front_minus.rbegin()).swap(nc);
             rebase_at_end(nc,   back_plus.begin()).swap(nc);
 
-            typedef typename spline_traits<SplineCurve>::rtag rtag;
-            typedef typename spline_traits<SplineCurve>::point_t pref_t;
 
-            return SplineCurve(
-                BSplineType(
-                    std::move(nc),
-                    [&deg](cref_t pb,
+            return SplineCurve( modify_bspline(nc,
+                   [&deg](cref_t pb,
                            cref_t pe,
                            kref_t,
                            kref_t) {
@@ -158,7 +145,7 @@ reduce_degree(const SplineCurve& crv, int deg)
                     }) );
         };
     typedef typename spline_traits<SplineCurve>::ptag ptag;
-    return tag_switcher::eval(tweak_ends_reg,tweak_ends_per,
+    return util::tag_switcher::eval(tweak_ends_per,tweak_ends_reg,
                               ptag());
 }
 }

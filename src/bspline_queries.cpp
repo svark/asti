@@ -133,6 +133,14 @@ qry::auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag)
 }
 
 
+template <class SplineType>
+double
+qry::greville(const SplineType& spl,int i)
+{
+    auto const &ts =  spl.knots();
+    int d = spl.degree();
+    return std::accumulate(ts.begin() + i + 1, ts.begin() + i + d + 1, 0.0) /d;
+}
 //}}}
 }
 //{{{  instantiation scripts
@@ -141,7 +149,7 @@ qry::auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag)
   Local Variables:
   eval:(load-file "./scripts/temp.el")
   eval:(setq methods (list "is_periodic" "is_bezier" "is_clamped"
-  "curvature" "torsion"
+  "curvature" "torsion" "greville"
   ))
   eval:(setq spltypes (list "bspline<double>"
   "bspline<point2d_t>"

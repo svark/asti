@@ -1,5 +1,5 @@
 //-*-mode:c++-*-
-//Generated on: Fri Aug 21 11:20:02 2015. Do not edit
+//Generated on: Thu Oct  8 14:31:00 2015. Do not edit
 //________________________________________________________
 // method:is_periodic
 template bool qry::is_periodic(const bspline<double> & crv) ;
@@ -30,3 +30,9 @@ template double  qry::torsion(const bspline<double> & spl, double u) ;
 template double  qry::torsion(const bspline<point2d_t> & spl, double u) ;
 template double  qry::torsion(const bspline<point3d_t> & spl, double u) ;
 template double  qry::torsion(const bspline<point4d_t> & spl, double u) ;
+//________________________________________________________
+// method:greville
+template double qry::greville(const bspline<double>& spl,int i) ;
+template double qry::greville(const bspline<point2d_t>& spl,int i) ;
+template double qry::greville(const bspline<point3d_t>& spl,int i) ;
+template double qry::greville(const bspline<point4d_t>& spl,int i) ;

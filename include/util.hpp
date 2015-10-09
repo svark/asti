@@ -88,6 +88,16 @@ std::vector<decltype(Fn()(A()))> fmap(Fn f, const std::vector<A, AllocT >& as) {
     return result;
 }
 
+struct tag_switcher
+{
+    template <class Fn1, class Fn2>
+    static auto eval(Fn1 f1_, Fn2 f2_, std::false_type) ->decltype(f2_())  { return f2_();}
+
+    template <class Fn1, class Fn2>
+    static auto eval(Fn1 f1_, Fn2 f2_, std::true_type)  ->decltype(f1_())  { return f1_();}
+
+};
+
 using std::next;
 }
 

@@ -70,6 +70,8 @@ auto lift_dim(const Point& p1, rational_tag) -> RAWTYPE(higher_dim(p1))
     return p2;
 }
 
+template <class SplineType>
+extern double greville(const SplineType& spl,int i);
 
 extern point3d_t
 auto_lift_dim3(const point3d_t& p1, polynomial_tag, polynomial_tag);
