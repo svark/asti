@@ -22,6 +22,7 @@ This is a cagd library with the following functionality implemented so far
 - reduce degree of curves.
 - hodographs of bsplines
 - tessellating splines
+- tight bbox computation of bsplines
 
 [![Build Status](https://travis-ci.org/svark/asti.svg?branch=master)](https://travis-ci.org/svark/asti)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/svark/asti?branch=master&svg=true)](https://ci.appveyor.com/project/svark/asti)
