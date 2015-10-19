@@ -67,9 +67,8 @@ reduce_degree(const SplineCurve& crv, int deg)
     {
         while(++pf!=pe)
         {
-            double s,e;
-            std::tie(s,std::ignore) = nc.param_range();
-            std::tie(std::ignore,e) = pf->param_range();
+			double s = qry::start_param(nc);
+			double e = qry::end_param(*pf);
             reparametrize(join_starts(reverse_curve(nc),*pf,deg-1),s,e).swap(nc);
         }
     }
@@ -82,8 +81,8 @@ reduce_degree(const SplineCurve& crv, int deg)
                 modify_bspline(nc,
                 [&crv](cref_t pb, cref_t pe, kref_t, kref_t){
                     if(pb != pe) {
-                        *pb     = crv.eval(crv.param_range().first);
-                        *(--pe) =  crv.eval(crv.param_range().second);
+						*pb     = crv.eval(qry::start_param(crv));
+						*(--pe) =  crv.eval(qry::end_param(crv));
                     }
                 }) );
         };
@@ -92,8 +91,8 @@ reduce_degree(const SplineCurve& crv, int deg)
         {
             modify_bspline(nc, [&crv](cref_t pb, cref_t pe, kref_t, kref_t) {
                     if(pb != pe) {
-                        *pb     = crv.eval(crv.param_range().first);
-                        *(--pe) =  crv.eval(crv.param_range().second);
+                        *pb     = crv.eval(qry::start_param(crv));
+						*(--pe) =  crv.eval(qry::end_param(crv));
                     }
                 });
 

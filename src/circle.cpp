@@ -50,6 +50,10 @@ geom::make_circle(const Point& p1,
     double lv3 = sqlen(v3);
 
     double d = sqlen( cross( v1, v2) );
+
+	if(tol::small(d)) 
+		throw geom_exception(circle_too_large);
+
     auto center = dot(v1, -v3) / d*d;
     double lens[] = {lv1, lv2, lv3};
     decltype(v1) vs[] = {v1,v2,v3};
@@ -84,9 +88,9 @@ geom::make_rbspline_from_circle(const circle<Point>& circ)
 {
     auto start_pt  =  circ.start();
     auto center    =  circ.center();
-    auto const & x = (start_pt - center);
+	auto const & x = normalize(start_pt - center);
     typedef decltype(circ.plane_normal()) normal_t;
-    decltype(x)  y = cross(circ.plane_normal(), normal_t(x) );
+    decltype(x)  y = normalize(cross(circ.plane_normal(), normal_t(x) ));
 
     double radius =  circ.radius();
 

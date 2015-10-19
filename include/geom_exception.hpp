@@ -23,7 +23,8 @@ enum geom_error_code_t
     mismatched_array_sizes = 15,
     invalid_periodic_data = 16,
     duplicate_point_data = 17,
-    degenerate_circle = 18
+    degenerate_circle = 18,
+	circle_too_large = 19
 };
 
 extern  std::map<geom_error_code_t, std::string> init_dict();

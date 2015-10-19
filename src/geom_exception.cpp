@@ -20,7 +20,7 @@ init_dict()
     add(continuity_condition_too_tight,"Join continutiy must not exceed or equal degree");
     add(vectors_not_in_plane_of_points,"Vectors provided as tangents to conic are not the plane of given points");
     add(lines_do_not_meet,"Given lines do not meet");
-    add(circle_too_small, "Circle is tool small compared to precision of computation");
+    add(circle_too_small, "Circle is too small compared to precision of computation");
     add(point_at_axis_error, "Nearest point computation failed.\n The given point is very near the axis of circle");
     add(knots_incompatible_for_merging,"incompatible knots in given curves");
     add(tangent_vectors_too_small,"tangent at the start or end are too small in magnitude");
@@ -36,7 +36,8 @@ init_dict()
          "note: tangents may be zero in which case they will be ignored" );
     add( invalid_periodic_data ,"end point must match start point for periodic spline interpolation");
     add( duplicate_point_data ,"points to interpolate may not have consecutive duplicates");
-    add( degenerate_circle ,"circle generated would be degenerate or small");
+    add( degenerate_circle ,"Circle generated would be degenerate or small");
+	add( circle_too_large ,"Circle radius is too high");
     return dict_;
 }
 

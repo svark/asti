@@ -112,6 +112,9 @@ ops::last_bezier_patch(
   "bspline<point2d_t>"
   "bspline<point3d_t>"
   "bspline<point4d_t>"
+  "rational_bspline<double>"
+  "rational_bspline<point2d_t>"
+  "rational_bspline<point3d_t>"
   ))
   eval:(instantiate-templates "split_into_bezier_patches" "ops" (list )
   (product methods spltypes ))

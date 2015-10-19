@@ -14,15 +14,16 @@ template <class SplineCurve>
 polyline<typename spline_traits<SplineCurve>::point_t>
 tessellate(const SplineCurve& crv, double epsilon)
 {
-    double width = qry::param_range(crv).second;
-    width -= qry::param_range(crv).first;
+	using geom::qry::start_param;
+	using geom::qry::end_param;
+	double s     = start_param(crv);
+    double width = end_param(crv) - s;
     assert(width > 0 );
+	
+    double twonrmsq =  two_norm_squared(2,crv);
 
-    double twonrm =  two_norm_squared(crv);
-
-    double delta =  util::nroot( 24.0 * epsilon * epsilon * width
-                                 / twonrm, 5 );
-
+	double del = 24.0 *  width / twonrmsq;
+    double delta =  sqrt(sqrt(del)) * sqrt(epsilon);
     long num_segs = long (ceil(width/delta) );
     delta = width/num_segs;
 
@@ -31,12 +32,13 @@ tessellate(const SplineCurve& crv, double epsilon)
 #pragma loop(hint_parallel(8))
     for(long i = 0 ; i <= num_segs;++i)
     {
-        double u = crv.param_range().first + i*delta;
+        double u = s + i*delta;
         crvpts[i] =  crv.eval(u);
     }
+	
     return polyline<Point>(std::move(crvpts),
-                           crv.param_range().first,
-                           crv.param_range().second);
+                           start_param(crv),
+                           end_param(crv));
 }
 }
 #endif // ASTI_TESSELLATE_HPP

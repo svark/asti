@@ -35,25 +35,7 @@ double npow(double b, int e)
 inline
 double nroot(double x, long n)
 {
-    if(tol::small(x) )
-        return 0.0;
-
-    if(tol::small(x - 1))
-        return 1;
-
-    if( x < 0 )
-        return std::numeric_limits<double>::quiet_NaN();
-
-    double result = x > 1 ? x/2 : 2*x;
-    long n1 = n - 1;
-    double delta = 0;
-    do
-    {
-        result += delta;
-        delta =  (x / npow(result,n1) - result);
-    }while( tol::small(delta));
-
-    return result;
+    return exp(log(x)/n);
 }
 
 }

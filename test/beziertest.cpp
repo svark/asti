@@ -5,6 +5,10 @@
 #include "testutils.hpp"
 #include "split_into_bezier_patches.hpp"
 #include "smat.hpp"
+#include "bspline_queries.hpp"
+#include "conic.hpp"
+#include "circle.hpp"
+
 TEST_CASE("bezier_test","[bezier][bspline][split]") {
 
     cpts2d_t pts(5);
@@ -29,5 +33,24 @@ TEST_CASE("bezier_test","[bezier][bspline][split]") {
         INFO( "bez:" << p1 << "spl:" << p2 << "\n" );
         REQUIRE( p1 == p2);
         ++i;
+    }
+}
+
+TEST_CASE("bezier_test1", "[bezier][rational bspline][split]" ){
+	using geom::make_pt;
+    geom::circle<geom::point2d_t> c( make_pt(0.0,0.0),
+                                     make_pt(0,2.0));
+
+	
+    auto const & rbsc = geom::make_rbspline_from_circle( c );
+   
+    auto const &bps = geom::ops::split_into_bezier_patches(rbsc);
+    double v = 0;
+    for(auto bp : bps)
+    {
+        double u = (0.25*geom::qry::start_param(bp) + 0.75*geom::qry::end_param(bp));
+        INFO("u:" << u);
+        REQUIRE( bp.eval(u) == rbsc.eval(u));
+        v = u;
     }
 }

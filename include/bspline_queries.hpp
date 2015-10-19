@@ -177,10 +177,10 @@ template <class SplineType>
 extern double torsion(const SplineType & spl, double u);
 
 template <class Fn, class SplineType>
-double checked_op(Fn f, const SplineType& spl, double u)
+auto checked_op(Fn f, const SplineType& spl, double u) -> decltype(f(spl,u))
 {
     auto v = f(spl, u);
-    if(std::isnan(v))
+    if(std::isnan(coord(v,X)))
     {
         auto bef = f(spl, u - tol::param_tol);
         auto aft = f(spl, u + tol::param_tol);
@@ -202,10 +202,35 @@ double torsion_approx(const SplineType & spl, double u)
 }
 
 template <class SplineType>
+auto
+derivative_approx(const SplineType& spl, double u, int der) -> decltype(spl.eval_derivative(der,u))
+{
+	auto op = [der](const SplineType& spl, double u)
+	{ return spl.eval_derivative(der,u); };
+
+    return checked_op(op, spl, u);
+}
+
+
+
+template <class SplineType>
 std::pair<double,double>
 param_range(const SplineType&spl)
 {
     return spl.param_range();
+}
+
+template <class SplineType>
+double
+start_param(const SplineType&spl)
+{
+    return spl.param_range().first;
+}
+template <class SplineType>
+double
+end_param(const SplineType&spl)
+{
+    return spl.param_range().second;
 }
 
 }}

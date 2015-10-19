@@ -14,7 +14,7 @@ bspline_surface<point3d_t,
                 bspline_surface_traits<
                     typename spline_traits<SplineType>::rtag,
                     typename spline_traits<SplineType>::ptag,
-                    geom::regular_tag,
+                    regular_tag,
                     extruded_surf >
                 >
 make_bspline_surface(

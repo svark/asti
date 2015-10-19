@@ -6,38 +6,36 @@
 #include "split_into_bezier_patches.hpp"
 #include "hodograph.hpp"
 #include "integrate1d.hpp"
+#include "bspline_queries.hpp"
 
 namespace geom {
 namespace impl {
 template <class SplineType>
-double two_norm_squared(const SplineType &spl, rational_tag)
+double two_norm_squared(int der, const SplineType &spl, rational_tag)
 {
-    auto const &crvs    =
-        ops::split_into_bezier_patches(
-            qry::get_spline(spl));
-
     double _2norm = 0;
-    for(auto c : crvs ) {
-        auto accel = [&c] (double t)
-            {
-                return sqlen(c.eval_derivative(2,t));
-            };
-        _2norm += integral(accel,
-                           c.param_range().first,
-                           c.param_range().second );
-    }
+	using namespace geom::qry;
+
+    auto accel = [&spl,der] (double t)
+        {
+			auto sder = derivative_approx(spl,t,der);
+            return sqlen(sder);
+        };
+    _2norm += integral(accel,
+                        start_param(spl),
+                        end_param(spl));
     return _2norm;
 }
 
 template <class SplineType>
-double two_norm_squared(const SplineType &spl, polynomial_tag)
+double two_norm_squared(int der, const SplineType &spl, polynomial_tag)
 {
     int         n       = spl.degree() - 2;
     auto const  &ncis   = util::ncks(n);
     auto const  &_2ncis = util::ncks(2*n);
     auto const  &crvs   =
         ops::split_into_bezier_patches(
-            qry::hodograph(qry::get_spline(spl),2));
+            qry::hodograph(qry::get_spline(spl),der));
 
     double _2norm = 0.0;
     for(auto c : crvs)
@@ -52,8 +50,9 @@ double two_norm_squared(const SplineType &spl, polynomial_tag)
                     _2ncis[i+j];
             }
         }
-        double w = c.param_range().second;
-        w-= c.param_range().first;
+		double s,e;
+		std::tie(s,e) = c.param_range();
+        double w = e - s;
         _2norm += (thisnorm*w);
     }
     return _2norm/(2*n+1);
@@ -61,9 +60,10 @@ double two_norm_squared(const SplineType &spl, polynomial_tag)
 }
 
 template <class SplineType>
-double two_norm_squared(const SplineType &spl)
+double two_norm_squared(int der, const SplineType &spl)
 {
-    return impl::two_norm_squared(spl, typename spline_traits<SplineType>::rtag());
+    return impl::two_norm_squared(der, spl, 
+		typename spline_traits<SplineType>::rtag());
 }
 
 }

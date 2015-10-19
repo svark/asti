@@ -165,8 +165,14 @@ double coord(const double& p, std::integral_constant<int, 0> );
 template <class Point>
 double coord(const Point& p, int  i );
 
+template <class Point>
+double ncoord(const Point& p, int  i );
+
 inline
 double coord(const double& p, int  i);
+
+inline
+double ncoord(const double& p, int  i);
 
 template <class Point,int i>
 double& coord_nonconst(Point&, std::integral_constant<int, i>);

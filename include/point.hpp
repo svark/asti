@@ -129,6 +129,20 @@ inline double coord(const double& p, int  i)
 }
 
 
+template <class Point>
+double ncoord(const Point& p, int  i )
+{
+    assert(i < Point::dimension);
+    return p[i]/p[Point::dimension-1];
+}
+
+double ncoord(const double& p, int  i )
+{
+    assert(i == 0);
+    return p;
+}
+
+
 //////
 template <class Point,int i>
 double& coord_nonconst( Point& p, std::integral_constant<int, i> )

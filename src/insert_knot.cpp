@@ -120,7 +120,6 @@ insert_knot_impl( const SplineType &crv,
     u               = periodic_param(crv.param_range(), u);
     auto         p  = crv.degree();
     auto &       t  = crv.knots();
-    auto const & r  = crv.param_range();
     size_t       nu = rmat_base_vd(t,p).locate_nu(u);
 
     auto crv0 = insert_knot_impl(crv, u, geom::regular_tag());

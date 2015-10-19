@@ -1,7 +1,7 @@
 #ifndef ASTI_BOX_COMPUTE
 #define ASTI_BOX_COMPUTE
 #include "box.hpp"
-
+#include "bspline_fwd.hpp"
 namespace geom {
 template <class P> class circle;
 template <class P> class conic_arc;
@@ -13,7 +13,7 @@ extern box<typename SplineType::point_t>
 compute_box(const SplineType &spl);
 
 template <class SplineType>
-box<typename SplineType::point_t>
+extern box<typename SplineType::point_t>
 compute_box_tight(const SplineType &spl);
 
 template <class Point>

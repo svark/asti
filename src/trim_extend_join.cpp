@@ -120,9 +120,8 @@ SplineType
 ops::extend_curve_start(const SplineType & spl, double delta)
 {
     auto const & s = clamp_start(spl);
-    auto pr =  s.param_range();
-    double u = pr.first;
-    u -= delta * (pr.second - pr.first);
+    double u = qry::start_param(s);
+    u -= delta * (qry::end_param(s) - u);
     return rebase_at_start(s, util::make_constant_iterator(u) );
 }
 
@@ -131,9 +130,8 @@ SplineType
 ops::extend_curve_end(const SplineType & spl, double delta)
 {
     auto const & s  = clamp_start(spl);
-    auto         pr = s.param_range();
-    double       v  = pr.second;
-    v += (delta * (pr.second -  pr.first));
+	double       v  = qry::end_param(s);
+	v += (delta * (v -  qry::start_param(s)));
     return rebase_at_end(s, util::make_constant_iterator(v));
 }
 

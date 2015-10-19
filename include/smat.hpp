@@ -142,7 +142,7 @@ SplineCurve transform_at_left(const SplineCurve & crv,
                               FnType f /*std::function<void(PointIter&)>*/
     )
 {
-    double a = crv.param_range().first;
+	double a = qry::start_param(crv);
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     double b = crv.knots()[deg+1];
@@ -224,7 +224,7 @@ SplineCurve rebase_at_start(const SplineCurve & crv, KnotIter us)
     auto & t = crv.knots();
     int deg  = crv.degree();
     rmat_base_vd r(t, deg);
-    double a = crv.param_range().first;
+    double a = qry::start_param(crv);
     return rebase_at_left(crv, a, us);
 }
 
@@ -235,7 +235,7 @@ SplineCurve rebase_at_end(const SplineCurve & crv, KnotIter us)
     auto & t = crv.knots();
     int deg  = crv.degree();
     rmat_base_vd r(t, deg);
-    double b = crv.param_range().second;
+    double b = qry::end_param(crv);
     return rebase_at_right(crv, b, us);
 }
 
@@ -294,7 +294,7 @@ SplineCurve clamp_at_right_yaim(double b, const SplineCurve & crv)
 template <class SplineCurve>
 SplineCurve clamp_end_yaim(const SplineCurve & crv)
 {
-    double b = crv.param_range().second;
+    double b = qry::end_param(crv);
     return clamp_at_right_yaim(b, crv);
 }
 
@@ -309,7 +309,7 @@ SplineCurve clamp_at_left_yaim(double a, const SplineCurve & crv)
 template <class SplineCurve>
 SplineCurve clamp_start_yaim(const SplineCurve & crv)
 {
-    double a = crv.param_range().first;
+    double a = qry::start_param(crv);
     return clamp_at_left_yaim(a, crv);
 
 }

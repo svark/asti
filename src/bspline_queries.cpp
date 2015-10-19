@@ -96,7 +96,7 @@ qry::auto_lift_dim3(const point2d_t& p1, polynomial_tag, rational_tag)
 point4d_t
 qry::auto_lift_dim3(const point3d_t& p1, polynomial_tag, rational_tag)
 {
-    return point4d_t(p1,1.0);
+    return point4d_t(p1, 1.0);
 }
 
 

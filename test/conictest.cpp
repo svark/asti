@@ -66,15 +66,17 @@ TEST_CASE("hyperbola", "[conic][2d][hyperbola]") {
 }
 
 TEST_CASE("circle", "[circle][2d]"){
-    geom::circle<geom::point2d_t> c( geom::make_pt(0.0,0.0),
-                                     geom::make_pt(0,1.0));
+    using geom::make_pt;
+    geom::circle<geom::point2d_t> c( make_pt(0.0,0.0),
+                                     make_pt(0,1.0));
     REQUIRE(c.eval(0) == make_pt(0, 1));
     REQUIRE(c.eval(M_PI/2) == make_pt( - 1, 0));
     REQUIRE(c.eval(M_PI) == make_pt(0,- 1));
     REQUIRE(c.eval(3*M_PI/2) ==  make_pt(1, 0));
     REQUIRE(c.eval(2 * M_PI) ==  make_pt(0, 1));
 
-    auto ac = geom::make_circle( geom::make_pt(0,1.0), geom::make_pt(1,0), geom::make_pt(-1,0));
+
+    auto ac = make_circle( make_pt(0,1.0), make_pt(1,0), make_pt(-1,0));
     REQUIRE( c.center() == ac.center());
     REQUIRE( c.radius() == Approx(ac.radius()));
     REQUIRE( len (c.plane_normal()  + ac.plane_normal() ) == Approx(0));
@@ -85,4 +87,6 @@ TEST_CASE("circle", "[circle][2d]"){
     REQUIRE(rbsc.eval(2*M_PI/6.0) == make_pt(-0.866025404,0.5));
     REQUIRE(rbsc.eval(2*M_PI/2) ==  make_pt(0, -1));
     REQUIRE(rbsc.eval(4.0*M_PI/3) ==  make_pt(0.866025404,-0.5));
+	// todo:fix thisREQUIRE(rbsc.eval(M_PI/8.0 ) == c.eval(M_PI/8.0));
+	    
 }

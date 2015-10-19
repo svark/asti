@@ -15,9 +15,12 @@ void
 tess_is_close(const SplineType& bs, const double tess_tol)
 {
     using geom::qry::num_cpts;
+	using geom::qry::start_param;
+	using geom::qry::end_param;
+
     geom::polyline<geom::point2d_t> const &pl = geom::tessellate(bs, tess_tol);
-    auto s = bs.param_range().first ;
-    auto w = bs.param_range().second - s;
+	auto s = start_param(bs);
+    auto w = end_param(bs) - s;
     size_t d = num_cpts(pl)-1;
     auto f = w/d;
     point2d_t pp;
@@ -69,7 +72,7 @@ TEST_CASE("tessellate bspline",  "[bspline][linear][approximation]") {
     }
     SECTION("circle")
     {
-        geom::point2d_t p1 = make_pt(-1,-1),p2 = make_pt(0,1),p3 = make_pt(1,0);
+        geom::point2d_t p1 = make_pt(-1,1.5),p2 = make_pt(0,1),p3 = make_pt(1,0);
         auto const &rbs = geom::make_rbspline_from_circle(geom::make_circle( p1, p2, p3 ));
         tess_is_close(rbs, 0.1);
     }
