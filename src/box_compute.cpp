@@ -11,6 +11,7 @@
 #include "smat.hpp"
 #include <algorithm>
 #include "tol.hpp"
+#include "point.hpp"
 namespace geom {
 
 namespace impl{
@@ -27,7 +28,7 @@ compute_box(const SplineType &spl, rational_tag);
 template <class SplineType>
 box<typename SplineType::point_t>
 ops::compute_box(const SplineType &spl) {
-    return impl::compute_box(spl, spline_traits<SplineType>::rtag());
+    return impl::compute_box(spl, typename spline_traits<SplineType>::rtag());
 }
 
 template <class SplineType>
