@@ -36,7 +36,7 @@ TEST_CASE("bezier_test","[bezier][bspline][split]") {
     }
 }
 
-TEST_CASE("bezier_test1", "[bezier][rational bspline][split]" ){
+TEST_CASE("bezier_test1", "[bezier][rational bspline][split][circle]" ){
 	using geom::make_pt;
     geom::circle<geom::point2d_t> c( make_pt(0.0,0.0),
                                      make_pt(0,2.0));

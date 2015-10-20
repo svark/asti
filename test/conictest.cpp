@@ -83,10 +83,10 @@ TEST_CASE("circle", "[circle][2d]"){
 
     auto const & rbsc = geom::make_rbspline_from_circle( c );
     REQUIRE(rbsc.eval(0 ) == make_pt(0, 1));
-    REQUIRE(rbsc.eval(2*M_PI/3.0 ) == make_pt(-0.866025404,-0.5));
-    REQUIRE(rbsc.eval(2*M_PI/6.0) == make_pt(-0.866025404,0.5));
-    REQUIRE(rbsc.eval(2*M_PI/2) ==  make_pt(0, -1));
-    REQUIRE(rbsc.eval(4.0*M_PI/3) ==  make_pt(0.866025404,-0.5));
-	// todo:fix thisREQUIRE(rbsc.eval(M_PI/8.0 ) == c.eval(M_PI/8.0));
+    REQUIRE(plen(rbsc.eval(1/3.0 )) == 1);
+    REQUIRE(plen(rbsc.eval(1/6.0)) == 1);
+    REQUIRE(plen(rbsc.eval(1/2.0)) == 1);
+    REQUIRE(plen(rbsc.eval(2/3.0)) == 1);
+	REQUIRE(plen(rbsc.eval(1/16.0)) == 1);
 	    
 }

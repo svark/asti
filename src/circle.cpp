@@ -94,26 +94,21 @@ geom::make_rbspline_from_circle(const circle<Point>& circ)
 
     double radius =  circ.radius();
 
-    auto a = start_pt + 2 * y * radius  * cos( M_PI/6.0);
-    auto c = start_pt - 2 * y * radius  * cos( M_PI/6.0);
-    auto b = center -  2 * x * radius ;
+    auto a = start_pt;
+	auto b = start_pt + y * radius;
+    auto c = center - x * radius +  y * radius;
+    auto d = center - x * radius ;
+	auto e = center - x * radius - y * radius;
+	auto f = center + x * radius - y * radius;
 
-    auto p = lerp(0.5,a,c);
-    auto q = lerp(0.5,a,b);
-    auto r = lerp(0.5,c,b);
-
-    double weights[] = {1,0.5,1,0.5,1,0.5,1};
-    Point cpts[] = {p, a   ,q    ,b    ,r   ,c, p};
-    double ts[]  = {0, 0, 0, 2*M_PI/3,2*M_PI/3,4*M_PI/3,4*M_PI/3, 2*M_PI,2*M_PI,2*M_PI};
+    double weights[] = {1,0.5,0.5,1,0.5,0.5,1};
+    Point cpts[] = {a,b,c,d,e,f,a};
+    double ts[]  = {0, 0, 0,1.0/4,1.0/2,1.0/2,3.0/4,1,1,1};
     auto spl = make_bspline(
         interleave( mk_stdvec(cpts, cpts + sizeof(cpts)/sizeof(Point)),
                     mk_stdvec(weights , weights + sizeof(weights)/sizeof(double) ) ),
         std::vector<double>( ts , ts + sizeof(ts)/sizeof(double) ),
         2 );
-    double st[] = {-2*M_PI/3,0,0};
-    double es[] = {2*M_PI, 2*M_PI, 8.0*M_PI/3 };
-    rebase_at_start(spl, st ).swap(spl);
-    rebase_at_end(spl,es).swap(spl);
     return make_rbspline(std::move(spl));
 }
 
