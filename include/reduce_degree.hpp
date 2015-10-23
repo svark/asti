@@ -69,7 +69,7 @@ reduce_degree(const SplineCurve& crv, int deg)
         {
 			double s = qry::start_param(nc);
 			double e = qry::end_param(*pf);
-            reparametrize(join_starts(reverse_curve(nc),*pf,deg-1),s,e).swap(nc);
+            reparametrize(join_starts(reverse_curve(std::move(nc)),*pf,deg-1),s,e).swap(nc);
         }
     }
 

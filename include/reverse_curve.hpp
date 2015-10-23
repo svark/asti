@@ -4,7 +4,7 @@
 namespace geom {
 namespace ops {
 template <class SplineType>
-extern SplineType reverse_curve(const SplineType& spl);
+extern SplineType reverse_curve(SplineType spl);
 
 }
 }

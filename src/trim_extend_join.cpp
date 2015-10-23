@@ -68,7 +68,8 @@ ops::join_starts(const SplineType& spl1,
                    [](cref p1,cref p2){
                        return lerp(0.5, p1,p2);} );
 
-    std::copy(cpts2.cbegin() + join_cont + 1,cpts2.cend(),
+    std::copy(cpts2.cbegin() + join_cont + 1,
+              cpts2.cend(),
               std::back_inserter(cpts));
     // merge the two knot sequences together to get the knot sequence
     // for the join
@@ -76,7 +77,7 @@ ops::join_starts(const SplineType& spl1,
     newknots.reserve(spl1_clamped.knots().size() +
                      spl2_clamped.knots().size() - p - 1);
 
-    reverse_curve(spl1_clamped).swap(spl1_clamped);
+    reverse_curve(std::move(spl1_clamped)).swap(spl1_clamped);
     newknots.assign(spl1_clamped.knots().cbegin(),
                     spl1_clamped.knots().cend() - (join_cont + 1));
     newknots.insert(newknots.end(),

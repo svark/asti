@@ -101,7 +101,7 @@ auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag);
 
 namespace detail {
 template <class Spl>
-auto get_spline(const Spl& s, std::true_type, std::true_type)
+auto get_spline(const Spl& s, rational_tag, periodic_tag)
 //rational periodic
     -> decltype(s.spline().spline())
 {
@@ -109,14 +109,15 @@ auto get_spline(const Spl& s, std::true_type, std::true_type)
 }
 
 template <class Spl>
-auto get_spline(const Spl& s, std::false_type, std::true_type)
+auto get_spline(const Spl& s, polynomial_tag, periodic_tag)
 // not rational , periodic
     -> decltype(s.spline())
 {
     return s.spline();
 }
+
 template <class Spl>
-auto get_spline(const Spl& s, std::true_type, std::false_type)
+auto get_spline(const Spl& s, rational_tag, regular_tag)
 //rational, regular
     -> decltype(s.spline())
 {
@@ -124,7 +125,7 @@ auto get_spline(const Spl& s, std::true_type, std::false_type)
 }
 template <class Spl>
 //regular bspline
-const Spl& get_spline(const Spl& s, std::false_type, std::false_type)
+const Spl& get_spline(const Spl& s, polynomial_tag, regular_tag)
 {
     return s;
 }
@@ -133,21 +134,14 @@ const Spl& get_spline(const Spl& s, std::false_type, std::false_type)
 template <class Spl>
 auto get_spline(const Spl& s) -> decltype(
     detail::get_spline(s,
-                       std::integral_constant<
-                       bool,
-                       is_rational_type<Spl>::value>(),
-                       std::integral_constant<
-                       bool,
-                       is_periodic_type<Spl>::value>()))
-
+    typename spline_traits<Spl>::rtag(), 
+    typename spline_traits<Spl>::ptag()
+	))
 {
     return detail::get_spline(s,
-                              std::integral_constant<
-                              bool,
-                              is_rational_type<Spl>::value>(),
-                              std::integral_constant<
-                              bool,
-                              is_periodic_type<Spl>::value>());
+	    typename spline_traits<Spl>::rtag(), 
+        typename spline_traits<Spl>::ptag()
+	);
 }
 
 template <class Crv>
@@ -160,14 +154,6 @@ template <class Crv>
 size_t num_cpts(const Crv& spl)
 {
     return get_spline(spl).control_points().size();
-}
-
-template <class Crv>
-bool is_regular_at(const Crv&spl, double u)
-{
-    auto ex = spl.eval_derivative(1,u);
-    if(!ex) return false;
-    return tol::neq(len(*ex) , 0);
 }
 
 template <class SplineType>
