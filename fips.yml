@@ -1,0 +1,9 @@
+# asti
+
+imports:
+    fips-eigen:
+       git: https://github.com/svark/fips-eigen.git
+    fips-boost-math:
+       git: https://github.com/svark/fips-boost-math.git
+    fips-catch:
+       git: https://github.com/svark/fips-catch.git

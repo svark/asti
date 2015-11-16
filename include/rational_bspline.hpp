@@ -11,7 +11,7 @@ template <class VecsT>
 auto rational_derivatives(const VecsT & vecs)
     ->  decltype(mk_stdvec(lower_dim(vecs[0])))
 {
-    int derOrder = vecs.size() - 1;
+    size_t derOrder = vecs.size() - 1;
     typedef decltype(lower_dim(vecs[0])) vec_t;
     enum {dim = point_dim < vec_t >::dimension};
 
