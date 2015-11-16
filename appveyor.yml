@@ -3,4 +3,4 @@ os: Visual Studio 2015
 build_script:
 - cmd: python fips build win64-vs2015-debug
 test_script:
-- cmd: python fips test_asti
+- cmd: python fips run test_asti
