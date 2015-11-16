@@ -8,6 +8,7 @@ if (NOT FIPS_IMPORT)
     message (STATUS "fips setup complete")
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
 fips_begin_lib(asti)
    include_directories(include)
 
