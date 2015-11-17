@@ -19,8 +19,8 @@ struct implicitCurveFormBase
     double eval(const point2d_t& p) const;
     virtual ~implicitCurveFormBase(){}
 protected:
-    int qdeg;
     std::vector<double> coefficients;
+    int qdeg;
 };
 
 

@@ -13,7 +13,6 @@ SplineType ops::reparametrize(const SplineType& spl,
                               double t1, double t2)
 {
     typedef typename SplineType::knots_t knots_t;
-    typedef typename SplineType::point_t point_t;
     knots_t new_knots( spl.knots().size() );
     auto & t = spl.knots();
 

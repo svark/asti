@@ -142,7 +142,7 @@ SplineCurve transform_at_left(const SplineCurve & crv,
                               FnType f /*std::function<void(PointIter&)>*/
     )
 {
-	double a = qry::start_param(crv);
+    double a = qry::start_param(crv);
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     double b = crv.knots()[deg+1];
@@ -164,7 +164,6 @@ SplineCurve transform_at(const SplineCurve & crv,
     size_t nu = r.locate_nu(a);
 
     typedef typename SplineCurve::cpts_t cpts_t;
-    typedef typename SplineCurve::knots_t knots_t;
 
     cpts_t newcpts(cpts);
     // get control points wrt bernstein basis

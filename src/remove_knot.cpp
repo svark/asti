@@ -10,16 +10,14 @@ template <typename SplineCurve>
 SplineCurve
 ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
 {
-    SplineCurve crv(crv_);
+    SplineCurve crv(crv_) ;
     while(crv.degree() < 3) {
         raise_degree(crv).swap(crv);
     }
     auto const &  ts =  crv.knots();
     std::vector<double> uts;
     uts.reserve(ts.size());
-    std::unique_copy(ts.cbegin(),
-                     ts.cend(),
-                     uts.begin());
+    std::unique_copy(ts.cbegin(), ts.cend(), uts.begin());
     int j = 0;
     std::vector<double> kdash_variation(uts.size());
     for(auto t : uts)
@@ -39,9 +37,9 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     auto const & cpts = crv.control_points();
     auto const & t = crv.knots();
     typename SplineCurve::cpts_t newcpts(cpts);
-    typedef RAWTYPE(cpts[0]) point_t;
+
     auto l =  (t[nu + 1] - t[nu - 3]) * make_vec(cpts[nu - 1])  -
-        (t[nu + 1] - t[nu]) * make_vec( cpts[nu - 2])  ;
+        (t[nu + 1] - t[nu]) * make_vec( cpts[nu - 2]);
 
     l *= 1.0 / (t[nu] - t[nu - 3]);
 
@@ -58,7 +56,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
         newcpts[nu] = cpts[nu] + tol *
             (newcpts[nu] - cpts[nu]) / sqrt(den);
     }else {
-        newcpts[nu] = cpts[nu];
+        newcpts[nu] = cpts[nu] ;
     }
 
     typedef spline_traits<SplineCurve> str;

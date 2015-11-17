@@ -132,7 +132,7 @@ find_knot_at_bound(const SplineType& bs, MinMaxTag tag)
     Eigen::Vector2d _2dv;
     _2dv << coord(pts[i + j],0) - coord(pts[i],0),
         t[i + d] - t[i + d + j];
-    _2dv = lu.solve(_2dv);
+	_2dv = lu.solve(_2dv);
 
     auto u = t[i + d] - _2dv[0] * (t[i + d] - t[i]);
     return std::make_pair(u, false);
