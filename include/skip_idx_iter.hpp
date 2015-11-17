@@ -21,7 +21,7 @@ struct skip_ith_iter :
     }
 
     skip_ith_iter(const skip_ith_iter&other)
-        :t(other.t),iter(other.iter),i(other.i)
+        :t(other.t),i(other.i),iter(other.iter)
     {
     }
 

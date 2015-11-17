@@ -24,8 +24,6 @@ bspline<double>
 ops::cubic_approx1d(Fn f, std::vector<double> t)
 {
 
-    double mindist = std::numeric_limits<double>::infinity();
-    size_t i  = 0;
     static const int p = 3;
     size_t n = t.size() - p - 1;
     assert(n>0);
@@ -185,8 +183,6 @@ ops::foot_param(const SplineType &spl,
                 const typename SplineType::point_t& p)
 {
     auto pr = spl.param_range();
-    double b = pr.first;
-    double e = pr.second;
 
     auto dist = [&p, &spl] (double u) -> double {
         return sqlen( p - spl.eval(u) );
@@ -214,8 +210,8 @@ ops::foot_param(const SplineType &spl,
 
     std::vector<double> tapprox;
     typedef typename spline_traits<SplineType>::ptag ptag;
-    kts::build_knots<3>(spl.knots().cbegin() + spl.degree(),
-                        spl.knots().cend()   - spl.degree(),
+    kts::build_knots<3>(t.cbegin() + deg,
+                        t.cend()   - deg,
                         tapprox,
                         ptag());
 

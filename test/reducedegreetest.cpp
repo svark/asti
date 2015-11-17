@@ -64,12 +64,6 @@ TEST_CASE("raise_and_reduce_degree_of_bspline", "[bspline][bspline][degree][appr
     auto const & raisedbs = geom::ops::raise_degree(bs);
     auto const  & nc = geom::ops::reduce_degree( raisedbs, 3);
 
-    auto p0 =  bs.eval(0);
-    auto p1 =  bs.eval(.2);
-    auto p2 =  bs.eval(0.9);
-    auto p3 =  bs.eval(1.2);
-    auto p4 =  bs.eval(0.9999999);
-
     auto r0 =  raisedbs.eval(0);
     auto r1 =  raisedbs.eval(.2);
     auto r2 =  raisedbs.eval(0.9);
