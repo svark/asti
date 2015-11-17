@@ -56,7 +56,7 @@ public:
 
     vector_t normal(double u) const
     {
-        return eval(u) - center;
+        return eval(u) - center();
     }
     // accessors
 

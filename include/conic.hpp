@@ -132,7 +132,7 @@ make_rbspline_from_conic(const conic_arc<Point> &arc)
                                  arc.p[2] - arc.p[1]);
 
 
-    if(w >= 1.0 || w > 0 && alpha > M_PI / 3) {
+    if(w >= 1.0 || (w > 0 && alpha > M_PI / 3) ) {
         // single segment parabola or hyperbola
         double ks[] =  {0, 0, 0, 1, 1, 1};
         auto spl(make_bspline_arr( arc.p, arc.p + 3, ks,

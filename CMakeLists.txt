@@ -8,7 +8,11 @@ if (NOT FIPS_IMPORT)
     message (STATUS "fips setup complete")
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+
+if( LINUX )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gnu=c++1y")
+endif()
+
 fips_begin_lib(asti)
    include_directories(include)
 

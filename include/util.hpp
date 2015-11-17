@@ -102,8 +102,8 @@ using std::next;
 }
 
 
-static const std::integral_constant<util::infix1,util::boundary_of> _on_;
-static const std::integral_constant<util::infix1,util::inside>      _in_;
-static const std::integral_constant<util::infix1,util::outside>     _out_;
+static const std::integral_constant<util::infix1,util::boundary_of> _on_ =  std::integral_constant<util::infix1,util::boundary_of>();
+static const std::integral_constant<util::infix1,util::inside>      _in_ = std::integral_constant<util::infix1,util::inside>();
+static const std::integral_constant<util::infix1,util::outside>     _out_= std::integral_constant<util::infix1,util::outside>();
 
 #endif//UTIL_HPP
