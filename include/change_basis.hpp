@@ -22,7 +22,7 @@ to_monomial(const bspline < Point >& bezf)
     size_t sz =  b.size();
     typedef  typename monomial_form < Point >::cpts_t cpts_t;
     cpts_t monf(sz, Point(0.0));
-    long cni = 1;
+    size_t cni = 1;
     short signi = 1;
     int n = sz - 1;
     for(size_t i =  0;i < sz; ++i, signi = -signi) {
@@ -30,8 +30,8 @@ to_monomial(const bspline < Point >& bezf)
             cni *= (n - i + 1) ;
             cni /= i;
         }
-        long cil =  1;
-        short signl = 1;
+		size_t cil =  1;
+		short signl = 1;
         for(size_t l =  0;l <= i; ++l, signl = -signl)
         {
             if(l != 0) {
@@ -39,7 +39,8 @@ to_monomial(const bspline < Point >& bezf)
                 cil /= l;
             }
             auto const & ev(b[l]);
-            double co =  signi * signl * cni * cil ;
+            double co =  cni * cil ;
+			co *= signi * signl;
             monf[i] += (scaled_copy(ev, co));
         }
     }
@@ -56,7 +57,7 @@ to_bezier(const monomial_form < Point > & mf )
     int n  =  mf.size() - 1;
     typename bezier_form<Point>::cpts_t  cpts(n + 1, Point(0.0));
     for(size_t l = 0;l < mf.size(); ++l) {
-        long clk = 1, cnk = 1;
+        size_t clk = 1, cnk = 1;
         for(size_t k = 0; k <= l; ++k)
         {
             if(k != 0) {
@@ -148,7 +149,7 @@ to_bezier(const legendre_form<Point>& lf)
                     mjk += (double(isign) * kisq * nkcji);
                 }
             }
-            mjk *= (ksign * f);
+            mjk *= (double(ksign) * f);
             mjk /= ncjs[j];
             cpts[j] +=  scaled_copy( lf.coeffs(k),mjk );
         }

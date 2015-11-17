@@ -16,7 +16,6 @@ make_bspline(CptsT && pts, std::vector<double>&& ks, int degree_,
     static_assert(std::is_same<point_t,Point>::value," deduced and passed val should be same");
     typedef bspline < point_t > spl_t;
     typedef typename spl_t::cpts_t cpts_t;
-    typedef typename spl_t::knots_t knots_t;
 
     auto const &spl = spl_t(
         std::forward < cpts_t > (pts),
@@ -95,7 +94,6 @@ make_bspline( CptsT pts, KnotsT ks, int degree_)
     typedef RAWTYPE(pts[0])  point_t;
     typedef bspline < point_t > spl_t;
     typedef typename spl_t::cpts_t cpts_t;
-    typedef typename spl_t::knots_t knots_t;
 
     return impl::make_bspline<point_t>(
         std::move(pts),

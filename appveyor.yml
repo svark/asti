@@ -1,50 +1,6 @@
 version: 1.0.{build}
-install:
-- cmd: if not exist C:\Projects\libs (mkdir c:\Projects\libs)
-- echo %CD%
-- cmd: cmake --version
-- ps: >-
-    $ChkFile = "C:\Projects\libs\bii-win.exe"
-
-    $FileExists = Test-Path $ChkFile
-
-    if ($FileExists -eq $True) {
-       Write-Host "Yippee, bii-win exists"
-    }else {
-         echo "Downloading biicode ..."
-         wget http://www.biicode.com/downloads/latest/win -OutFile $ChkFile
-    }
-
-- cmd: echo Installing biicode..
-- cmd: C:\Projects\libs\bii-win.exe /VERYSILENT
-- cmd: set PATH=%PATH%;C:\Progra~2\BiiCode\bii\
-- cmd: set project_name=xasti
-- cmd: bii -v
-- ps: >-
-   $ChkFile = "C:\Projects\libs\boost_1_57_0.zip"
-
-   if (!(Test-Path $ChkFile)) {
-          echo "Downloading Boost 1.57.0 ..."
-          wget "http://iweb.dl.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.zip" -OutFile $ChkFile
-   }
-
-cache:
-  - C:\Projects\libs\bii-win.exe
-  - C:\Projects\libs\boost_1_57_0.zip
-before_build:
-- cmd: cd \
-- cmd: bii init %project_name%
-- cmd: cd %project_name%
-- cmd: bii new svark/asti
-# copy files and folders
-- cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\svark\asti\ /S /Q
-- cmd: bii find --update
-- cmd: xcopy C:\Projects\libs\boost_1_57_0.zip c:\users\appveyor\.biicode\tmp\boost\1.57.0\
-- cmd: bii cpp:configure -G "Visual Studio 12"
+os: Visual Studio 2015
 build_script:
-- cmd: bii cpp:build
+- cmd: python fips build win64-vs2015-debug
 test_script:
-- cmd: bii test
-# to run your custom scripts instead of provider deployments
-deploy_script:
-on_success:
+- cmd: python fips run test_asti

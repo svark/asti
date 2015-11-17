@@ -182,7 +182,6 @@ double
 ops::foot_param(const SplineType &spl,
                 const typename SplineType::point_t& p)
 {
-
     auto dist = [&p, &spl] (double u) -> double {
         return sqlen( p - spl.eval(u) );
     };
@@ -209,8 +208,8 @@ ops::foot_param(const SplineType &spl,
 
     std::vector<double> tapprox;
     typedef typename spline_traits<SplineType>::ptag ptag;
-    kts::build_knots<3>(spl.knots().cbegin() + spl.degree(),
-                        spl.knots().cend()   - spl.degree(),
+    kts::build_knots<3>(t.cbegin() + deg,
+                        t.cend()   - deg,
                         tapprox,
                         ptag());
 

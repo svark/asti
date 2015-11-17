@@ -1,26 +1,19 @@
-language:
-  - cpp
+language: cpp
+compiler: gcc
+os:
+  - osx
+  - linux
+before_install:
+  - echo $TRAVIS_OS_NAME
+  #LINUX
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
 install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.9; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90
-  - wget http://apt.biicode.com/install.sh && sudo chmod +x install.sh && sudo ./install.sh #Install biicode
-  - bii setup:cpp #Install biicode required C/C++ tools (GCC, cmake, etc)
-  - cd ../..
-  - bii init xasti
-  - cd xasti
-  - bii new svark/asti
-  - ls
-  - pwd
-  - mv ../svark/asti blocks/svark/
-  - ls blocks/svark/asti
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -qq g++-4.9; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install cmake; fi
 script:
-  - bii find --update #Find biicode dependencies 
-  - bii cpp:configure #Configure block for building
-  - bii cpp:build #Build block
-  - bii test
-cache:
-  directories:
-  - $HOME/.biicode
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then python fips build linux-make-release ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python fips build osx-xcode-release ; fi
+  - python fips run test_asti

@@ -91,10 +91,10 @@ std::vector<decltype(Fn()(A()))> fmap(Fn f, const std::vector<A, AllocT >& as) {
 struct tag_switcher
 {
     template <class Fn1, class Fn2>
-    static auto eval(Fn1 f1_, Fn2 f2_, std::false_type) ->decltype(f2_())  { return f2_();}
+    static auto eval(Fn1 f1_, Fn2 f2_, std::false_type) { return f2_();}
 
     template <class Fn1, class Fn2>
-    static auto eval(Fn1 f1_, Fn2 f2_, std::true_type)  ->decltype(f1_())  { return f1_();}
+    static auto eval(Fn1 f1_, Fn2 f2_, std::true_type)  { return f1_();}
 
 };
 
@@ -102,8 +102,8 @@ using std::next;
 }
 
 
-static const std::integral_constant<util::infix1,util::boundary_of> _on_;
-static const std::integral_constant<util::infix1,util::inside>      _in_;
-static const std::integral_constant<util::infix1,util::outside>     _out_;
+static const std::integral_constant<util::infix1,util::boundary_of> _on_ =  std::integral_constant<util::infix1,util::boundary_of>();
+static const std::integral_constant<util::infix1,util::inside>      _in_ = std::integral_constant<util::infix1,util::inside>();
+static const std::integral_constant<util::infix1,util::outside>     _out_= std::integral_constant<util::infix1,util::outside>();
 
 #endif//UTIL_HPP

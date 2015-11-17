@@ -169,7 +169,7 @@ public:
     {
         typedef  RAWTYPE(cpts[0]) point_type;
         point_type pt(0.0);
-        for (int k = 0; k < size(); ++k)
+        for (size_t k = 0; k < size(); ++k)
         {
             pt += get(k) * cpts[k];
         }

@@ -7,40 +7,32 @@
 
 namespace geom {
 
-// to remove when you have c++14
-#define MAKE_BSPLINE  make_bspline(std::forward < CptsT > (pts),        \
-                                   std::forward < KnotsT > (ks), deg)
-
-#define MAKE_PERIODIC_BSPLINE   make_periodic_bspline(std::forward<CptsT> (pts), \
-                                                      std::forward<KnotsT> (ks), \
-                                                      deg)
-#define MAKE_RBSPLINE make_rbspline(std::move(make_bspline(pts,ks,deg,PTag(),polynomial_tag())))
-
 template<class CptsT, class KnotsT>
-    auto
-    make_bspline(CptsT && pts, KnotsT && ks, int deg,
-                 regular_tag, polynomial_tag) ->
-    RAWTYPE(MAKE_BSPLINE)
+auto
+make_bspline(CptsT && pts, KnotsT && ks, int deg,
+             regular_tag, polynomial_tag)
 {
-    return MAKE_BSPLINE;
+    return make_bspline(std::forward < CptsT > (pts),
+                        std::forward < KnotsT > (ks), deg);
 }
 
 template<class CptsT, class KnotsT>
 auto
 make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             periodic_tag, polynomial_tag) ->
-    RAWTYPE(MAKE_PERIODIC_BSPLINE)
+             periodic_tag, polynomial_tag)
 {
-    return MAKE_PERIODIC_BSPLINE;
+    return make_periodic_bspline(std::forward<CptsT>(pts),
+                                 std::forward<KnotsT> (ks),
+                                 deg);
 }
 
 template<class CptsT, class KnotsT,class PTag>
 auto
 make_bspline(CptsT && pts, KnotsT && ks, int deg,
-             PTag , rational_tag) ->
-    RAWTYPE(MAKE_RBSPLINE)
+             PTag , rational_tag)
 {
-    return MAKE_RBSPLINE;
+    return make_rbspline(std::move(make_bspline(pts,ks,deg,PTag(),
+                                                polynomial_tag())));
 }
 
 }

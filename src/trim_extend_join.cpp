@@ -59,7 +59,7 @@ ops::join_starts(const SplineType& spl1,
     auto & cpts2 = spl2_clamped.control_points();
     typename SplineType::cpts_t cpts;
     typedef typename SplineType::cpts_t::const_reference cref;
-    typedef typename SplineType::point_t point_t;
+
     cpts.reserve(cpts1.size() + cpts2.size());
     std::copy(cpts1.crbegin(), cpts1.crend(), std::back_inserter(cpts));
     // merge the p + 1 cpts at the end of reversed c0 and start of c1
@@ -98,7 +98,6 @@ SplineType
 ops::extract_regular_curve(const SplineType &spl)
 {
     auto &ts    = spl.knots();
-    int   deg   = spl.degree();
 
     assert(!tol::param_eq(ts.front(), ts.back()));
     return clamp_end(clamp_start(spl));
@@ -110,7 +109,6 @@ SplineType
 ops::trim_curve(const SplineType &spl, double a, double b)
 {
     auto &ts    = spl.knots();
-    int   deg   = spl.degree();
 
     assert(!tol::param_eq(ts.front(), ts.back()));
     return clamp_at_right(b, clamp_at_left(a, spl));
@@ -131,8 +129,8 @@ SplineType
 ops::extend_curve_end(const SplineType & spl, double delta)
 {
     auto const & s  = clamp_start(spl);
-	double       v  = qry::end_param(s);
-	v += (delta * (v -  qry::start_param(s)));
+    double       v  = qry::end_param(s);
+    v += (delta * (v -  qry::start_param(s)));
     return rebase_at_end(s, util::make_constant_iterator(v));
 }
 

@@ -595,7 +595,8 @@ pchip_preconditions(
     typedef RAWTYPE(pb[0]) point_t;
     static const int dim =  point_dim < point_t >::dimension;
 
-    if(vecs.size() != std::distance(pb, pe))
+    size_t numPts(std::distance(pb, pe));
+    if(vecs.size() != numPts )
         throw geom_exception(mismatched_array_sizes);
 
     if(opts.end_conditions == periodic &&

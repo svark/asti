@@ -132,8 +132,8 @@ find_knot_at_bound(const SplineType& bs, MinMaxTag tag)
     Eigen::Vector2d _2dv;
     _2dv << coord(pts[i + j],0) - coord(pts[i],0),
         t[i + d] - t[i + d + j];
-	_2dv = lu.solve(_2dv);
 
+    _2dv = lu.solve(_2dv);
     auto u = t[i + d] - _2dv[0] * (t[i + d] - t[i]);
     return std::make_pair(u, false);
 }
@@ -234,7 +234,7 @@ box<Point>
 ops::compute_box(const circle<Point> &c) {
     box<Point> b0;
     enum { dim = point_dim<Point>::dimension };
-    typedef decltype(Point() - Point()) vector_t;
+    typedef VECTOR_TYPE(Point) vector_t;
     for (int i = 0; i < dim; ++i) {
         Point p(0.0);
         p[i] = 1.0;
