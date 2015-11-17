@@ -161,8 +161,7 @@ SplineCurve transform_at(const SplineCurve & crv,
     int deg  = crv.degree();
     auto const & cpts = crv.control_points();
     rmat_base_vd r(t, deg);
-    size_t nu = r.locate_nu(a);
-
+ 
     typedef typename SplineCurve::cpts_t cpts_t;
 
     cpts_t newcpts(cpts);
@@ -222,7 +221,6 @@ SplineCurve rebase_at_start(const SplineCurve & crv, KnotIter us)
 
     auto & t = crv.knots();
     int deg  = crv.degree();
-    rmat_base_vd r(t, deg);
     double a = qry::start_param(crv);
     return rebase_at_left(crv, a, us);
 }
@@ -233,7 +231,6 @@ SplineCurve rebase_at_end(const SplineCurve & crv, KnotIter us)
 
     auto & t = crv.knots();
     int deg  = crv.degree();
-    rmat_base_vd r(t, deg);
     double b = qry::end_param(crv);
     return rebase_at_right(crv, b, us);
 }

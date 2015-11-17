@@ -24,7 +24,7 @@ enum geom_error_code_t
     invalid_periodic_data = 16,
     duplicate_point_data = 17,
     degenerate_circle = 18,
-	circle_too_large = 19
+    circle_too_large = 19
 };
 
 extern  std::map<geom_error_code_t, std::string> init_dict();
@@ -41,8 +41,9 @@ struct geom_exception
     {
     }
 
-    std::string what() { return dict().at(code());}
-    geom_error_code_t code() { return exception_code;}
+    std::string what() const { return dict().at(code());}
+    geom_error_code_t code() const { return exception_code;}
+    std::string where() const { return function + ":" + std::to_string(line) ; }
 private:
     static const std::map<geom_error_code_t, std::string> & dict() {
         static std::map<geom_error_code_t, std::string> dict_ ( std::move(init_dict()));

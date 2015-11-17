@@ -1,5 +1,5 @@
 //-*-mode:c++-*-
-//Generated on: Mon Oct 19 18:39:51 2015. Do not edit
+//Generated on: Tue Nov 17 14:00:19 2015. Do not edit
 //________________________________________________________
 // method:make_rbspline_from_circle
 template rational_bspline< point2d_t, regular_tag > geom::make_rbspline_from_circle(const circle<point2d_t>& circ) ;

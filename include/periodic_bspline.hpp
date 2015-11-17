@@ -9,7 +9,7 @@ namespace geom
 {
 
 static
-double periodic_param(const std::pair<double, double>& range,
+inline double periodic_param(const std::pair<double, double>& range,
                       double u)
 {
     if (u <_in_> range)

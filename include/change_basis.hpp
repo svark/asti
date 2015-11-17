@@ -85,7 +85,6 @@ to_legendre(const bspline<Point>& bezf)
     int   n    = bezf.degree();
     typedef  typename monomial_form < Point >::cpts_t cpts_t;
     cpts_t legf(sz, Point(0.0));
-    double njn = 1;
 
     std::vector<size_t> njcns(util::nkcks(n,n));
     for(int k = 0; k <= n; ++k) {
@@ -98,7 +97,7 @@ to_legendre(const bspline<Point>& bezf)
             double mjk  = 0.0;
             short isign = 1;
             size_t jci  = 1;
-            size_t kick = 1;
+
             for(int i = 0; i <= j; ++i, isign *=- 1)
             {
                 if(i!= 0) {
@@ -126,7 +125,6 @@ to_bezier(const legendre_form<Point>& lf)
 
     short  ksign =  1;
 
-    size_t ncj = 1;
     std::vector<size_t> ncjs (util::ncks(n));
     for(int k = 0;k <= n; ++k, ksign *=- 1)
     {

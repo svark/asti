@@ -51,10 +51,9 @@ geom::make_circle(const Point& p1,
 
     double d = sqlen( cross( v1, v2) );
 
-	if(tol::small(d)) 
-		throw geom_exception(circle_too_large);
+    if(tol::small(d))
+        throw geom_exception(circle_too_large);
 
-    auto center = dot(v1, -v3) / d*d;
     double lens[] = {lv1, lv2, lv3};
     decltype(v1) vs[] = {v1,v2,v3};
 
