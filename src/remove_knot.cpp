@@ -39,7 +39,7 @@ ops::fair_by_knot_removal(const SplineCurve & crv_, double tol)
     auto const & cpts = crv.control_points();
     auto const & t = crv.knots();
     typename SplineCurve::cpts_t newcpts(cpts);
-    typedef RAWTYPE(cpts[0]) point_t;
+
     auto l =  (t[nu + 1] - t[nu - 3]) * make_vec(cpts[nu - 1])  -
         (t[nu + 1] - t[nu]) * make_vec( cpts[nu - 2])  ;
 
