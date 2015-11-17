@@ -23,7 +23,6 @@ make_bspline_surface(
     )
 {
     using namespace qry;
-    typedef typename spline_traits<SplineType>::point_t point_t;
     typedef typename std::conditional<is_rational_type<SplineType>::value,point4d_t, point3d_t>::type pointw_t;
     typedef typename std::conditional<is_rational_type<SplineType>::value,vector4d_t, vector3d_t>::type vectorw_t;
 

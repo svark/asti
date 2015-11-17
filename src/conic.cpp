@@ -93,8 +93,6 @@ conic_arc_preconditions(const point3d_t p[], const vector3d_t v[])
 conic_arc<point3d_t>
 make_conic_arc(const point3d_t p[3], const vector3d_t v[2])
 {
-    typedef conic_arc< point3d_t >::pointw_t pointw_t;
-
     auto err = conic_arc_preconditions(p,v);
     if(err)
         throw geom_error_code_t(err);
@@ -110,8 +108,6 @@ make_conic_arc(const point3d_t p[3], const vector3d_t v[2])
 conic_arc<point2d_t>
 make_conic_arc(const point2d_t p[3], const vector2d_t v[2])
 {
-    typedef conic_arc< point3d_t >::pointw_t pointw_t;
-
     if( tol::eq(fabs(dot(v[0], v[1])),
                 len(v[0]) * len(v[1])))
     { // tangents are parallel

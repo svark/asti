@@ -23,7 +23,7 @@ template <class SplineType>
 bool qry::is_bezier(const SplineType& spl)
 {
     auto &t = spl.knots();
-    int sz = spl.degree() + 1;
+    size_t sz = spl.degree() + 1;
     if( t.size() != 2*sz || spl.control_points().size() != sz)
         return false;
     if(std::equal(t.begin(), t.begin() + sz,

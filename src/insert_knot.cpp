@@ -81,7 +81,6 @@ insert_knot_impl( const SplineType &crv,
                   double u,
                   geom::regular_tag )
 {
-    typedef typename SplineType::point_t point_t;
     typedef typename SplineType::knots_t knots_t;
     auto & cpts = crv.control_points();
     auto p = crv.degree();
@@ -98,7 +97,7 @@ insert_knot_impl( const SplineType &crv,
     }
     std::copy(cpts.cbegin() + nu, cpts.cend(),
               std::back_inserter(newcpts));
-    typename SplineType::knots_t newts;
+    knots_t newts;
     newts.reserve(t.size() + 1);
     newts.assign(t.cbegin(),t.cbegin() + nu + 1);
     newts.push_back(u);

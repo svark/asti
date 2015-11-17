@@ -142,7 +142,6 @@ template <class SplineType, class MaxTag>
 double
 find_bound_by_insertion(SplineType &bs, MaxTag tag) {
     typedef typename SplineType::point_t point_t;
-    static const int dimension = point_dim<point_t>::dimension;
     bool found_bound = false;
     double u = bs.param_range().second;
     std::tie(u, found_bound) = find_knot_at_bound(bs, tag);
@@ -190,9 +189,7 @@ template <class SplineType>
 box<typename SplineType::point_t>
 compute_box_tight(const SplineType &spl, rational_tag) {
     typedef typename SplineType::point_t point_t;
-    typedef typename spline_traits<SplineType>::ptag ptag;
-    typedef typename spline_traits<SplineType>::rtag rtag;
-    const int dimension = point_dim<point_t>::dimension;
+     const int dimension = point_dim<point_t>::dimension;
 
     box<point_t> b;
     int d = spl.degree();
@@ -224,7 +221,6 @@ compute_box_tight(const SplineType &spl, rational_tag) {
 template <class SplineType>
 box<typename SplineType::point_t>
 ops::compute_box_tight(const SplineType &spl) {
-    typedef typename SplineType::point_t point_t;
     typedef typename spline_traits<SplineType>::rtag rtag;
     return impl::compute_box_tight(spl, rtag());
 }

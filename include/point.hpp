@@ -2,6 +2,7 @@
 #define ASTI__POINT_HPP
 #include <cmath>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 #include "tol.hpp"
 #include "type_utils.hpp"
 #include <vector>

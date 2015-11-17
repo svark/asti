@@ -35,7 +35,7 @@ TEST_CASE("boxtest", "[bspline][box]") {
   geom::box<geom::point2d_t>  b;
   for(auto cp : pl.control_points())
   {
-	  REQUIRE(geom::contains_point( bxtight, cp, 0.001) );
+      REQUIRE(geom::contains_point( bxtight, cp, 0.001) );
   }
 
   double ps[][2] = {{0.,0},{0.0833333,0.5},{0.333333,1.25},{0.666667,0.75},{0.916667,0.5},{1.,0}};
@@ -44,7 +44,7 @@ TEST_CASE("boxtest", "[bspline][box]") {
       pts[i] = make_pt(ps[i][0],ps[i][1]);
   ks.resize(6+3+1);
   double karr[] = {0,0,0,0,1.0/4,3.0/4,1,1,1,1};
-  for(int i =0; i<sizeof(karr)/sizeof(double);++i)
+  for(size_t i =0; i<sizeof(karr)/sizeof(double);++i)
       ks[i] = karr[i];
 
   geom::bspline<geom::point2d_t> bs2(std::move(pts),

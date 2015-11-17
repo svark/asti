@@ -9,9 +9,6 @@ namespace geom{
 template <class SplineType>
 SplineType ops::reverse_curve(SplineType spl)
 {
-    auto &cpts=spl.control_points();
-    auto &t = spl.knots();
-    size_t numPts = cpts.size();
     typedef typename SplineType::point_t point_t;
     typedef RAWTYPE(spl.control_points()) cpts_t;
 

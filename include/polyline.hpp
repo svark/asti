@@ -34,11 +34,10 @@ class polyline : public bspline<Point>
         std::vector<double> ks(num_pts+2);
         ks[0] = start;
         ks[num_pts + 1] = end;
-        int prev  = 0;
+
         for(size_t i = 0; i < num_pts; ++i)
         {
             ks[i+1] = start + i*(end - start)/(num_pts-1);
-            prev = i;
         }
         return ks;
     }
