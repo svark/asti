@@ -33,7 +33,5 @@ This is a cagd library with the following functionality implemented so far
 </a>
 
 My plan is to read up text books Hoschek/Farin/Piegl and translate the book ideas into code as much as I can in here.
-Well some ideas are new too. The project uses biicode to handle builds and catch to perform unit testing.
-
-
-
+Well some ideas are new too :smile: The project uses <a href="https://github.com/floooh/fips"> fips </a>  to handle builds and
+<a href="https://github.com/philsquared/catch">catch</a> to perform unit testing.
