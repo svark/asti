@@ -15,9 +15,7 @@ ops::split_into_bezier_patches(const SplineType &spl)
 {
     typedef typename SplineType::knots_t knots_t;
 
-    auto &ts    = spl.knots();
-
-    assert(!tol::param_eq(ts.front(), ts.back()));
+    assert(!tol::param_eq(spl.knots().front(), spl.knots().back()));
     SplineType s ( clamp_end(clamp_start(spl)) );
     std::list<SplineType,Eigen::aligned_allocator<SplineType>> patches;
     knots_t newts;
@@ -43,9 +41,7 @@ ops::first_bezier_patch(const SplineType &spl)
 {
     typedef typename SplineType::knots_t knots_t;
 
-    auto &ts    = spl.knots();
-
-    assert(!tol::param_eq(ts.front(), ts.back()));
+    assert(!tol::param_eq(spl.knots().front(), spl.knots().back()));
     SplineType s ( clamp_start(spl) );
 
     knots_t newts;
@@ -70,9 +66,7 @@ ops::last_bezier_patch(
 {
     typedef typename SplineType::knots_t knots_t;
 
-    auto &ts    = spl.knots();
-
-    assert(!tol::param_eq(ts.front(), ts.back()));
+    assert(!tol::param_eq(spl.knots().front(), spl.knots().back()));
     SplineType s(clamp_end(spl) );
 
     knots_t newts;

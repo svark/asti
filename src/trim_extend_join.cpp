@@ -97,9 +97,7 @@ template <class SplineType>
 SplineType
 ops::extract_regular_curve(const SplineType &spl)
 {
-    auto &ts    = spl.knots();
-
-    assert(!tol::param_eq(ts.front(), ts.back()));
+    assert(!tol::param_eq(spl.knots().front(), spl.knots().back()));
     return clamp_end(clamp_start(spl));
 }
 
@@ -108,9 +106,7 @@ template <class SplineType>
 SplineType
 ops::trim_curve(const SplineType &spl, double a, double b)
 {
-    auto &ts    = spl.knots();
-
-    assert(!tol::param_eq(ts.front(), ts.back()));
+    assert(!tol::param_eq(spl.knots().front(), spl.knots().back()));
     return clamp_at_right(b, clamp_at_left(a, spl));
 }
 

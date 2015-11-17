@@ -102,27 +102,22 @@ auto_lift_dim3(const point3d_t& p1, rational_tag, polynomial_tag);
 namespace detail {
 template <class Spl>
 auto get_spline(const Spl& s, rational_tag, periodic_tag)
-//rational periodic
-    -> decltype(s.spline().spline())
 {
     return s.spline().spline();
 }
 
 template <class Spl>
 auto get_spline(const Spl& s, polynomial_tag, periodic_tag)
-// not rational , periodic
-    -> decltype(s.spline())
 {
     return s.spline();
 }
 
 template <class Spl>
 auto get_spline(const Spl& s, rational_tag, regular_tag)
-//rational, regular
-    -> decltype(s.spline())
 {
     return s.spline();
 }
+
 template <class Spl>
 //regular bspline
 const Spl& get_spline(const Spl& s, polynomial_tag, regular_tag)
@@ -132,16 +127,13 @@ const Spl& get_spline(const Spl& s, polynomial_tag, regular_tag)
 }
 
 template <class Spl>
-auto get_spline(const Spl& s) -> decltype(
-    detail::get_spline(s,
-    typename spline_traits<Spl>::rtag(), 
-    typename spline_traits<Spl>::ptag()
-	))
+auto get_spline(const Spl& s)
 {
-    return detail::get_spline(s,
-	    typename spline_traits<Spl>::rtag(), 
+    return detail::get_spline(
+        s,
+        typename spline_traits<Spl>::rtag(),
         typename spline_traits<Spl>::ptag()
-	);
+        );
 }
 
 template <class Crv>
@@ -189,10 +181,10 @@ double torsion_approx(const SplineType & spl, double u)
 
 template <class SplineType>
 auto
-derivative_approx(const SplineType& spl, double u, int der) -> decltype(spl.eval_derivative(der,u))
+derivative_approx(const SplineType& spl, double u, int der)
 {
-	auto op = [der](const SplineType& spl, double u)
-	{ return spl.eval_derivative(der,u); };
+    auto op = [der](const SplineType& spl, double u)
+        { return spl.eval_derivative(der,u); };
 
     return checked_op(op, spl, u);
 }
