@@ -36,7 +36,7 @@ TEST_CASE("change basis", "[bezier][monomial]"){
         for(int i = 0;i < 5; ++i)
             c[i] = i + 1;
 
-        bezier_form < double > bf(c, 1, 2.0);
+        bezier_form < double > bf = geom::make_bezier_form(c, 1, 2.0);
         auto const & bf_dual = to_bezier (to_monomial(bf));
         auto const &  cfs = bf_dual.control_points();
         REQUIRE(cfs.size() == c.size());
@@ -67,7 +67,7 @@ TEST_CASE("change basis", "[bezier][monomial]"){
         for(int i = 0;i < 5; ++i)
             c[i] = i + 1;
 
-        bezier_form < double > bf(c, 1, 2.0);
+        bezier_form < double > bf(c, 5, 1.0, 2.0);
         auto const & lf = to_legendre(bf);
         auto const & bf_dual = to_bezier(lf);
         REQUIRE(bf.eval(1.1) == Approx(lf.eval(1.1)));

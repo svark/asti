@@ -13,11 +13,11 @@ class bezier_form : public bspline < Point >
 {
 public:
     typedef bspline<Point> base_t;
-    bezier_form(ARRAY_TYPE(Point) c,
+    bezier_form(ARRAY_TYPE(Point) c, size_t csize,
                 double a = 0,  double b =  1.0):
-        base_t(std::move(c),
-               std::vector<double>(2 * c.size()),
-               c.size() - 1)
+        base_t(std::move(c), 
+			   std::vector<double>( 2*csize ), 
+			   csize - 1)
     {
         int deg =  base_t::degree();
         std::fill_n(base_t::t.begin() + (      0), deg + 1, a);
@@ -38,9 +38,10 @@ public:
 
 template <class CptsT>
 auto make_bezier_form(CptsT cpts,
-                      double a,  double b) -> bezier_form<RAWTYPE(cpts[0])>
+                      double a,  double b)
 {
-    return bezier_form<RAWTYPE(cpts[0])>(std::move(cpts), a, b);
+	size_t csize = cpts.size();
+    return bezier_form<RAWTYPE(cpts[0])>(std::move(cpts), csize , a, b);
 }
 
 }
