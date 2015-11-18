@@ -1,6 +1,7 @@
 version: 1.0.{build}
 os: Visual Studio 2015
 build_script:
-- cmd: python fips build win64-vs2015-debug
+- cmd: python fips set config win64-vs2015-debug
+- cmd: python fips build
 test_script:
-- cmd: python fips run test_asti
+- cmd: python fips run test_asti 
