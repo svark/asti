@@ -34,4 +34,5 @@ This is a cagd library with the following functionality implemented so far
 
 My plan is to read up text books Hoschek/Farin/Piegl and translate the book ideas into code as much as I can in here.
 Well some ideas are new too :smile: The project uses <a href="https://github.com/floooh/fips"> fips </a>  to handle builds and
-<a href="https://github.com/philsquared/catch">catch</a> to perform unit testing.
+<a href="https://github.com/philsquared/catch">catch</a> to perform unit testing. Tested (via travis) with gcc 4.9 on osx and linux. On windows, i use vs2015. 
+
