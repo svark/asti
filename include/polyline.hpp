@@ -43,12 +43,12 @@ class polyline : public bspline<Point>
     }
 public:
     polyline(cpts_t pts):
-        bspline<Point>(std::move(pts),compute_knots(pts),1)
+        bspline<Point>(pts,compute_knots(pts),1)
     {
     }
 
     polyline(cpts_t pts, double start, double end):
-        bspline<Point>(std::move(pts),compute_knots(pts.size(),start,end),1)
+        bspline<Point>(pts,compute_knots(pts.size(),start,end),1)
     {
     }
 };
