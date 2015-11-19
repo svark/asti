@@ -41,14 +41,28 @@ class polyline : public bspline<Point>
         }
         return ks;
     }
+
+    static auto make_tuple(cpts_t pts, double start, double end)
+    {
+        int sz = pts.size();
+        auto && ks = compute_knots(sz, start, end);
+        return std::make_tuple(std::move(pts), std::forward<knots_t>(ks),1);
+    }
+
+    static auto make_tuple(cpts_t pts)
+    {
+        auto && ks = compute_knots(pts);
+        return std::make_tuple(std::move(pts), std::forward<knots_t>(ks),1);
+    }
+
 public:
     polyline(cpts_t pts):
-        bspline<Point>(pts,compute_knots(pts),1)
+        bspline<Point>(make_tuple(std::move(cpts)))
     {
     }
 
     polyline(cpts_t pts, double start, double end):
-        bspline<Point>(pts,compute_knots(pts.size(),start,end),1)
+        bspline<Point>(make_tuple(std::move(pts), start, end))
     {
     }
 };
