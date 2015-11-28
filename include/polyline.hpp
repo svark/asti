@@ -10,7 +10,8 @@ class polyline : public bspline<Point>
 {
 
     typedef typename bspline<Point>::cpts_t cpts_t;
-
+    typedef typename bspline<Point>::knots_t knots_t;
+    
     static
     std::vector<double> compute_knots(const cpts_t &pts)
     {
