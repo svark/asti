@@ -15,6 +15,6 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install cmake; fi
 script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then python fips set config linux-make-debug ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python fips set config osx-xcode-debug  ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python fips set config osx-xcode-release  ; fi
   - python fips build
   - python fips run test_asti
