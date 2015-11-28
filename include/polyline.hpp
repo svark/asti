@@ -58,7 +58,7 @@ class polyline : public bspline<Point>
 
 public:
     polyline(cpts_t pts):
-        bspline<Point>(make_tuple(std::move(cpts)))
+        bspline<Point>(make_tuple(std::move(pts)))
     {
     }
 
